@@ -13,4 +13,16 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    implementation 'org.springframework:spring-webmvc:5.2.13.RELEASE'
+
+    implementation 'org.springframework:spring-context:5.2.13.RELEASE'
+
+    implementation 'org.springframework:spring-beans:5.2.13.RELEASE'
+
+    implementation 'org.springframework:spring-core:5.2.13.RELEASE'
+
+    implementation 'org.springframework:spring-orm:5.2.13.RELEASE'
+
+    implementation project(":web")
 }
