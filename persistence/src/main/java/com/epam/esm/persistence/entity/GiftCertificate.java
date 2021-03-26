@@ -12,7 +12,6 @@ public class GiftCertificate implements Entity {
     private LocalDate createDate;
     private LocalDate lastUpdateDate;
 
-
     public GiftCertificate() {
     }
 
