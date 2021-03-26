@@ -1,4 +1,4 @@
-package com.epam.esm.config;
+package com.epam.esm.persistence.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -10,9 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -20,11 +18,8 @@ import java.util.Properties;
 
 @Configuration
 @ComponentScan(basePackages = "com.epam.esm")
-@EnableWebMvc
 @EnableTransactionManagement
-public class AppConfig {
-
-    //TODO: Change this to .yml type
+public class PersistenceConfig {
     private static final String HIKARI_PROPERTIES_PATH = "hikari.properties";
 
     @Bean
@@ -41,7 +36,7 @@ public class AppConfig {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() throws IOException {
+    public DataSourceTransactionManager transactionManager() throws IOException {
         DataSource dataSource = dataSource();
         return new DataSourceTransactionManager(dataSource);
     }

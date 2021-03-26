@@ -1,20 +1,9 @@
-plugins {
-    id 'java'
-}
-
-group 'com.epam.esm'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-
     implementation 'org.springframework:spring-context:5.2.13.RELEASE'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
     implementation project(":persistence")
 }

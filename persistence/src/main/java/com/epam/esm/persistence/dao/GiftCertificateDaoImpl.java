@@ -1,6 +1,6 @@
-package com.epam.esm.dao;
+package com.epam.esm.persistence.dao;
 
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.persistence.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;

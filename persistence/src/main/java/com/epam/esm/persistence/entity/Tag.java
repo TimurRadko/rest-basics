@@ -1,4 +1,4 @@
-package com.epam.esm.entity;
+package com.epam.esm.persistence.entity;
 
 public class Tag implements Entity {
     private Long id;

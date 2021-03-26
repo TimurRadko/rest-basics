@@ -9,3 +9,4 @@ build
 /gradlew.bat
 /gradlew
 /.gitattributes
+/persistence/out/

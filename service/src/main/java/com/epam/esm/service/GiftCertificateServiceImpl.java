@@ -1,7 +1,7 @@
-package com.epam.esm;
+package com.epam.esm.service;
 
-import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.persistence.dao.GiftCertificateDao;
+import com.epam.esm.persistence.entity.GiftCertificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
