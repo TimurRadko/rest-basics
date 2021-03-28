@@ -22,7 +22,7 @@ import java.util.Properties;
 public class PersistenceConfig {
     private static final String HIKARI_PROPERTIES_PATH = "hikari.properties";
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public DataSource dataSource() throws IOException {
         Resource resource = new ClassPathResource(HIKARI_PROPERTIES_PATH);
         Properties hikariProperties = PropertiesLoaderUtils.loadProperties(resource);

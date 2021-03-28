@@ -1,5 +1,7 @@
-package com.epam.esm.persistence.entity;
+package com.epam.esm.persistence.dto;
 
+import com.epam.esm.persistence.entity.Entity;
+import com.epam.esm.persistence.entity.Tag;
 import com.epam.esm.persistence.serialization.LocalDateDeserializer;
 import com.epam.esm.persistence.serialization.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -7,9 +9,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
-public class GiftCertificate implements Entity {
+public class GiftCertificateDto implements Entity {
     private Long id;
+
     private String name;
     private String description;
     private BigDecimal price;
@@ -23,16 +27,19 @@ public class GiftCertificate implements Entity {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate lastUpdateDate;
 
-    public GiftCertificate() {
+    private Set<Tag> tags;
+
+    public GiftCertificateDto() {
     }
 
-    public GiftCertificate(Long id,
-                           String name,
-                           String description,
-                           BigDecimal price,
-                           int duration,
-                           LocalDate createDate,
-                           LocalDate lastUpdateDate) {
+    public GiftCertificateDto(Long id,
+                              String name,
+                              String description,
+                              BigDecimal price,
+                              int duration,
+                              LocalDate createDate,
+                              LocalDate lastUpdateDate,
+                              Set<Tag> tags) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -40,16 +47,7 @@ public class GiftCertificate implements Entity {
         this.duration = duration;
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
+        this.tags = tags;
     }
 
     public String getName() {
@@ -100,16 +98,34 @@ public class GiftCertificate implements Entity {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof GiftCertificate)) {
+        if (!(o instanceof GiftCertificateDto)) {
             return false;
         }
 
-        GiftCertificate that = (GiftCertificate) o;
+        GiftCertificateDto that = (GiftCertificateDto) o;
 
         if (getDuration() != that.getDuration()) {
             return false;
@@ -123,11 +139,16 @@ public class GiftCertificate implements Entity {
         if (getDescription() != null ? !getDescription().equals(that.getDescription()) : that.getDescription() != null) {
             return false;
         }
-        if (getPrice() != null ? !getPrice().equals(that.getPrice()) : that.getPrice() != null) return false;
+        if (getPrice() != null ? !getPrice().equals(that.getPrice()) : that.getPrice() != null) {
+            return false;
+        }
         if (getCreateDate() != null ? !getCreateDate().equals(that.getCreateDate()) : that.getCreateDate() != null) {
             return false;
         }
-        return getLastUpdateDate() != null ? getLastUpdateDate().equals(that.getLastUpdateDate()) : that.getLastUpdateDate() == null;
+        if (getLastUpdateDate() != null ? !getLastUpdateDate().equals(that.getLastUpdateDate()) : that.getLastUpdateDate() != null) {
+            return false;
+        }
+        return getTags() != null ? getTags().equals(that.getTags()) : that.getTags() == null;
     }
 
     @Override
@@ -139,12 +160,13 @@ public class GiftCertificate implements Entity {
         result = 31 * result + getDuration();
         result = 31 * result + (getCreateDate() != null ? getCreateDate().hashCode() : 0);
         result = 31 * result + (getLastUpdateDate() != null ? getLastUpdateDate().hashCode() : 0);
+        result = 31 * result + (getTags() != null ? getTags().hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "GiftCertificate{" +
+        return "GiftCertificateDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
@@ -152,6 +174,7 @@ public class GiftCertificate implements Entity {
                 ", duration=" + duration +
                 ", createDate=" + createDate +
                 ", lastUpdateDate=" + lastUpdateDate +
+                ", tags=" + tags +
                 '}';
     }
 }

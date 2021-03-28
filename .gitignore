@@ -5,7 +5,6 @@
 build
 /.idea/
 /gradle/
-/settings.gradle
 /gradlew.bat
 /gradlew
 /.gitattributes

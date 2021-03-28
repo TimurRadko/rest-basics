@@ -7,15 +7,14 @@ import java.io.Serializable;
  */
 public interface Entity extends Serializable, Cloneable {
     /**
-     * This interface describes all Entities in DB. It is used to eliminate
-     * the possibility of inserting entities that don't implement it into the DB.
+     * This method allow to get entities ID in DB.
      *
      * @return entities id
      */
     Long getId();
 
     /**
-     *
+     * This method allow to set entities ID in DB.
      */
     void setId(Long id);
 }
