@@ -1,17 +1,18 @@
 package com.epam.esm.service;
 
 import java.util.List;
+import java.util.Optional;
 
 //TODO: write javadoc for this interface
 public interface Service<T> {
 
-    T create(T t);
+    Optional<T> save(T t);
 
     //read statements
     List<T> getAll();
-    T getById(long id);
+    Optional<T> getById(long id);
 
-    T update(T t);
+    Optional<T> update(T t);
 
     void delete(long id);
 }

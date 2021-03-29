@@ -4,11 +4,13 @@ import com.epam.esm.persistence.entity.GiftCertificate;
 import com.epam.esm.persistence.repository.GiftCertificateRepository;
 import com.epam.esm.persistence.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
@@ -34,23 +36,33 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     }
 
     @Override
-    public GiftCertificate getEntityBySpecification(Specification specification) {
-        return jdbcTemplate.queryForObject(
-                specification.getQuery(),
-                specification.getArgs(),
-                new BeanPropertyRowMapper<>(GiftCertificate.class));
+    public Optional<GiftCertificate> getEntityBySpecification(Specification specification) {
+        try {
+            GiftCertificate giftCertificate = jdbcTemplate.queryForObject(
+                    specification.getQuery(),
+                    specification.getArgs(),
+                    new BeanPropertyRowMapper<>(GiftCertificate.class));
+            return Optional.ofNullable(giftCertificate);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public GiftCertificate create(GiftCertificate giftCertificate) {
-        return jdbcTemplate.queryForObject(INSERT_GIFT_CERTIFICATE,
-                new Object[]{giftCertificate.getName(),
-                        giftCertificate.getDescription(),
-                        giftCertificate.getPrice(),
-                        giftCertificate.getDuration(),
-                        giftCertificate.getCreateDate(),
-                        giftCertificate.getLastUpdateDate()},
-                new BeanPropertyRowMapper<>(GiftCertificate.class));
+    public Optional<GiftCertificate> save(GiftCertificate giftCertificate) {
+        try {
+            GiftCertificate createdGiftCertificate = jdbcTemplate.queryForObject(INSERT_GIFT_CERTIFICATE,
+                    new Object[]{giftCertificate.getName(),
+                            giftCertificate.getDescription(),
+                            giftCertificate.getPrice(),
+                            giftCertificate.getDuration(),
+                            giftCertificate.getCreateDate(),
+                            giftCertificate.getLastUpdateDate()},
+                    new BeanPropertyRowMapper<>(GiftCertificate.class));
+            return Optional.ofNullable(createdGiftCertificate);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -59,7 +71,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     }
 
     @Override
-    public GiftCertificate update(GiftCertificate giftCertificate) {
-        return null;
+    public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
+        return Optional.empty();
     }
 }

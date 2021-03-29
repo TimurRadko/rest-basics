@@ -7,8 +7,8 @@ DROP DATABASE gift_certificates_task;
 CREATE TABLE gift_certificates
 (
     id               bigserial      NOT NULL,
-    name             character(255) NOT NULL,
-    description      character(255),
+    name             varchar(255) NOT NULL,
+    description      varchar(255),
     price            double precision,
     duration         serial,
     create_date      date           NOT NULL,
@@ -29,7 +29,7 @@ DROP TABLE gift_certificates;
 CREATE TABLE tags
 (
     id   bigserial      NOT NULL,
-    name character(255) NOT NULL,
+    name varchar(255) NOT NULL,
     PRIMARY KEY (id),
     UNIQUE (name)
 );

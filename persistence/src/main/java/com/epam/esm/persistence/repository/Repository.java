@@ -4,16 +4,12 @@ import com.epam.esm.persistence.entity.Entity;
 import com.epam.esm.persistence.specification.Specification;
 
 import java.util.List;
+import java.util.Optional;
 
 //TODO: write javadoc for this interface
 public interface Repository<T extends Entity> {
-
-    //TODO: Think about Implementation using Optional
-    T create(T t);
-
-    //read statements
+    Optional<T> save(T t);
     List<T> getListBySpecification(Specification specification);
-    T getEntityBySpecification(Specification specification);
-
+    Optional<T> getEntityBySpecification(Specification specification);
     void delete(T t);
 }

@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.persistence.entity.GiftCertificate;
+import com.epam.esm.service.dto.GiftCertificateDto;
 
-public interface GiftCertificateService extends Service<GiftCertificate> {
+public interface GiftCertificateService extends Service<GiftCertificateDto> {
 }

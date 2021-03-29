@@ -1,11 +1,13 @@
-package com.epam.esm.persistence.dto;
+package com.epam.esm.service.dto;
 
 import com.epam.esm.persistence.entity.Entity;
+import com.epam.esm.persistence.entity.GiftCertificate;
 import com.epam.esm.persistence.entity.Tag;
 import com.epam.esm.persistence.serialization.LocalDateDeserializer;
 import com.epam.esm.persistence.serialization.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +16,7 @@ import java.util.Set;
 public class GiftCertificateDto implements Entity {
     private Long id;
 
+    @Size(min = 3, max = 100)
     private String name;
     private String description;
     private BigDecimal price;
@@ -30,6 +33,16 @@ public class GiftCertificateDto implements Entity {
     private Set<Tag> tags;
 
     public GiftCertificateDto() {
+    }
+
+    public GiftCertificateDto(GiftCertificate giftCertificate, Set<Tag> tags) {
+        this.id = giftCertificate.getId();
+        this.name = giftCertificate.getName();
+        this.description = giftCertificate.getDescription();
+        this.price = giftCertificate.getPrice();
+        this.createDate = giftCertificate.getCreateDate();
+        this.lastUpdateDate = giftCertificate.getLastUpdateDate();
+        this.tags = tags;
     }
 
     public GiftCertificateDto(Long id,

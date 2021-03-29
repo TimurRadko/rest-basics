@@ -2,11 +2,11 @@ package com.epam.esm.persistence.specification.gift;
 
 import com.epam.esm.persistence.specification.Specification;
 
-public class GetGiftByIdSpecification implements Specification {
+public class GetGiftCertificateByIdSpecification implements Specification {
     private static final String QUERY = "SELECT * FROM gift_certificates WHERE id=?";
     private final long id;
 
-    public GetGiftByIdSpecification(long id) {
+    public GetGiftCertificateByIdSpecification(long id) {
         this.id = id;
     }
 

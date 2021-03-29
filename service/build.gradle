@@ -3,5 +3,11 @@ dependencies {
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.2'
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.1'
+
+    implementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'
+    
     implementation project(":persistence")
 }
