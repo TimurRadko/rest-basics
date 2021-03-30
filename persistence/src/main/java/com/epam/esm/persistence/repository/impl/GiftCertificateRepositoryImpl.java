@@ -19,10 +19,21 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     private static final String RETURNING =
             "RETURNING id, name, description, price, duration, create_date, last_update_date;";
 
-    private static final String INSERT_GIFT_CERTIFICATE =
+    private static final String INSERT =
             "INSERT INTO gift_certificates (name, description, price, duration, create_date, last_update_date)" +
                     " VALUES (?,?,?,?,now(),now()) "
                     + RETURNING;
+
+    private static final String UPDATE =
+            "UPDATE  gift_certificates SET (name, description, price, duration, last_update_date) "
+                    + " = (?,?,?,?,now()) WHERE id=? "
+                    + RETURNING;
+
+    private static final String DELETE_TAGS_FROM_GIFT_CERTIFICATE =
+            "DELETE FROM gift_certificates_tags WHERE gift_certificate_id=?;";
+
+    private static final String DELETE_GIFT_CERTIFICATE_BY_ID =
+            "DELETE FROM  gift_certificates WHERE id=?;";
 
     @Autowired
     public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate) {
@@ -31,7 +42,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
     @Override
     public List<GiftCertificate> getListBySpecification(Specification specification) {
-        return jdbcTemplate.query(specification.getQuery(),
+        return jdbcTemplate.query(
+                specification.getQuery(),
+                specification.getArgs(),
                 new BeanPropertyRowMapper<>(GiftCertificate.class));
     }
 
@@ -51,13 +64,11 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     @Override
     public Optional<GiftCertificate> save(GiftCertificate giftCertificate) {
         try {
-            GiftCertificate createdGiftCertificate = jdbcTemplate.queryForObject(INSERT_GIFT_CERTIFICATE,
+            GiftCertificate createdGiftCertificate = jdbcTemplate.queryForObject(INSERT,
                     new Object[]{giftCertificate.getName(),
                             giftCertificate.getDescription(),
                             giftCertificate.getPrice(),
-                            giftCertificate.getDuration(),
-                            giftCertificate.getCreateDate(),
-                            giftCertificate.getLastUpdateDate()},
+                            giftCertificate.getDuration()},
                     new BeanPropertyRowMapper<>(GiftCertificate.class));
             return Optional.ofNullable(createdGiftCertificate);
         } catch (EmptyResultDataAccessException e) {
@@ -67,11 +78,25 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
     @Override
     public void delete(GiftCertificate giftCertificate) {
-
+        jdbcTemplate.update(DELETE_TAGS_FROM_GIFT_CERTIFICATE, giftCertificate.getId());
+        jdbcTemplate.update(DELETE_GIFT_CERTIFICATE_BY_ID, giftCertificate.getId());
     }
 
     @Override
     public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
-        return Optional.empty();
+        try {
+            GiftCertificate createdGiftCertificate = jdbcTemplate.queryForObject(UPDATE,
+                    new Object[]{
+                            giftCertificate.getId(),
+                            giftCertificate.getName(),
+                            giftCertificate.getDescription(),
+                            giftCertificate.getPrice(),
+                            giftCertificate.getDuration(),
+                            giftCertificate.getLastUpdateDate()},
+                    new BeanPropertyRowMapper<>(GiftCertificate.class));
+            return Optional.ofNullable(createdGiftCertificate);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 }

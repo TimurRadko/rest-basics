@@ -6,6 +6,8 @@ import com.epam.esm.persistence.specification.tag.GetAllTagsSpecification;
 import com.epam.esm.persistence.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.persistence.specification.tag.GetTagsListByGiftCertificatesIdSpecification;
 import com.epam.esm.service.TagService;
+import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.validator.TagValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +16,11 @@ import java.util.Optional;
 @Service
 public class TagServiceImpl implements TagService {
     private TagRepository tagRepository;
+    private TagValidator tagValidator;
 
-    public TagServiceImpl(TagRepository tagRepository) {
+    public TagServiceImpl(TagRepository tagRepository, TagValidator tagValidator) {
         this.tagRepository = tagRepository;
+        this.tagValidator = tagValidator;
     }
 
     @Override
@@ -36,7 +40,11 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Optional<Tag> save(Tag tag) {
-        return Optional.empty();
+        if (tagValidator.validate(tag)) {
+            return tagRepository.save(tag);
+        } else {
+            throw new ServiceException(tagValidator.getErrorMessage());
+        }
     }
 
     @Override

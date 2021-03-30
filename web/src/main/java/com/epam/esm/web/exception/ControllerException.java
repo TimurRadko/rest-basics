@@ -1,19 +1,19 @@
 package com.epam.esm.web.exception;
 
-public class ControllerException extends RuntimeException {
-    public ControllerException(String message) {
+/*Package-private*/ class ControllerException extends RuntimeException {
+    /*Package-private*/ ControllerException(String message) {
         super(message);
     }
 
-    public ControllerException(String message, Throwable cause) {
+    /*Package-private*/ ControllerException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public ControllerException(Throwable cause) {
+    /*Package-private*/ ControllerException(Throwable cause) {
         super(cause);
     }
 
-    public ControllerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    /*Package-private*/ ControllerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

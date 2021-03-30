@@ -7,7 +7,6 @@ import com.epam.esm.persistence.serialization.LocalDateDeserializer;
 import com.epam.esm.persistence.serialization.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,8 +14,6 @@ import java.util.Set;
 
 public class GiftCertificateDto implements Entity {
     private Long id;
-
-    @Size(min = 3, max = 100)
     private String name;
     private String description;
     private BigDecimal price;

@@ -3,7 +3,7 @@ package com.epam.esm.persistence.specification.gift;
 import com.epam.esm.persistence.specification.Specification;
 
 public class GetAllGiftCertificatesSpecification implements Specification {
-    private static final String QUERY = "SELECT * FROM gift_certificates";
+    private static final String QUERY = "SELECT * FROM gift_certificates;";
 
     @Override
     public String getQuery() {

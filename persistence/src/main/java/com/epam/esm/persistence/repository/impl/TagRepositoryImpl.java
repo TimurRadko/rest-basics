@@ -15,6 +15,15 @@ import java.util.Optional;
 public class TagRepositoryImpl implements TagRepository {
     private final JdbcTemplate jdbcTemplate;
 
+    private static final String RETURNING = "RETURNING id, name;";
+
+    private static final String INSERT = "INSERT INTO tags (name) VALUES (?) " + RETURNING;
+
+    private static final String DELETE_TAG_FROM_GIFT_CERTIFICATES =
+            "DELETE FROM gift_certificates_tags WHERE tag_id = ?;";
+
+    private static final String DELETE_TAG_BY_ID = "DELETE FROM tags WHERE id = ?;";
+
     public TagRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -42,11 +51,19 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public Optional<Tag> save(Tag tag) {
-        return Optional.empty();
+        try {
+            Tag createdTag = jdbcTemplate.queryForObject(INSERT,
+                    new Object[]{tag.getName()},
+                    new BeanPropertyRowMapper<>(Tag.class));
+            return Optional.ofNullable(createdTag);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public void delete(Tag tag) {
-
+        jdbcTemplate.update(DELETE_TAG_FROM_GIFT_CERTIFICATES, tag.getId());
+        jdbcTemplate.update(DELETE_TAG_BY_ID, tag.getId());
     }
 }
