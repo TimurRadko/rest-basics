@@ -45,15 +45,26 @@ public class GiftCertificateController {
             Optional<GiftCertificateDto> optionalGiftCertificateDto = giftCertificateService.save(giftCertificateDto);
 
             return optionalGiftCertificateDto.
-                    orElseThrow(() -> new EntityNotFoundException("Gift certificate did't add to DB"));
+                    orElseThrow(() -> new EntityNotFoundException("Gift certificate didn't add to DB"));
         } catch (ServiceException e) {
             throw new InvalidRequestBodyException(e.getMessage());
         }
     }
 
-    //TODO: Before release delete this method
-    @GetMapping("/hello")
-    public String sayHello() {
-        return "Hello from Gift Controller";
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public GiftCertificateDto update(@PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
+        Optional<GiftCertificateDto> optionalGiftCertificateDto = giftCertificateService.update(id, giftCertificateDto);
+
+
+        return giftCertificateDto;
+    }
+
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable long id) {
+        giftCertificateService.getById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Requested resource not found (id = " + id +")"));
+        giftCertificateService.delete(id);
+        return "The Gift Certificate with id = " + id + " was deleted";
     }
 }

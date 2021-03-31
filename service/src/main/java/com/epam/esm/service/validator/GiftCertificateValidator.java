@@ -39,6 +39,4 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
         }
         return true;
     }
-
-
 }

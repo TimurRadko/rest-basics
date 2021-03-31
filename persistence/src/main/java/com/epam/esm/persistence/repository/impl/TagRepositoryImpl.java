@@ -3,6 +3,7 @@ package com.epam.esm.persistence.repository.impl;
 import com.epam.esm.persistence.entity.Tag;
 import com.epam.esm.persistence.repository.TagRepository;
 import com.epam.esm.persistence.specification.Specification;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,6 +25,7 @@ public class TagRepositoryImpl implements TagRepository {
 
     private static final String DELETE_TAG_BY_ID = "DELETE FROM tags WHERE id = ?;";
 
+    @Autowired
     public TagRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -50,7 +52,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public Optional<Tag> save(Tag tag) {
+    public Optional<Tag> saveIfNotExist(Tag tag) {
         try {
             Tag createdTag = jdbcTemplate.queryForObject(INSERT,
                     new Object[]{tag.getName()},
@@ -62,8 +64,8 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public void delete(Tag tag) {
-        jdbcTemplate.update(DELETE_TAG_FROM_GIFT_CERTIFICATES, tag.getId());
-        jdbcTemplate.update(DELETE_TAG_BY_ID, tag.getId());
+    public void delete(long id) {
+        jdbcTemplate.update(DELETE_TAG_FROM_GIFT_CERTIFICATES, id);
+        jdbcTemplate.update(DELETE_TAG_BY_ID, id);
     }
 }

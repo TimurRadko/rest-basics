@@ -4,6 +4,7 @@ import com.epam.esm.persistence.entity.Tag;
 import com.epam.esm.persistence.repository.TagRepository;
 import com.epam.esm.persistence.specification.tag.GetAllTagsSpecification;
 import com.epam.esm.persistence.specification.tag.GetTagByIdSpecification;
+import com.epam.esm.persistence.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.persistence.specification.tag.GetTagsListByGiftCertificatesIdSpecification;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
@@ -41,19 +42,16 @@ public class TagServiceImpl implements TagService {
     @Override
     public Optional<Tag> save(Tag tag) {
         if (tagValidator.validate(tag)) {
-            return tagRepository.save(tag);
+            String name = tag.getName();
+            Optional<Tag> optionalExistingTag = tagRepository.getEntityBySpecification(new GetTagByNameSpecification(name));
+            return tagRepository.saveIfNotExist(optionalExistingTag.orElseThrow(() -> new ServiceException("Empty Tag")));
         } else {
             throw new ServiceException(tagValidator.getErrorMessage());
         }
     }
 
     @Override
-    public Optional<Tag> update(Tag tag) {
-        return Optional.empty();
-    }
-
-    @Override
     public void delete(long id) {
-
+        tagRepository.delete(id);
     }
 }

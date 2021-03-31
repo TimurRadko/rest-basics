@@ -22,7 +22,6 @@ public class TagValidator extends AbstractValidator<Tag> {
             setErrorMessage("To create a Tag, the name must be between 3 and 50 characters long");
             return false;
         }
-
         return true;
     }
 }

@@ -20,3 +20,10 @@ FROM gift_certificates gc
          INNER JOIN tags t ON t.id = gct.tag_id
 WHERE t.name = 'tag2';
 ----------------------------------------------------------------------------
+
+SELECT tag_id FROM gift_certificates_tags WHERE gift_certificate_id=1;
+
+SELECT gct.tag_id, t.name FROM gift_certificates_tags gct
+INNER JOIN tags t ON t.id = gct.tag_id WHERE gct.gift_certificate_id = 2 AND gct.tag_id = 4;
+
+SELECT * FROM gift_certificates_tags WHERE tag_id=1;
