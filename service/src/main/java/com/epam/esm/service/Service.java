@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface Service<T> {
     Optional<T> save(T t);
 
-    List<T> getAll();
+    List<T> getAll(String sort);
 
     Optional<T> getById(long id);
 

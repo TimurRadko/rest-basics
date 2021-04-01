@@ -20,8 +20,6 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
     private static final String INSERT = "INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id) " +
             "VALUES (?,?) " + RETURNING;
 
-    private static final String UPDATE = "";
-
     @Autowired
     public GiftCertificateTagRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -53,22 +51,6 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
         try {
             GiftCertificateTag createdGiftCertificateTag = jdbcTemplate.queryForObject(INSERT,
                     new Object[]{
-                            giftCertificateTag.getGiftCertificateId(),
-                            giftCertificateTag.getTagId()},
-                    new BeanPropertyRowMapper<>(GiftCertificateTag.class));
-            return Optional.ofNullable(createdGiftCertificateTag);
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
-    }
-
-    //TODO: I think this method may work wrong
-    @Override
-    public Optional<GiftCertificateTag> update(GiftCertificateTag giftCertificateTag) {
-        try {
-            GiftCertificateTag createdGiftCertificateTag = jdbcTemplate.queryForObject(UPDATE,
-                    new Object[]{
-                            giftCertificateTag.getId(),
                             giftCertificateTag.getGiftCertificateId(),
                             giftCertificateTag.getTagId()},
                     new BeanPropertyRowMapper<>(GiftCertificateTag.class));

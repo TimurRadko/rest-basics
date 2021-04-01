@@ -52,7 +52,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public Optional<Tag> saveIfNotExist(Tag tag) {
+    public Optional<Tag> save(Tag tag) {
         try {
             Tag createdTag = jdbcTemplate.queryForObject(INSERT,
                     new Object[]{tag.getName()},

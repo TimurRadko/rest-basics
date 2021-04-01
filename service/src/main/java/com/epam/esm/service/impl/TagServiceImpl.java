@@ -5,10 +5,10 @@ import com.epam.esm.persistence.repository.TagRepository;
 import com.epam.esm.persistence.specification.tag.GetAllTagsSpecification;
 import com.epam.esm.persistence.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.persistence.specification.tag.GetTagByNameSpecification;
-import com.epam.esm.persistence.specification.tag.GetTagsListByGiftCertificatesIdSpecification;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.validator.TagValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,17 +16,18 @@ import java.util.Optional;
 
 @Service
 public class TagServiceImpl implements TagService {
-    private TagRepository tagRepository;
-    private TagValidator tagValidator;
+    private final TagRepository tagRepository;
+    private final TagValidator tagValidator;
 
+    @Autowired
     public TagServiceImpl(TagRepository tagRepository, TagValidator tagValidator) {
         this.tagRepository = tagRepository;
         this.tagValidator = tagValidator;
     }
 
     @Override
-    public List<Tag> getAll() {
-        return tagRepository.getListBySpecification(new GetAllTagsSpecification());
+    public List<Tag> getAll(String sort) {
+        return tagRepository.getListBySpecification(new GetAllTagsSpecification(sort));
     }
 
     @Override
@@ -35,16 +36,11 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> getTagsByGiftCertificateId(long id) {
-        return tagRepository.getListBySpecification(new GetTagsListByGiftCertificatesIdSpecification(id));
-    }
-
-    @Override
     public Optional<Tag> save(Tag tag) {
         if (tagValidator.validate(tag)) {
             String name = tag.getName();
             Optional<Tag> optionalExistingTag = tagRepository.getEntityBySpecification(new GetTagByNameSpecification(name));
-            return tagRepository.saveIfNotExist(optionalExistingTag.orElseThrow(() -> new ServiceException("Empty Tag")));
+            return tagRepository.save(optionalExistingTag.orElseThrow(() -> new ServiceException("Empty Tag")));
         } else {
             throw new ServiceException(tagValidator.getErrorMessage());
         }

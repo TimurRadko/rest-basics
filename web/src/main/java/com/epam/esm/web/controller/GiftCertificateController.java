@@ -23,10 +23,11 @@ public class GiftCertificateController {
     }
 
     @GetMapping()
-    public List<GiftCertificateDto> showAll(
-            @RequestParam(value = "name", required = false) String name) {
+    public List<GiftCertificateDto> getAll(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "sort", required = false) String sort) {
         if (name == null) {
-            return giftCertificateService.getAll();
+            return giftCertificateService.getAll(sort);
         }
         return giftCertificateService.getGiftCertificatesByTagName(name);
     }
@@ -35,7 +36,7 @@ public class GiftCertificateController {
     public GiftCertificateDto get(@PathVariable Long id) {
         Optional<GiftCertificateDto> optionalGiftCertificateDto = giftCertificateService.getById(id);
         return optionalGiftCertificateDto.
-                orElseThrow(() -> new EntityNotFoundException("Requested resource not found (id = " + id +")"));
+                orElseThrow(() -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
     }
 
     @PostMapping()
@@ -43,7 +44,6 @@ public class GiftCertificateController {
     public GiftCertificateDto save(@RequestBody GiftCertificateDto giftCertificateDto) {
         try {
             Optional<GiftCertificateDto> optionalGiftCertificateDto = giftCertificateService.save(giftCertificateDto);
-
             return optionalGiftCertificateDto.
                     orElseThrow(() -> new EntityNotFoundException("Gift certificate didn't add to DB"));
         } catch (ServiceException e) {
@@ -54,16 +54,14 @@ public class GiftCertificateController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public GiftCertificateDto update(@PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
-        Optional<GiftCertificateDto> optionalGiftCertificateDto = giftCertificateService.update(id, giftCertificateDto);
-
-
-        return giftCertificateDto;
+        return giftCertificateService.update(id, giftCertificateDto)
+                .orElseThrow(() -> new EntityNotFoundException("Gift certificate with id=" + id + " didn't update"));
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable long id) {
         giftCertificateService.getById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Requested resource not found (id = " + id +")"));
+                .orElseThrow(() -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
         giftCertificateService.delete(id);
         return "The Gift Certificate with id = " + id + " was deleted";
     }

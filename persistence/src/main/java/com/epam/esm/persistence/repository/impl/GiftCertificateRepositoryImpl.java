@@ -85,16 +85,15 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     @Override
     public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
         try {
-            GiftCertificate createdGiftCertificate = jdbcTemplate.queryForObject(UPDATE,
+            GiftCertificate updatedGiftCertificate = jdbcTemplate.queryForObject(UPDATE,
                     new Object[]{
-                            giftCertificate.getId(),
                             giftCertificate.getName(),
                             giftCertificate.getDescription(),
                             giftCertificate.getPrice(),
                             giftCertificate.getDuration(),
-                            giftCertificate.getLastUpdateDate()},
+                            giftCertificate.getId()},
                     new BeanPropertyRowMapper<>(GiftCertificate.class));
-            return Optional.ofNullable(createdGiftCertificate);
+            return Optional.ofNullable(updatedGiftCertificate);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }

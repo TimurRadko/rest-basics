@@ -3,7 +3,15 @@ package com.epam.esm.persistence.specification.tag;
 import com.epam.esm.persistence.specification.Specification;
 
 public class GetAllTagsSpecification implements Specification {
-    private static final String QUERY = "SELECT * FROM tags;";
+    private final String sort;
+
+    private static final String QUERY = "SELECT * FROM tags ORDER BY " +
+            "CASE WHEN ? ='name-asc' THEN name END ASC, " +
+            "CASE WHEN ? ='name-desc' THEN name END DESC, id ASC;";
+
+    public GetAllTagsSpecification(String sort) {
+        this.sort = sort;
+    }
 
     @Override
     public String getQuery() {
@@ -12,6 +20,6 @@ public class GetAllTagsSpecification implements Specification {
 
     @Override
     public Object[] getArgs() {
-        return new Object[0];
+        return new Object[]{sort, sort};
     }
 }

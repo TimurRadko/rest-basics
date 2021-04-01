@@ -4,6 +4,7 @@ import com.epam.esm.persistence.specification.Specification;
 
 public class GetTagByIdSpecification implements Specification {
     private final long id;
+
     private static final String QUERY = "SELECT * FROM gift_certificates WHERE id=?;";
 
     public GetTagByIdSpecification(long id) {

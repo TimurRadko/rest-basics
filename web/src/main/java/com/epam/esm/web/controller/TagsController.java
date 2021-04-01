@@ -23,8 +23,8 @@ public class TagsController {
     }
 
     @GetMapping()
-    public List<Tag> showAll() {
-        return tagService.getAll();
+    public List<Tag> getAll(@RequestParam(value = "sort", required = false) String sort) {
+        return tagService.getAll(sort);
     }
 
     @GetMapping("/{id}")
