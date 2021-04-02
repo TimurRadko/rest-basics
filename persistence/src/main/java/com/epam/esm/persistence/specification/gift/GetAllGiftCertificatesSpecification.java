@@ -5,7 +5,8 @@ import com.epam.esm.persistence.specification.Specification;
 public class GetAllGiftCertificatesSpecification implements Specification {
     private final String sort;
 
-    private static final String QUERY = "SELECT * FROM gift_certificates ORDER BY " +
+    private static final String QUERY = "SELECT id, name, description, price, " +
+            "duration, create_date, last_update_date FROM gift_certificates ORDER BY " +
             "CASE WHEN ? ='name-asc' THEN name END ASC, " +
             "CASE WHEN ? ='name-desc' THEN name END DESC, " +
             "CASE WHEN ? ='create-date-asc' THEN create_date END ASC, " +

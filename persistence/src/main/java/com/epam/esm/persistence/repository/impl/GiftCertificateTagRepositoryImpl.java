@@ -26,7 +26,7 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
     }
 
     @Override
-    public List<GiftCertificateTag> getListBySpecification(Specification specification) {
+    public List<GiftCertificateTag> getEntitiesListBySpecification(Specification specification) {
         return jdbcTemplate.query(
                 specification.getQuery(),
                 specification.getArgs(),

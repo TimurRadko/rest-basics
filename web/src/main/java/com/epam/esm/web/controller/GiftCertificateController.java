@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +26,22 @@ public class GiftCertificateController {
     @GetMapping()
     public List<GiftCertificateDto> getAll(
             @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "tag", required = false) String tagName,
             @RequestParam(value = "sort", required = false) String sort) {
-        if (name == null) {
+        if (name == null && description == null && tagName == null) {
             return giftCertificateService.getAll(sort);
         }
-        return giftCertificateService.getGiftCertificatesByTagName(name);
+        List<GiftCertificateDto> giftCertificateDtos = new ArrayList<>();
+        if (name != null || description != null) {
+            giftCertificateDtos = giftCertificateService
+                    .getGiftCertificatesByNameOrDescriptionPart(name, description, sort);
+        }
+        if (tagName != null) {
+            giftCertificateDtos = giftCertificateService
+                    .getGiftCertificatesByTagName(giftCertificateDtos, tagName, sort);
+        }
+        return giftCertificateDtos;
     }
 
     @GetMapping("/{id}")

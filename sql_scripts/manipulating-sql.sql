@@ -42,6 +42,12 @@ SELECT gift_certificates.id   AS certificate_id,
 FROM gift_certificates
          LEFT JOIN gift_certificates_tags ON gift_certificates.id = gift_certificates_tags.gift_certificate_id
          LEFT JOIN tags ON gift_certificates_tags.tag_id = tags.id
-WHERE gift_certificates.id = 13;
+WHERE gift_certificates.name = '%1%';
 
 SELECT * FROM tags ORDER BY name DESC;
+
+SELECT * FROM gift_certificates;
+
+SELECT *
+FROM gift_certificates gc
+WHERE gc.name LIKE concat('%', 'certificate', '%');

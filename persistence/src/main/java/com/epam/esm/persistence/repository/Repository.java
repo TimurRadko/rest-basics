@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface Repository<T extends Entity> {
     Optional<T> save(T t);
 
-    List<T> getListBySpecification(Specification specification);
+    List<T> getEntitiesListBySpecification(Specification specification);
 
     Optional<T> getEntityBySpecification(Specification specification);
 }

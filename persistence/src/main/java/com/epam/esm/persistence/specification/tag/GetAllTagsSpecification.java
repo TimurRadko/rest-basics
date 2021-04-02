@@ -5,7 +5,7 @@ import com.epam.esm.persistence.specification.Specification;
 public class GetAllTagsSpecification implements Specification {
     private final String sort;
 
-    private static final String QUERY = "SELECT * FROM tags ORDER BY " +
+    private static final String QUERY = "SELECT id, name FROM tags ORDER BY " +
             "CASE WHEN ? ='name-asc' THEN name END ASC, " +
             "CASE WHEN ? ='name-desc' THEN name END DESC, id ASC;";
 

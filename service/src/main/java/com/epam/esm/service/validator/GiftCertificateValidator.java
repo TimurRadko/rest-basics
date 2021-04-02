@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public class GiftCertificateValidator extends AbstractValidator<GiftCertificateDto> {
     private static final int MIN_NAME_LENGTH = 3;
     private static final int MAX_NAME_LENGTH = 50;
+    private static final double MIN_PRICE = 0.0d;
 
     @Override
     public boolean validate(GiftCertificateDto giftCertificateDto) {
@@ -27,7 +28,7 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
         }
 
         BigDecimal price = giftCertificateDto.getPrice();
-        if (price.compareTo(BigDecimal.valueOf(0.0d)) < 0) {
+        if (price.compareTo(BigDecimal.valueOf(MIN_PRICE)) < 0) {
             setErrorMessage("To create a Gift Certificate the price must be more than 0.0");
             return false;
         }

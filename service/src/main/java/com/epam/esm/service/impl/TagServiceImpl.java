@@ -27,7 +27,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> getAll(String sort) {
-        return tagRepository.getListBySpecification(new GetAllTagsSpecification(sort));
+        return tagRepository.getEntitiesListBySpecification(new GetAllTagsSpecification(sort));
     }
 
     @Override

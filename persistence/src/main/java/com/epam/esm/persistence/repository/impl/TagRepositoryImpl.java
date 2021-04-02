@@ -31,7 +31,7 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public List<Tag> getListBySpecification(Specification specification) {
+    public List<Tag> getEntitiesListBySpecification(Specification specification) {
         return jdbcTemplate.query(
                 specification.getQuery(),
                 specification.getArgs(),
