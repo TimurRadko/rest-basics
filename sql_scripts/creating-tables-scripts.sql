@@ -74,8 +74,8 @@ BEGIN
             RETURN QUERY
                 SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date
                 FROM gift_certificates gc
-                WHERE (gc.name LIKE concat('%', part_name, '%'))
-                  AND (gc.description LIKE concat('%', part_description, '%'))
+                WHERE (gc.name ILIKE concat('%', part_name, '%'))
+                  AND (gc.description ILIKE concat('%', part_description, '%'))
                 ORDER BY CASE WHEN sort = 'name-asc' THEN gc.name END ASC,
                          CASE WHEN sort = 'name-desc' THEN gc.name END DESC,
                          CASE WHEN sort = 'description-asc' THEN gc.description END,
@@ -89,7 +89,7 @@ BEGIN
                 RETURN QUERY
                     SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date
                     FROM gift_certificates gc
-                    WHERE gc.name LIKE concat('%', part_name, '%')
+                    WHERE gc.name ILIKE concat('%', part_name, '%')
                     ORDER BY CASE WHEN sort = 'name-asc' THEN gc.name END ASC,
                              CASE WHEN sort = 'name-desc' THEN gc.name END DESC,
                              CASE WHEN sort = 'description-asc' THEN gc.description END ASC,
@@ -106,7 +106,7 @@ BEGIN
                 RETURN QUERY
                     SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, gc.create_date, gc.last_update_date
                     FROM gift_certificates gc
-                    WHERE gc.description LIKE concat('%', part_description, '%')
+                    WHERE gc.description ILIKE concat('%', part_description, '%')
                     ORDER BY CASE WHEN sort = 'name-asc' THEN gc.name END ASC,
                              CASE WHEN sort = 'name-desc' THEN gc.name END DESC,
                              CASE WHEN sort = 'description-asc' THEN gc.description END ASC,

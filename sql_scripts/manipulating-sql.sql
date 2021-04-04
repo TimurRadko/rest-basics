@@ -50,4 +50,4 @@ SELECT * FROM gift_certificates;
 
 SELECT *
 FROM gift_certificates gc
-WHERE gc.name LIKE concat('%', 'certificate', '%');
+WHERE gc.name ILIKE concat('%', 'certificate', '%');

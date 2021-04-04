@@ -77,9 +77,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     }
 
     @Override
-    public void delete(long id) {
+    public int delete(long id) {
         jdbcTemplate.update(DELETE_TAGS_FROM_GIFT_CERTIFICATE, id);
-        jdbcTemplate.update(DELETE_GIFT_CERTIFICATE_BY_ID, id);
+        return jdbcTemplate.update(DELETE_GIFT_CERTIFICATE_BY_ID, id);
     }
 
     @Override

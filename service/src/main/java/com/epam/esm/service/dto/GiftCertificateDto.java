@@ -37,6 +37,7 @@ public class GiftCertificateDto implements Entity {
         this.name = giftCertificate.getName();
         this.description = giftCertificate.getDescription();
         this.price = giftCertificate.getPrice();
+        this.duration = giftCertificate.getDuration();
         this.createDate = giftCertificate.getCreateDate();
         this.lastUpdateDate = giftCertificate.getLastUpdateDate();
         this.tags = tags;
