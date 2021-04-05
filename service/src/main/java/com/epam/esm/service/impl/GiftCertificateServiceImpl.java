@@ -13,7 +13,6 @@ import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.persistence.repository.GiftCertificateRepository;
 import com.epam.esm.persistence.entity.GiftCertificate;
 import com.epam.esm.persistence.specification.gift.GetAllGiftCertificatesSpecification;
-import com.epam.esm.persistence.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.builder.GiftCertificateBuilder;
@@ -172,7 +171,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
             List<Tag> existingTag =
                     tagRepository.getEntitiesListBySpecification(
-                            new GetAllTagsByGiftCertificatesIdSpecification(giftCertificate.getId()));
+                            new GetAllTagsByGiftCertificatesIdSpecification(id));
             tags.addAll(existingTag);
 
             giftCertificateDto = new GiftCertificateDto(newGiftCertification, tags);

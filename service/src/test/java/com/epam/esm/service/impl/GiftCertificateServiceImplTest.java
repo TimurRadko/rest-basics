@@ -1,12 +1,14 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.persistence.entity.GiftCertificate;
+import com.epam.esm.persistence.entity.GiftCertificateTag;
 import com.epam.esm.persistence.entity.Tag;
 import com.epam.esm.persistence.repository.GiftCertificateRepository;
 import com.epam.esm.persistence.repository.GiftCertificateTagRepository;
 import com.epam.esm.persistence.repository.TagRepository;
 import com.epam.esm.persistence.specification.gift.GetGiftCertificatesByPartNameOrDescriptionSpecification;
 import com.epam.esm.persistence.specification.gift.GetGiftCertificatesByTagNameSpecification;
+import com.epam.esm.persistence.specification.tag.GetAllTagsByGiftCertificatesIdSpecification;
 import com.epam.esm.service.builder.GiftCertificateBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.exception.ServiceException;
@@ -35,6 +37,8 @@ class GiftCertificateServiceImplTest {
     @Mock
     private TagRepository tagRepository;
     @Mock
+    private GiftCertificateTagRepository giftCertificateTagRepository;
+    @Mock
     private GiftCertificateBuilder builder;
     @Mock
     private GiftCertificateValidator giftCertificateValidator;
@@ -54,6 +58,15 @@ class GiftCertificateServiceImplTest {
     private static final String PART_NAME = "va";
     private static final String PART_DESCRIPTION = "es";
     private static final String FIRST_TAG_NAME = "tag1";
+    private GiftCertificateTag giftCertificateTag = new GiftCertificateTag(1L, 1L, 1L);
+    private GiftCertificate changedGiftCertificate = new GiftCertificate(
+            1L,
+            "anotherValidName1",
+            "validDescription1",
+            BigDecimal.valueOf(12),
+            14,
+            LocalDate.now(),
+            LocalDate.now());
 
     @BeforeEach
     void setUp() {
@@ -254,27 +267,62 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void testUpdateShouldReturnUpdatedGiftCertificateWhenGiftCertificateIsValid() {
-//        GiftCertificate expectedChangedGiftCertificate = firstExpectedGiftCertificate;
-//        expectedChangedGiftCertificate.setName("AnotherName");
-//
-//        Mockito.lenient()
-//                .when(giftCertificateRepository.update(firstExpectedGiftCertificate))
-//                .thenReturn(Optional.of(expectedChangedGiftCertificate));
-//
-//        GiftCertificateDto incomingGiftCertificateDto
-//                = new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag));
-//        Mockito.lenient().when(giftCertificateValidator.validate(any())).thenReturn(true);
-//        Mockito.lenient().when(tagRepository.save(any())).thenReturn(Optional.of(firstTag));
-////        Mockito.lenient().when(giftCertificateRepository.getEntityBySpecification(any()))
-////                .thenReturn(Optional.of(firstExpectedGiftCertificate));
-//        Optional<GiftCertificateDto> optionalActualGiftCertificateDto
-//                = giftCertificateService.update(ID_FOR_MANIPULATIONS, incomingGiftCertificateDto);
-//
-//        GiftCertificate actualGiftCertificate = buildFromDto(optionalActualGiftCertificateDto.get());
-//
-//        assertEquals(expectedChangedGiftCertificate, actualGiftCertificate);
+    void testUpdateShouldThrowServiceExceptionWhenGiftCertificateIsAbsentInDatabase() {
+        Mockito.lenient()
+                .when(giftCertificateRepository.update(firstExpectedGiftCertificate))
+                .thenReturn(Optional.of(changedGiftCertificate));
 
+        GiftCertificateDto incomingGiftCertificateDto
+                = new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag));
+
+        Mockito.lenient().when(giftCertificateValidator.validate(any())).thenReturn(true);
+        Mockito.lenient().when(builder.buildFromDto(any())).thenReturn(changedGiftCertificate);
+
+        assertThrows(ServiceException.class,
+                () -> giftCertificateService.update(ID_FOR_MANIPULATIONS, incomingGiftCertificateDto));
+    }
+
+    @Test
+    void testUpdateShouldThrowServiceExceptionWhenTagWasNotSaved() {
+        Mockito.lenient().when(giftCertificateRepository.getEntityBySpecification(any()))
+                .thenReturn(Optional.ofNullable(firstExpectedGiftCertificate));
+        Mockito.lenient()
+                .when(giftCertificateRepository.update(any()))
+                .thenReturn(Optional.of(changedGiftCertificate));
+
+
+        GiftCertificateDto incomingGiftCertificateDto
+                = new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag));
+
+        Mockito.lenient().when(giftCertificateValidator.validate(any())).thenReturn(true);
+        Mockito.lenient().when(builder.buildFromDto(any())).thenReturn(changedGiftCertificate);
+
+        assertThrows(ServiceException.class,
+                () -> giftCertificateService.update(ID_FOR_MANIPULATIONS, incomingGiftCertificateDto));
+    }
+
+    @Test
+    void testUpdateShouldReturnUpdatedGiftCertificateWhenGiftCertificateIsExists() {
+        Mockito.lenient().when(giftCertificateRepository.getEntityBySpecification(any()))
+                .thenReturn(Optional.ofNullable(firstExpectedGiftCertificate));
+        Mockito.lenient()
+                .when(giftCertificateRepository.update(any()))
+                .thenReturn(Optional.of(changedGiftCertificate));
+        GiftCertificateDto incomingGiftCertificateDto
+                = new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag));
+
+        Mockito.lenient().when(giftCertificateValidator.validate(any())).thenReturn(true);
+        Mockito.lenient().when(builder.buildFromDto(any())).thenReturn(changedGiftCertificate);
+        Mockito.lenient().when(tagRepository.save(any())).thenReturn(Optional.of(firstTag));
+        Mockito.lenient().when(giftCertificateTagRepository.save(any())).thenReturn(Optional.of(giftCertificateTag));
+
+        Mockito.lenient().when(tagRepository.getEntitiesListBySpecification(any()))
+                .thenReturn(Collections.singletonList(firstTag));
+
+        Optional<GiftCertificateDto> actualGiftCertificateDto
+                = giftCertificateService.update(ID_FOR_MANIPULATIONS, incomingGiftCertificateDto);
+        GiftCertificate actualGiftCertificate = buildFromDto(actualGiftCertificateDto.get());
+        assertEquals(changedGiftCertificate, actualGiftCertificate);
     }
 
     @Test
