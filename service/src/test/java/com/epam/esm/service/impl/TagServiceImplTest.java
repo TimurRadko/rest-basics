@@ -27,17 +27,18 @@ class TagServiceImplTest {
     private TagRepository tagRepository;
     @InjectMocks
     private TagServiceImpl tagService;
-    private TagValidator tagValidator = Mockito.mock(TagValidator.class);
+    @Mock
+    private TagValidator tagValidator;
 
     private Tag firstTestEntity;
     private List<Tag> expectedTags;
-    private static final String SORT = null;
+    private static final String NULL_SORTING = null;
     private static final long ID_FOR_MANIPULATIONS = 1L;
 
     @BeforeEach
     void setUp() {
-        firstTestEntity = new Tag(1L, "test1");
-        Tag secondTestEntity = new Tag(2L, "test2");
+        firstTestEntity = new Tag(1L, "tag1");
+        Tag secondTestEntity = new Tag(2L, "tag2");
         expectedTags = Arrays.asList(firstTestEntity, secondTestEntity);
     }
 
@@ -45,7 +46,7 @@ class TagServiceImplTest {
     void testGetAllShouldReturnTagListWhenTagsExist() {
         Mockito.lenient().when(tagRepository.getEntitiesListBySpecification(any()))
                 .thenReturn(expectedTags);
-        List<Tag> actualTags = tagService.getAll(SORT);
+        List<Tag> actualTags = tagService.getAll(NULL_SORTING);
         assertEquals(expectedTags, actualTags);
     }
 
@@ -71,9 +72,9 @@ class TagServiceImplTest {
     }
 
     @Test
-    void testSaveShouldThrowServiceExceptionWhenTagInNotValid() {
+    void testSaveShouldThrowServiceExceptionWhenTagIsInvalid() {
         Mockito.lenient().when(tagRepository.save(firstTestEntity)).thenReturn(Optional.of(firstTestEntity));
-        Mockito.lenient().when(tagValidator.validate(firstTestEntity)).thenReturn(false);
+        Mockito.lenient().when(tagValidator.validate(any())).thenReturn(false);
 
         assertThrows(ServiceException.class, () -> tagService.save(firstTestEntity));
     }

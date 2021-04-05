@@ -4,6 +4,7 @@ import com.epam.esm.persistence.entity.GiftCertificateTag;
 import com.epam.esm.persistence.entity.Tag;
 import com.epam.esm.persistence.repository.GiftCertificateTagRepository;
 import com.epam.esm.persistence.repository.TagRepository;
+import com.epam.esm.persistence.specification.gift.GetGiftCertificateByIdSpecification;
 import com.epam.esm.persistence.specification.gift.GetGiftCertificatesByPartNameOrDescriptionSpecification;
 import com.epam.esm.persistence.specification.gift.GetGiftCertificatesByTagNameSpecification;
 import com.epam.esm.persistence.specification.tag.GetTagByNameSpecification;
@@ -138,7 +139,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public Optional<GiftCertificateDto> getById(long id) {
         Optional<GiftCertificate> optionalGiftCertificate =
-                giftCertificateRepository.getEntityBySpecification(new GetTagByIdSpecification(id));
+                giftCertificateRepository.getEntityBySpecification(new GetGiftCertificateByIdSpecification(id));
         if (optionalGiftCertificate.isPresent()) {
             GiftCertificate giftCertificate = optionalGiftCertificate.get();
             return Optional.of(createGiftCertificateDto(giftCertificate));
@@ -159,7 +160,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (giftCertificateValidator.validate(giftCertificateDto)) {
             GiftCertificate giftCertificate = builder.buildFromDto(giftCertificateDto);
             GiftCertificate existingGiftCertificate =
-                    giftCertificateRepository.getEntityBySpecification(new GetTagByIdSpecification(id))
+                    giftCertificateRepository.getEntityBySpecification(new GetGiftCertificateByIdSpecification(id))
                             .orElseThrow(() -> new ServiceException(CERTIFICATE_NOT_EXISTS_IN_THE_DB));
 
             giftCertificate = builder.buildNewParameterGiftCertificate(existingGiftCertificate, giftCertificate);
