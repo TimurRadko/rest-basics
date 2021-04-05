@@ -1,29 +1,25 @@
-CREATE TABLE gift_certificates
+CREATE TABLE IF NOT EXISTS tags
 (
-    id               bigserial    NOT NULL,
-    name             varchar(255) NOT NULL,
-    description      varchar(255),
-    price            double precision,
-    duration         serial,
-    create_date      timestamp         NOT NULL,
-    last_update_date timestamp        NOT NULL,
-    PRIMARY KEY (id)
+    id   BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(20) UNIQUE
 );
 
-CREATE TABLE tags
+CREATE TABLE IF NOT EXISTS gift_certificates
 (
-    id   bigserial    NOT NULL,
-    name varchar(255) NOT NULL,
-    PRIMARY KEY (id),
-    UNIQUE (name)
+    id               BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name             VARCHAR(20) NOT NULL,
+    description      VARCHAR(255),
+    duration         SMALLINT,
+    create_date      DATETIME,
+    last_update_date DATETIME,
+    price            DECIMAL
 );
 
-CREATE UNIQUE INDEX name_case_insensitive_unique_index ON tags (LOWER(name));
-
-CREATE TABLE gift_certificates_tags
+CREATE TABLE IF NOT EXISTS gift_certificates_tags
 (
-    id                  BIGSERIAL,
-    gift_certificate_id BIGINT NOT NULL REFERENCES gift_certificates (id),
-    tag_id              BIGINT NOT NULL REFERENCES tags (id),
-    UNIQUE (gift_certificate_id, tag_id)
+    id                  BIGINT PRIMARY KEY AUTO_INCREMENT,
+    tag_id              BIGINT NOT NULL,
+    gift_certificate_id BIGINT NOT NULL,
+    FOREIGN KEY (tag_id) REFERENCES tags (id),
+    FOREIGN KEY (gift_certificate_id) REFERENCES gift_certificates (id)
 );
