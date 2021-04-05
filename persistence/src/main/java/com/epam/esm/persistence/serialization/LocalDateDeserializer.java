@@ -6,16 +6,17 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public class LocalDateDeserializer extends StdDeserializer<LocalDate> {
+public class LocalDateDeserializer extends StdDeserializer<LocalDateTime> {
 
     protected LocalDateDeserializer() {
-        super(LocalDate.class);
+        super(LocalDateTime.class);
     }
 
     @Override
-    public LocalDate deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
+    public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
         String serialized = jsonParser.readValueAs(String.class);
-        return LocalDate.parse(serialized);
+        return LocalDateTime.parse(serialized);
     }
 }

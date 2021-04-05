@@ -8,7 +8,6 @@ import com.epam.esm.persistence.repository.GiftCertificateTagRepository;
 import com.epam.esm.persistence.repository.TagRepository;
 import com.epam.esm.persistence.specification.gift.GetGiftCertificatesByPartNameOrDescriptionSpecification;
 import com.epam.esm.persistence.specification.gift.GetGiftCertificatesByTagNameSpecification;
-import com.epam.esm.persistence.specification.tag.GetAllTagsByGiftCertificatesIdSpecification;
 import com.epam.esm.service.builder.GiftCertificateBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.exception.ServiceException;
@@ -22,7 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,8 +64,8 @@ class GiftCertificateServiceImplTest {
             "validDescription1",
             BigDecimal.valueOf(12),
             14,
-            LocalDate.now(),
-            LocalDate.now());
+            LocalDateTime.now(),
+            LocalDateTime.now());
 
     @BeforeEach
     void setUp() {
@@ -76,16 +75,16 @@ class GiftCertificateServiceImplTest {
                 "validDescription1",
                 BigDecimal.valueOf(12),
                 14,
-                LocalDate.now(),
-                LocalDate.now());
+                LocalDateTime.now(),
+                LocalDateTime.now());
         secondExpectedGiftCertificate = new GiftCertificate(
                 2L,
                 "lidName2",
                 "validDcription2",
                 BigDecimal.valueOf(24),
                 28,
-                LocalDate.now(),
-                LocalDate.now());
+                LocalDateTime.now(),
+                LocalDateTime.now());
     }
 
     @Test

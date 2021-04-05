@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class GiftCertificate implements Entity {
     private Long id;
@@ -14,14 +14,12 @@ public class GiftCertificate implements Entity {
     private String description;
     private BigDecimal price;
     private int duration;
-
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate createDate;
-
+    private LocalDateTime createDate;
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate lastUpdateDate;
+    private LocalDateTime lastUpdateDate;
 
     public GiftCertificate() {
     }
@@ -31,8 +29,8 @@ public class GiftCertificate implements Entity {
                            String description,
                            BigDecimal price,
                            int duration,
-                           LocalDate createDate,
-                           LocalDate lastUpdateDate) {
+                           LocalDateTime createDate,
+                           LocalDateTime lastUpdateDate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -84,21 +82,22 @@ public class GiftCertificate implements Entity {
         this.duration = duration;
     }
 
-    public LocalDate getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDate createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public LocalDate getLastUpdateDate() {
+    public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(LocalDate lastUpdateDate) {
+    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -123,7 +122,9 @@ public class GiftCertificate implements Entity {
         if (getDescription() != null ? !getDescription().equals(that.getDescription()) : that.getDescription() != null) {
             return false;
         }
-        if (getPrice() != null ? !getPrice().equals(that.getPrice()) : that.getPrice() != null) return false;
+        if (getPrice() != null ? !getPrice().equals(that.getPrice()) : that.getPrice() != null) {
+            return false;
+        }
         if (getCreateDate() != null ? !getCreateDate().equals(that.getCreateDate()) : that.getCreateDate() != null) {
             return false;
         }

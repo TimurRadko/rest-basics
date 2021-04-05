@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,8 +20,8 @@ public class GiftCertificateValidatorTest {
             "validDescription",
             BigDecimal.valueOf(12),
             14,
-            LocalDate.now(),
-            LocalDate.now());
+            LocalDateTime.now(),
+            LocalDateTime.now());
     private final Set<Tag> tags = Set.of(new Tag(1L, "test1"));
     private static final String EXPECTED_NULL_GIFT_CERTIFICATE_MESSAGE = "To create a Gift Certificate " +
             "you must send the GiftCertificate Entity";

@@ -11,8 +11,8 @@ CREATE TABLE gift_certificates
     description      varchar(255),
     price            double precision,
     duration         serial,
-    create_date      date         NOT NULL,
-    last_update_date date         NOT NULL,
+    create_date      timestamp         NOT NULL,
+    last_update_date timestamp        NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -22,7 +22,7 @@ ALTER TABLE gift_certificates
 
 
 ---------------DROP TABLE GIFT-CERTIFICATES--------------
-DROP TABLE gift_certificates;
+DROP TABLE gift_certificates CASCADE;
 ---------------------------------------------------------
 
 ----------------CREATE TABLE TAGS------------------------
@@ -80,8 +80,8 @@ BEGIN
                          CASE WHEN sort = 'name-desc' THEN gc.name END DESC,
                          CASE WHEN sort = 'description-asc' THEN gc.description END,
                          CASE WHEN sort = 'description-desc' THEN gc.description END DESC,
-                         CASE WHEN sort = 'last-modified-desc' THEN TO_CHAR(gc.last_update_date, 'YYYY-MM-DD') END DESC,
-                         CASE WHEN sort = 'creation-date-desc' THEN TO_CHAR(gc.create_date, 'YYYY-MM-DD') END DESC,
+                         CASE WHEN sort = 'last-modified-desc' THEN TO_CHAR(gc.last_update_date, 'yyyy-MM-dd''T''HH:mm''Z''') END DESC,
+                         CASE WHEN sort = 'creation-date-desc' THEN TO_CHAR(gc.create_date, 'yyyy-MM-dd''T''HH:mm''Z''') END DESC,
                          gc.id ASC;
 
         WHEN ((part_name NOT ILIKE '') AND (part_name IS NOT NULL))
@@ -96,9 +96,9 @@ BEGIN
                              CASE WHEN sort = 'description-desc' THEN gc.description END DESC,
                              CASE
                                  WHEN sort = 'last-update-date-desc'
-                                     THEN TO_CHAR(gc.last_update_date, 'YYYY-MM-DD') END DESC,
+                                     THEN TO_CHAR(gc.last_update_date, 'yyyy-MM-dd''T''HH:mm''Z''') END DESC,
                              CASE
-                                 WHEN sort = 'create-date-desc' THEN TO_CHAR(gc.create_date, 'YYYY-MM-DD') END DESC,
+                                 WHEN sort = 'create-date-desc' THEN TO_CHAR(gc.create_date, 'yyyy-MM-dd''T''HH:mm''Z''') END DESC,
                              gc.id ASC;
 
         WHEN ((part_description NOT ILIKE '') AND (part_description IS NOT NULL))
@@ -113,10 +113,10 @@ BEGIN
                              CASE WHEN sort = 'description-desc' THEN gc.description END DESC,
                              CASE
                                  WHEN sort = 'last-update-date-desc'
-                                     THEN TO_CHAR(gc.last_update_date, 'YYYY-MM-DD') END DESC,
+                                     THEN TO_CHAR(gc.last_update_date, 'yyyy-MM-dd''T''HH:mm''Z''') END DESC,
                              CASE
                                  WHEN sort = 'create-date-desc'
-                                     THEN TO_CHAR(gc.create_date, 'YYYY-MM-DD') END DESC,
+                                     THEN TO_CHAR(gc.create_date, 'yyyy-MM-dd''T''HH:mm''Z''') END DESC,
                              gc.id ASC;
 
         ELSE RAISE EXCEPTION 'Wasn''t found any Gift Certificate';

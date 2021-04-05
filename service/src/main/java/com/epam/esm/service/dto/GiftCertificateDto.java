@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class GiftCertificateDto implements Entity {
@@ -18,14 +18,12 @@ public class GiftCertificateDto implements Entity {
     private String description;
     private BigDecimal price;
     private int duration;
-
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate createDate;
-
+    private LocalDateTime createDate;
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate lastUpdateDate;
+    private LocalDateTime lastUpdateDate;
 
     private Set<Tag> tags;
 
@@ -48,8 +46,8 @@ public class GiftCertificateDto implements Entity {
                               String description,
                               BigDecimal price,
                               int duration,
-                              LocalDate createDate,
-                              LocalDate lastUpdateDate,
+                              LocalDateTime createDate,
+                              LocalDateTime lastUpdateDate,
                               Set<Tag> tags) {
         this.id = id;
         this.name = name;
@@ -93,19 +91,19 @@ public class GiftCertificateDto implements Entity {
         this.duration = duration;
     }
 
-    public LocalDate getCreateDate() {
+    public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(LocalDate createDate) {
+    public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
     }
 
-    public LocalDate getLastUpdateDate() {
+    public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(LocalDate lastUpdateDate) {
+    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 

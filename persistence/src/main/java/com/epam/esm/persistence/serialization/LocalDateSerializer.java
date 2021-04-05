@@ -5,20 +5,19 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LocalDateSerializer extends StdSerializer<LocalDate> {
+public class LocalDateSerializer extends StdSerializer<LocalDateTime> {
 
-    protected LocalDateSerializer() {
-        super(LocalDate.class);
+    public LocalDateSerializer() {
+        super(LocalDateTime.class);
     }
 
     @Override
-    public void serialize(LocalDate localDate, JsonGenerator jsonGenerator, SerializerProvider provider)
-            throws IOException {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
-        String serialized = localDate.format(dateTimeFormatter);
-        jsonGenerator.writeString(serialized);
+    public void serialize(LocalDateTime localDateTime, JsonGenerator generator, SerializerProvider provider) throws IOException {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        String serialized = localDateTime.format(dateTimeFormatter);
+        generator.writeString(serialized);
     }
 }
