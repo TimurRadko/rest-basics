@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public class TagRepositoryImpl implements TagRepository {
-    private final JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     private static final String RETURNING = "RETURNING id, name;";
 

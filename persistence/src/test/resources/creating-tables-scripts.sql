@@ -5,8 +5,8 @@ CREATE TABLE gift_certificates
     description      varchar(255),
     price            double precision,
     duration         serial,
-    create_date      date         NOT NULL,
-    last_update_date date         NOT NULL,
+    create_date      timestamp         NOT NULL,
+    last_update_date timestamp        NOT NULL,
     PRIMARY KEY (id)
 );
 

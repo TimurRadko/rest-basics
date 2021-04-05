@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepository {
-    private final JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
     private static final String RETURNING = "RETURNING id, gift_certificate_id, tag_id;";
 
     private static final String INSERT = "INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id) " +

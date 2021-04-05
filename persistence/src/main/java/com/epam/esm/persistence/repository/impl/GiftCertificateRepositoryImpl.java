@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
-    private final JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     private static final String RETURNING =
             "RETURNING id, name, description, price, duration, create_date, last_update_date;";
