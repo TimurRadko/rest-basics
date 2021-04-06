@@ -13,5 +13,5 @@ dependencies {
 
     implementation project(":service")
 
-    implementation project(":persistence")
+    implementation project(":dao")
 }

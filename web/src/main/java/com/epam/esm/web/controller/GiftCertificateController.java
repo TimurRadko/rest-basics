@@ -32,14 +32,11 @@ public class GiftCertificateController {
         if (name == null && description == null && tagName == null) {
             return giftCertificateService.getAll(sort);
         }
-        List<GiftCertificateDto> giftCertificateDtos = new ArrayList<>();
-        if (name != null || description != null) {
-            giftCertificateDtos = giftCertificateService
-                    .getGiftCertificatesByNameOrDescriptionPart(name, description, sort);
-        }
+        List<GiftCertificateDto> giftCertificateDtos = giftCertificateService
+                .getGiftCertificatesByNameOrDescriptionPart(name, description, sort);
         if (tagName != null) {
             giftCertificateDtos = giftCertificateService
-                    .getGiftCertificatesByTagName(giftCertificateDtos, tagName, sort);
+                    .getGiftCertificateListByTagName(giftCertificateDtos, tagName, sort);
         }
         return giftCertificateDtos;
     }

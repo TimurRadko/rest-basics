@@ -4,14 +4,14 @@ public class GiftCertificateIncorrectData {
     private String errorMessage;
     private Integer errorCode;
 
-    /*package-private*/ GiftCertificateIncorrectData() {
+    GiftCertificateIncorrectData() {
     }
 
     public String getErrorMessage() {
         return errorMessage;
     }
 
-    /*package-private*/ void setMessage(String errorMessage) {
+    void setMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
@@ -19,7 +19,7 @@ public class GiftCertificateIncorrectData {
         return errorCode;
     }
 
-    /*package-private*/ void setErrorCode(Integer errorCode) {
+    void setErrorCode(Integer errorCode) {
         this.errorCode = errorCode;
     }
 }

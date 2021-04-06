@@ -1,5 +1,5 @@
 rootProject.name = 'rest-basics'
-include 'persistence'
+include 'dao'
 include 'web'
 include 'service'
 

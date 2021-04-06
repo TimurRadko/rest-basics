@@ -1,6 +1,6 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.persistence.entity.Tag;
+import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.exception.EntityNotFoundException;

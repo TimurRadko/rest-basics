@@ -11,24 +11,13 @@ INSERT INTO tags(name) VALUES
  ('tag3'),
  ('tag4');
 
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
-VALUES (1, 1);
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
-VALUES (1, 2);
-
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
-VALUES (2, 3);
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
-VALUES (2, 4);
-
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
-VALUES (3, 1);
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
-VALUES (3, 4);
-
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
-VALUES (4, 1);
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
-VALUES (4, 2);
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
-VALUES (4, 4);
+INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id) VALUES
+(1, 1),
+(1, 2),
+(2, 3),
+(2, 4),
+(3, 1),
+(3, 4),
+(4, 1),
+(4, 2),
+(4, 4);

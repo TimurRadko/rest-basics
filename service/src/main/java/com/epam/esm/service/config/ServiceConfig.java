@@ -7,5 +7,4 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @ComponentScan(basePackages = {"com.epam.esm"})
 @EnableTransactionManagement
-public class ServiceConfig {
-}
+public class ServiceConfig {}

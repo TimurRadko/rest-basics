@@ -1,6 +1,6 @@
 package com.epam.esm.web.config;
 
-import com.epam.esm.persistence.config.PersistenceConfig;
+import com.epam.esm.dao.config.DaoConfig;
 import com.epam.esm.service.config.ServiceConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -13,7 +13,7 @@ public class DispatcherServletInitConfig extends AbstractAnnotationConfigDispatc
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{WebConfig.class, PersistenceConfig.class, ServiceConfig.class};
+        return new Class[]{WebConfig.class, DaoConfig.class, ServiceConfig.class};
     }
 
     @Override

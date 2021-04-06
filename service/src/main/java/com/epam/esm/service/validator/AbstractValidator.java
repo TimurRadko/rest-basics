@@ -2,17 +2,20 @@ package com.epam.esm.service.validator;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public abstract class AbstractValidator<T> {
-    private String errorMessage;
+  private List<String> errorMessages = new ArrayList<>();
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
+  public String getErrorMessage() {
+    return String.join(". ", errorMessages);
+  }
 
-    /*package-private*/ void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+  void addErrorMessage(String errorMessage) {
+    errorMessages.add(errorMessage);
+  }
 
-    public abstract boolean validate(T t);
+  public abstract boolean validate(T t);
 }
