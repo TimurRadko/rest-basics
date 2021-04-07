@@ -9,3 +9,4 @@ build
 /gradlew
 /.gitattributes
 /persistence/out/
+/dao/out/
