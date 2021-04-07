@@ -13,6 +13,7 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
 
   @Override
   public boolean validate(GiftCertificateDto giftCertificateDto) {
+    eraseErrorMessages();
     boolean isValid = true;
     if (giftCertificateDto == null) {
       addErrorMessage("To create a Gift Certificate you must send the GiftCertificate Entity");
@@ -30,13 +31,13 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
     }
 
     BigDecimal price = giftCertificateDto.getPrice();
-    if (price.compareTo(BigDecimal.valueOf(MIN_PRICE)) <= 0) {
+    if (price != null && price.compareTo(BigDecimal.valueOf(MIN_PRICE)) <= 0) {
       addErrorMessage("To create a Gift Certificate the price must be more than 0.0");
       isValid = false;
     }
 
-    int duration = giftCertificateDto.getDuration();
-    if (duration < 0) {
+    Integer duration = giftCertificateDto.getDuration();
+    if (duration != null && duration < 0) {
       addErrorMessage("To create a Gift Certificate the duration must be more than 0");
       isValid = false;
     }

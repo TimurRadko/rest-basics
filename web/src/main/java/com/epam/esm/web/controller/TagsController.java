@@ -15,38 +15,40 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/tags")
 public class TagsController {
-    private TagService tagService;
+  private TagService tagService;
 
-    @Autowired
-    public TagsController(TagService tagService) {
-        this.tagService = tagService;
-    }
+  @Autowired
+  public TagsController(TagService tagService) {
+    this.tagService = tagService;
+  }
 
-    @GetMapping()
-    public List<Tag> getAll(@RequestParam(value = "sort", required = false) String sort) {
-        return tagService.getAll(sort);
-    }
+  @GetMapping()
+  public List<Tag> getAll(@RequestParam(value = "sort", required = false) String sort) {
+    return tagService.getAll(sort);
+  }
 
-    @GetMapping("/{id}")
-    public Tag get(@PathVariable Long id) throws ServiceException {
-        Optional<Tag> optionalTag =  tagService.getById(id);
-        return optionalTag.
-                orElseThrow(() -> new EntityNotFoundException("Requested resource not found (id = " + id +")"));
-    }
+  @GetMapping("/{id}")
+  public Tag get(@PathVariable Long id) throws ServiceException {
+    Optional<Tag> optionalTag = tagService.getById(id);
+    return optionalTag.orElseThrow(
+        () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+  }
 
-    @PostMapping()
-    @ResponseStatus(HttpStatus.OK)
-    public Tag save(@RequestBody Tag tag) {
-        Optional<Tag> optionalTag = tagService.save(tag);
-        return optionalTag.
-                orElseThrow(() -> new TagAlreadyExistsException("The Tag already exists in the DB"));
-    }
+  @PostMapping()
+  @ResponseStatus(HttpStatus.OK)
+  public Tag save(@RequestBody Tag tag) {
+    Optional<Tag> optionalTag = tagService.save(tag);
+    return optionalTag.orElseThrow(
+        () -> new TagAlreadyExistsException("The Tag already exists in the DB"));
+  }
 
-    @DeleteMapping(value = "/{id}")
-    public String delete(@PathVariable long id) {
-        tagService.getById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Requested resource not found (id = " + id +")"));
-        tagService.delete(id);
-        return "The Tag with id = " + id + " was deleted";
-    }
+  @DeleteMapping(value = "/{id}")
+  public String delete(@PathVariable long id) {
+    tagService
+        .getById(id)
+        .orElseThrow(
+            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+    tagService.delete(id);
+    return "The Tag with id = " + id + " was deleted";
+  }
 }

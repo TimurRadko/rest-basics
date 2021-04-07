@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TagValidatorTest {
+class TagValidatorTest {
   private TagValidator validator;
   private static final String EXPECTED_NULL_TAG_MESSAGE =
       "To create a Tag you must send the Tag Entity";

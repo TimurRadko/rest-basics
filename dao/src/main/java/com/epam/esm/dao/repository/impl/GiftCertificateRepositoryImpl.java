@@ -7,8 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,18 +22,13 @@ import java.util.Optional;
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
   private JdbcTemplate jdbcTemplate;
 
-  private static final String RETURNING =
-      "RETURNING id, name, description, price, duration, create_date, last_update_date;";
-
   private static final String INSERT =
       "INSERT INTO gift_certificates (name, description, price, duration, create_date, last_update_date)"
-          + " VALUES (?,?,?,?,now(),now()) "
-          + RETURNING;
+          + " VALUES (?,?,?,?,?,?);";
 
   private static final String UPDATE =
       "UPDATE  gift_certificates SET (name, description, price, duration, last_update_date) "
-          + " = (?,?,?,?,now()) WHERE id=? "
-          + RETURNING;
+          + " = (?,?,?,?,?) WHERE id=?;";
 
   private static final String DELETE_TAGS_FROM_GIFT_CERTIFICATE =
       "DELETE FROM gift_certificates_tags WHERE gift_certificate_id=?;";
@@ -65,18 +66,28 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   @Override
   public Optional<GiftCertificate> save(GiftCertificate giftCertificate) {
     try {
-      GiftCertificate createdGiftCertificate =
-          jdbcTemplate.queryForObject(
-              INSERT,
-              new Object[] {
-                giftCertificate.getName(),
-                giftCertificate.getDescription(),
-                giftCertificate.getPrice(),
-                giftCertificate.getDuration()
-              },
-              new BeanPropertyRowMapper<>(GiftCertificate.class));
-      return Optional.ofNullable(createdGiftCertificate);
-    } catch (EmptyResultDataAccessException e) {
+      KeyHolder keyHolder = new GeneratedKeyHolder();
+      LocalDateTime now = LocalDateTime.now();
+      jdbcTemplate.update(
+          connection -> {
+            PreparedStatement ps =
+                connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, giftCertificate.getName());
+            ps.setString(2, giftCertificate.getDescription());
+            ps.setBigDecimal(3, giftCertificate.getPrice());
+            ps.setInt(4, giftCertificate.getDuration());
+            ps.setTimestamp(5, Timestamp.valueOf(now));
+            ps.setTimestamp(6, Timestamp.valueOf(now));
+            return ps;
+          },
+          keyHolder);
+
+      giftCertificate.setId((Long) keyHolder.getKeys().get("id"));
+      giftCertificate.setCreateDate(now);
+      giftCertificate.setLastUpdateDate(now);
+
+      return Optional.of(giftCertificate);
+    } catch (NullPointerException e) {
       return Optional.empty();
     }
   }
@@ -89,21 +100,14 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
   @Override
   public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
-    try {
-      GiftCertificate updatedGiftCertificate =
-          jdbcTemplate.queryForObject(
-              UPDATE,
-              new Object[] {
-                giftCertificate.getName(),
-                giftCertificate.getDescription(),
-                giftCertificate.getPrice(),
-                giftCertificate.getDuration(),
-                giftCertificate.getId()
-              },
-              new BeanPropertyRowMapper<>(GiftCertificate.class));
-      return Optional.ofNullable(updatedGiftCertificate);
-    } catch (EmptyResultDataAccessException e) {
-      return Optional.empty();
-    }
+    jdbcTemplate.update(
+        UPDATE,
+        giftCertificate.getName(),
+        giftCertificate.getDescription(),
+        giftCertificate.getPrice(),
+        giftCertificate.getDuration(),
+        Timestamp.valueOf(LocalDateTime.now()),
+        giftCertificate.getId());
+    return Optional.of(giftCertificate);
   }
 }

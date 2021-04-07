@@ -17,7 +17,7 @@ import java.util.Properties;
 @Configuration
 @ComponentScan(basePackages = "com.epam.esm")
 @EnableTransactionManagement
-public class DaoConfig {
+public class PersistenceConfig {
   private static final String HIKARI_PROPERTIES_PATH = "hikari.properties";
 
   @Bean

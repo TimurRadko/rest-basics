@@ -8,9 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,7 @@ class TagRepositoryImplTest {
   private Tag secondTag;
   private Tag thirdTag;
   private Tag fourthTag;
+  private Tag tagForManipulations;
 
   @Autowired private TagRepositoryImpl tagRepository;
 
@@ -38,6 +41,9 @@ class TagRepositoryImplTest {
     thirdTag = new Tag(3L, "tag3");
 
     fourthTag = new Tag(4L, "tag4");
+
+    tagForManipulations = new Tag();
+    tagForManipulations.setName("tag5");
   }
 
   @Test
@@ -47,6 +53,28 @@ class TagRepositoryImplTest {
     // when
     List<Tag> actual =
         tagRepository.getEntityListBySpecification(new GetAllTagsSpecification(null));
+    // then
+    assertEquals(actual, expected);
+  }
+
+  @Test
+  void testGetEntityListBySpecification_shouldReturnSortedNameAscEntityList_whenEntitiesExist() {
+    // given
+    List<Tag> expected = Arrays.asList(firstTag, secondTag, thirdTag, fourthTag);
+    // when
+    List<Tag> actual =
+        tagRepository.getEntityListBySpecification(new GetAllTagsSpecification("name-asc"));
+    // then
+    assertEquals(actual, expected);
+  }
+
+  @Test
+  void testGetEntityListBySpecification_shouldReturnSortedNameDescEntityList_whenEntitiesExist() {
+    // given
+    List<Tag> expected = Arrays.asList(fourthTag, thirdTag, secondTag, firstTag);
+    // when
+    List<Tag> actual =
+        tagRepository.getEntityListBySpecification(new GetAllTagsSpecification("name-desc"));
     // then
     assertEquals(actual, expected);
   }
@@ -63,7 +91,7 @@ class TagRepositoryImplTest {
   }
 
   @Test
-  void testGetEntityBySpecification_shouldReturnEptyOptional_whenTagDoesNotExist() {
+  void testGetEntityBySpecification_shouldReturnEmptyOptional_whenTagDoesNotExist() {
     // given
     // when
     Optional<Tag> optionalActualTag =
@@ -72,9 +100,29 @@ class TagRepositoryImplTest {
     assertEquals(Optional.empty(), optionalActualTag);
   }
 
-  //    @Test
-  //    void delete() {
-  //        int actualResult = tagRepository.delete(firstTag.getId());
-  //        assertEquals(1, actualResult);
-  //    }
+  @Test
+  @Transactional
+  @Rollback
+  void testDelete_shouldDelete_whenTagIsExists() {
+    // given
+    Optional<Tag> optionalSavedTag = tagRepository.save(tagForManipulations);
+    Long id = optionalSavedTag.get().getId();
+    // when
+    int actualResult = tagRepository.delete(id);
+    // then
+    assertEquals(1, actualResult);
+  }
+
+  @Test
+  @Transactional
+  @Rollback
+  void testSave_shouldReturnTag_whenUpdateWasSuccessful() {
+    // given
+    // when
+    Optional<Tag> optionalSavedTag = tagRepository.save(tagForManipulations);
+    Tag actualSavedTag = optionalSavedTag.get();
+    tagForManipulations.setId(actualSavedTag.getId());
+    // then
+    assertEquals(tagForManipulations, actualSavedTag);
+  }
 }

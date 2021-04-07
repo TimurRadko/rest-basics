@@ -7,20 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepository {
   private JdbcTemplate jdbcTemplate;
-  private static final String RETURNING = "RETURNING id, gift_certificate_id, tag_id;";
 
   private static final String INSERT =
-      "INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id) "
-          + "VALUES (?,?) "
-          + RETURNING;
+      "INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id) VALUES (?,?);";
 
   @Autowired
   public GiftCertificateTagRepositoryImpl(JdbcTemplate jdbcTemplate) {
@@ -52,15 +53,20 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
   @Override
   public Optional<GiftCertificateTag> save(GiftCertificateTag giftCertificateTag) {
     try {
-      GiftCertificateTag createdGiftCertificateTag =
-          jdbcTemplate.queryForObject(
-              INSERT,
-              new Object[] {
-                giftCertificateTag.getGiftCertificateId(), giftCertificateTag.getTagId()
-              },
-              new BeanPropertyRowMapper<>(GiftCertificateTag.class));
-      return Optional.ofNullable(createdGiftCertificateTag);
-    } catch (EmptyResultDataAccessException e) {
+      KeyHolder keyHolder = new GeneratedKeyHolder();
+      jdbcTemplate.update(
+          connection -> {
+            PreparedStatement ps =
+                connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+            ps.setLong(1, giftCertificateTag.getGiftCertificateId());
+            ps.setLong(2, giftCertificateTag.getTagId());
+            return ps;
+          },
+          keyHolder);
+
+      giftCertificateTag.setId((Long) keyHolder.getKeys().get("id"));
+      return Optional.of(giftCertificateTag);
+    } catch (NullPointerException e) {
       return Optional.empty();
     }
   }

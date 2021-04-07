@@ -17,5 +17,9 @@ public abstract class AbstractValidator<T> {
     errorMessages.add(errorMessage);
   }
 
+  void eraseErrorMessages() {
+    errorMessages = new ArrayList<>();
+  }
+
   public abstract boolean validate(T t);
 }

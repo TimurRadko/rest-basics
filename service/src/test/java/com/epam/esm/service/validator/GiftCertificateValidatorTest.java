@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GiftCertificateValidatorTest {
+class GiftCertificateValidatorTest {
   private GiftCertificateValidator validator;
 
   private final GiftCertificate giftCertificate =

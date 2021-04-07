@@ -9,6 +9,7 @@ public class TagValidator extends AbstractValidator<Tag> {
   private static final int MAX_NAME_LENGTH = 50;
 
   public boolean validate(Tag tag) {
+    eraseErrorMessages();
     boolean isValid = true;
     if (tag == null) {
       addErrorMessage("To create a Tag you must send the Tag Entity");
