@@ -54,21 +54,20 @@ public class TagRepositoryImpl implements TagRepository {
 
   @Override
   public Optional<Tag> save(Tag tag) {
-    try {
-      KeyHolder keyHolder = new GeneratedKeyHolder();
-      jdbcTemplate.update(
-          connection -> {
-            PreparedStatement ps =
-                connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, tag.getName());
-            return ps;
-          },
-          keyHolder);
-      tag.setId((Long) keyHolder.getKeys().get("id"));
-      return Optional.of(tag);
-    } catch (NullPointerException e) {
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+    jdbcTemplate.update(
+        connection -> {
+          PreparedStatement ps =
+              connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+          ps.setString(1, tag.getName());
+          return ps;
+        },
+        keyHolder);
+    if (keyHolder.getKeys() == null) {
       return Optional.empty();
     }
+    tag.setId((Long) keyHolder.getKeys().get("id"));
+    return Optional.of(tag);
   }
 
   @Override

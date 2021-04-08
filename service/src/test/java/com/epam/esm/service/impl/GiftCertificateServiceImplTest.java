@@ -6,8 +6,6 @@ import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.GiftCertificateTagRepository;
 import com.epam.esm.dao.repository.TagRepository;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNamePartSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByTagNameSpecification;
 import com.epam.esm.service.builder.GiftCertificateBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.exception.ServiceException;
@@ -17,12 +15,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -121,9 +124,6 @@ class GiftCertificateServiceImplTest {
   @Test
   void testSave_shouldThrowServiceException_whenGiftCertificateIsInvalid() {
     // given
-    Mockito.lenient()
-        .when(giftCertificateRepository.save(firstExpectedGiftCertificate))
-        .thenReturn(Optional.of(firstExpectedGiftCertificate));
     when(giftCertificateValidator.validate(any())).thenReturn(false);
     GiftCertificateDto expectedGiftCertificateDto =
         new GiftCertificateDto(firstExpectedGiftCertificate, tags);
@@ -157,11 +157,6 @@ class GiftCertificateServiceImplTest {
   @Test
   void testGetGiftCertificatesByNameOrDescriptionPart_shouldReturnGift_whenFieldsConsistNamePart() {
     // given
-    Mockito.lenient()
-        .when(
-            giftCertificateRepository.getEntityListBySpecification(
-                new GetGiftCertificatesByNamePartSpecification(PART_NAME, null)))
-        .thenReturn(expectedGiftCertificates);
     // when
     List<GiftCertificateDto> actualGiftCertificateDtos =
         giftCertificateService.getGiftCertificatesByNameOrDescriptionPart(PART_NAME, null, null);
@@ -173,11 +168,6 @@ class GiftCertificateServiceImplTest {
   void
       testGetGiftCertificatesByNameOrDescriptionPart_shouldReturnGift_whenFieldsConsistDescriptionPart() {
     // given
-    Mockito.lenient()
-        .when(
-            giftCertificateRepository.getEntityListBySpecification(
-                new GetGiftCertificatesByNamePartSpecification(null, PART_DESCRIPTION)))
-        .thenReturn(expectedGiftCertificates);
     // when
     List<GiftCertificateDto> actualGiftCertificateDtos =
         giftCertificateService.getGiftCertificatesByNameOrDescriptionPart(
@@ -197,12 +187,6 @@ class GiftCertificateServiceImplTest {
     List<GiftCertificateDto> expectedGiftCertificateDtos =
         Collections.singletonList(
             (new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag))));
-
-    Mockito.lenient()
-        .when(
-            giftCertificateRepository.getEntityListBySpecification(
-                new GetGiftCertificatesByTagNameSpecification(FIRST_TAG_NAME, null)))
-        .thenReturn(Collections.singletonList(firstExpectedGiftCertificate));
     // when
     List<GiftCertificateDto> actualGiftCertificateDtos =
         giftCertificateService.getGiftCertificateListByTagName(
@@ -218,11 +202,6 @@ class GiftCertificateServiceImplTest {
     List<GiftCertificateDto> incomingGiftCertificateDtos = new ArrayList<>();
     List<GiftCertificate> expectedGiftCertificates =
         getGiftCertificates(incomingGiftCertificateDtos);
-    Mockito.lenient()
-        .when(
-            giftCertificateRepository.getEntityListBySpecification(
-                new GetGiftCertificatesByTagNameSpecification(FIRST_TAG_NAME, null)))
-        .thenReturn(expectedGiftCertificates);
     // when
     List<GiftCertificateDto> actualGiftCertificateDtos =
         giftCertificateService.getGiftCertificateListByTagName(
@@ -240,9 +219,6 @@ class GiftCertificateServiceImplTest {
     Optional<GiftCertificateDto> optionalActualGiftCertificateDto =
         giftCertificateService.getById(ID_FOR_MANIPULATIONS);
     GiftCertificate actualGiftCertificate = buildFromDto(optionalActualGiftCertificateDto.get());
-    Mockito.lenient()
-        .when(builder.buildFromDto(optionalActualGiftCertificateDto.get()))
-        .thenReturn(actualGiftCertificate);
     // then
     assertEquals(firstExpectedGiftCertificate, actualGiftCertificate);
   }
@@ -272,9 +248,6 @@ class GiftCertificateServiceImplTest {
   @Test
   void testUpdate_shouldThrowServiceException_whenGiftCertificateIsInvalid() {
     // given
-    Mockito.lenient()
-        .when(giftCertificateRepository.update(firstExpectedGiftCertificate))
-        .thenReturn(Optional.of(firstExpectedGiftCertificate));
     when(giftCertificateValidator.validate(any())).thenReturn(false);
     GiftCertificateDto expectedGiftCertificateDto =
         new GiftCertificateDto(firstExpectedGiftCertificate, tags);
@@ -287,9 +260,6 @@ class GiftCertificateServiceImplTest {
   @Test
   void testUpdate_shouldThrowServiceException_whenGiftCertificateDoesNotExistInDatabase() {
     // given
-    Mockito.lenient()
-        .when(giftCertificateRepository.update(firstExpectedGiftCertificate))
-        .thenReturn(Optional.of(changedGiftCertificate));
     GiftCertificateDto incomingGiftCertificateDto =
         new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag));
 

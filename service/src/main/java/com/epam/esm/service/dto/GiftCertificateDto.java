@@ -1,6 +1,5 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.dao.entity.AbstractEntity;
 import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.serialization.LocalDateDeserializer;
@@ -12,7 +11,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-public class GiftCertificateDto extends AbstractEntity {
+public class GiftCertificateDto {
+  private Long id;
   private String name;
   private String description;
   private BigDecimal price;
@@ -31,7 +31,7 @@ public class GiftCertificateDto extends AbstractEntity {
   public GiftCertificateDto() {}
 
   public GiftCertificateDto(GiftCertificate giftCertificate, Set<Tag> tags) {
-    super(giftCertificate.getId());
+    this.id = giftCertificate.getId();
     this.name = giftCertificate.getName();
     this.description = giftCertificate.getDescription();
     this.price = giftCertificate.getPrice();
@@ -50,7 +50,7 @@ public class GiftCertificateDto extends AbstractEntity {
       LocalDateTime createDate,
       LocalDateTime lastUpdateDate,
       Set<Tag> tags) {
-    super(id);
+    this.id = id;
     this.name = name;
     this.description = description;
     this.price = price;
@@ -58,6 +58,14 @@ public class GiftCertificateDto extends AbstractEntity {
     this.createDate = createDate;
     this.lastUpdateDate = lastUpdateDate;
     this.tags = tags;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getName() {
@@ -124,13 +132,13 @@ public class GiftCertificateDto extends AbstractEntity {
     if (!(o instanceof GiftCertificateDto)) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
 
     GiftCertificateDto that = (GiftCertificateDto) o;
 
     if (getDuration() != that.getDuration()) {
+      return false;
+    }
+    if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) {
       return false;
     }
     if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) {
@@ -159,7 +167,7 @@ public class GiftCertificateDto extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    int result = super.hashCode();
+    int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getName() != null ? getName().hashCode() : 0);
     result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
     result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);

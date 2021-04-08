@@ -33,7 +33,6 @@ class GiftCertificateRepositoryImplTest {
   private GiftCertificate secondGiftCertificate;
   private GiftCertificate thirdGiftCertificate;
   private GiftCertificate fourthGiftCertificate;
-  private static final long LAST_SAVED_ID = 5;
 
   @Autowired private GiftCertificateRepositoryImpl giftCertificateRepository;
 

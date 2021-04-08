@@ -4,7 +4,11 @@ import com.epam.esm.dao.entity.GiftCertificateTag;
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.repository.GiftCertificateTagRepository;
 import com.epam.esm.dao.repository.TagRepository;
-import com.epam.esm.dao.specification.gift.*;
+import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificateByIdSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesByDescriptionPartSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNamePartSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesByTagNameSpecification;
 import com.epam.esm.dao.specification.gifttag.GetGiftCertificateTagByGiftCertificateIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.dao.specification.tag.GetAllTagsByGiftCertificatesIdSpecification;
@@ -19,8 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -95,7 +102,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return existingTag;
       }
     }
-    return tag;
+    return optionalExistingTag.get();
   }
 
   private void saveGiftCertificateTag(long giftCertificateId, Tag tag) {

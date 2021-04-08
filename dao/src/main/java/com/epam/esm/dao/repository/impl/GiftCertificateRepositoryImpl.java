@@ -65,31 +65,29 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
 
   @Override
   public Optional<GiftCertificate> save(GiftCertificate giftCertificate) {
-    try {
-      KeyHolder keyHolder = new GeneratedKeyHolder();
-      LocalDateTime now = LocalDateTime.now();
-      jdbcTemplate.update(
-          connection -> {
-            PreparedStatement ps =
-                connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, giftCertificate.getName());
-            ps.setString(2, giftCertificate.getDescription());
-            ps.setBigDecimal(3, giftCertificate.getPrice());
-            ps.setInt(4, giftCertificate.getDuration());
-            ps.setTimestamp(5, Timestamp.valueOf(now));
-            ps.setTimestamp(6, Timestamp.valueOf(now));
-            return ps;
-          },
-          keyHolder);
-
-      giftCertificate.setId((Long) keyHolder.getKeys().get("id"));
-      giftCertificate.setCreateDate(now);
-      giftCertificate.setLastUpdateDate(now);
-
-      return Optional.of(giftCertificate);
-    } catch (NullPointerException e) {
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+    LocalDateTime now = LocalDateTime.now();
+    jdbcTemplate.update(
+        connection -> {
+          PreparedStatement ps =
+              connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+          ps.setString(1, giftCertificate.getName());
+          ps.setString(2, giftCertificate.getDescription());
+          ps.setBigDecimal(3, giftCertificate.getPrice());
+          ps.setInt(4, giftCertificate.getDuration());
+          ps.setTimestamp(5, Timestamp.valueOf(now));
+          ps.setTimestamp(6, Timestamp.valueOf(now));
+          return ps;
+        },
+        keyHolder);
+    if (keyHolder.getKeys() == null) {
       return Optional.empty();
     }
+    giftCertificate.setId((Long) keyHolder.getKeys().get("id"));
+    giftCertificate.setCreateDate(now);
+    giftCertificate.setLastUpdateDate(now);
+
+    return Optional.of(giftCertificate);
   }
 
   @Override

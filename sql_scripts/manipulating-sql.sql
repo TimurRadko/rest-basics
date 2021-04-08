@@ -75,7 +75,7 @@ FROM gift_certificates gc
 WHERE (gc.name ILIKE concat('%', 'sec', '%'));
 
 INSERT INTO tags(name)
-VALUES ('tag8');
+VALUES ('tag6');
 
 SELECT *
 FROM tags;

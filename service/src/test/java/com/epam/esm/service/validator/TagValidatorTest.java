@@ -1,10 +1,12 @@
 package com.epam.esm.service.validator;
 
-import com.epam.esm.dao.entity.Tag;
+import com.epam.esm.service.dto.TagDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TagValidatorTest {
   private TagValidator validator;
@@ -30,19 +32,19 @@ class TagValidatorTest {
   @Test
   void testValidate_shouldReturnTrue_whenTagIsValid() {
     // given
-    Tag tag = new Tag(1L, "validName");
+    TagDto tagDto = new TagDto(1L, "validName");
     // when
     // then
-    assertTrue(validator.validate(tag));
+    assertTrue(validator.validate(tagDto));
   }
 
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenTagNameIsNull() {
     // given
-    Tag tag = new Tag(1L, null);
+    TagDto tagDto = new TagDto(1L, null);
     // when
     // then
-    assertFalse(validator.validate(tag));
+    assertFalse(validator.validate(tagDto));
     String actualErrorMessage = validator.getErrorMessage();
     assertEquals(EXPECTED_NULL_OR_ZERO_LENGTH_NAME_TAG_MESSAGE, actualErrorMessage);
   }
@@ -50,10 +52,10 @@ class TagValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenTagNameLengthIsZero() {
     // given
-    Tag tag = new Tag(1L, "");
+    TagDto tagDto = new TagDto(1L, "");
     // when
     // then
-    assertFalse(validator.validate(tag));
+    assertFalse(validator.validate(tagDto));
     String actualErrorMessage = validator.getErrorMessage();
     assertEquals(EXPECTED_NULL_OR_ZERO_LENGTH_NAME_TAG_MESSAGE, actualErrorMessage);
   }
@@ -61,10 +63,10 @@ class TagValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenTagNameLengthIsLessThanMin() {
     // given
-    Tag tag = new Tag(1L, "I");
+    TagDto tagDto = new TagDto(1L, "I");
     // when
     // then
-    assertFalse(validator.validate(tag));
+    assertFalse(validator.validate(tagDto));
     String actualErrorMessage = validator.getErrorMessage();
     assertEquals(EXPECTED_MIN_OR_MAX_TAG_MESSAGE, actualErrorMessage);
   }
@@ -72,10 +74,10 @@ class TagValidatorTest {
   @Test
   void testValidate_ShouldReturnCorrectErrorMessage_whenTagNameLengthIsMoreThanMax() {
     // given
-    Tag tag = new Tag(1L, "nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
+    TagDto tagDto = new TagDto(1L, "nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
     // when
     // then
-    assertFalse(validator.validate(tag));
+    assertFalse(validator.validate(tagDto));
     String actualErrorMessage = validator.getErrorMessage();
     assertEquals(EXPECTED_MIN_OR_MAX_TAG_MESSAGE, actualErrorMessage);
   }

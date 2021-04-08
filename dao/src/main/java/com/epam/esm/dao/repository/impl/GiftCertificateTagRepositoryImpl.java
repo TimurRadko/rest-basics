@@ -52,22 +52,20 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
 
   @Override
   public Optional<GiftCertificateTag> save(GiftCertificateTag giftCertificateTag) {
-    try {
-      KeyHolder keyHolder = new GeneratedKeyHolder();
-      jdbcTemplate.update(
-          connection -> {
-            PreparedStatement ps =
-                connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-            ps.setLong(1, giftCertificateTag.getGiftCertificateId());
-            ps.setLong(2, giftCertificateTag.getTagId());
-            return ps;
-          },
-          keyHolder);
-
-      giftCertificateTag.setId((Long) keyHolder.getKeys().get("id"));
-      return Optional.of(giftCertificateTag);
-    } catch (NullPointerException e) {
+    KeyHolder keyHolder = new GeneratedKeyHolder();
+    jdbcTemplate.update(
+        connection -> {
+          PreparedStatement ps =
+              connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+          ps.setLong(1, giftCertificateTag.getGiftCertificateId());
+          ps.setLong(2, giftCertificateTag.getTagId());
+          return ps;
+        },
+        keyHolder);
+    if (keyHolder.getKeys() == null) {
       return Optional.empty();
     }
+    giftCertificateTag.setId((Long) keyHolder.getKeys().get("id"));
+    return Optional.of(giftCertificateTag);
   }
 }
