@@ -305,6 +305,8 @@ class GiftCertificateServiceImplTest {
     // given
     int expectedResult = 1;
     when(giftCertificateRepository.delete(ID_FOR_MANIPULATIONS)).thenReturn(expectedResult);
+    when(giftCertificateRepository.getEntityBySpecification(any()))
+        .thenReturn(Optional.of(firstExpectedGiftCertificate));
     // when
     int actualResult = giftCertificateService.delete(ID_FOR_MANIPULATIONS);
     // then

@@ -51,12 +51,8 @@ public class TagsController {
   }
 
   @DeleteMapping(value = "/{id}")
-  public String delete(@PathVariable long id) {
-    tagService
-        .getById(id)
-        .orElseThrow(
-            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable long id) {
     tagService.delete(id);
-    return "The Tag with id = " + id + " was deleted";
   }
 }

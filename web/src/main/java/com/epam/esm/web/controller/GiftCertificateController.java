@@ -71,12 +71,8 @@ public class GiftCertificateController {
   }
 
   @DeleteMapping("/{id}")
-  public String delete(@PathVariable long id) {
-    giftCertificateService
-        .getById(id)
-        .orElseThrow(
-            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable long id) {
     giftCertificateService.delete(id);
-    return "The Gift Certificate with id = " + id + " was deleted";
   }
 }

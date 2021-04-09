@@ -104,6 +104,7 @@ class TagServiceImplTest {
     // given
     int expectedResult = 1;
     when(tagRepository.delete(ID_FOR_MANIPULATIONS)).thenReturn(expectedResult);
+    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
     // when
     int actualResult = tagService.delete(ID_FOR_MANIPULATIONS);
     // then

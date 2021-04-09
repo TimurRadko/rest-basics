@@ -65,6 +65,8 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public int delete(long id) {
+    getById(id)
+        .orElseThrow(() -> new ServiceException("Requested resource not found (id = " + id + ")"));
     return tagRepository.delete(id);
   }
 }
