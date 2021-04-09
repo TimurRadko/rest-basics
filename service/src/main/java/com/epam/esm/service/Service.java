@@ -19,15 +19,6 @@ public interface Service<T> {
   Optional<T> save(T t);
 
   /**
-   * * This method describes a general getAll (getting a list of all entities) operation for all
-   * Entities, from persistence layer
-   *
-   * @param sort - the parameter, which describes rules of sorting getting data
-   * @return List<T> - List of T contained in one of all tables in the DB
-   */
-  List<T> getAll(String sort);
-
-  /**
    * * This method describes a general get (getting a entity by parameter) operation for all
    * Entities, from persistence layer
    *

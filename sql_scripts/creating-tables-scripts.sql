@@ -1,8 +1,3 @@
-----------------DROP DATABASE----------------------------
-DROP DATABASE gift_certificates_task;
----------------------------------------------------------
-
-
 ----------------CREATE TABLE GIFT-CERTIFICATES------------
 CREATE TABLE gift_certificates
 (
@@ -10,7 +5,7 @@ CREATE TABLE gift_certificates
     name             varchar(255) NOT NULL,
     description      varchar(255),
     price            double precision,
-    duration         serial,
+    duration         integer,
     create_date      timestamp         NOT NULL,
     last_update_date timestamp        NOT NULL,
     PRIMARY KEY (id)
@@ -18,11 +13,6 @@ CREATE TABLE gift_certificates
 
 ALTER TABLE gift_certificates
     OWNER to postgres;
----------------------------------------------------------
-
-
----------------DROP TABLE GIFT-CERTIFICATES--------------
-DROP TABLE gift_certificates;
 ---------------------------------------------------------
 
 
@@ -40,11 +30,6 @@ ALTER TABLE tags
 -------------------------------------------------------
 
 
-----------------DROP TABLE TAGS------------------------
-DROP TABLE tags;
--------------------------------------------------------
-
-
 ------------CREATING UNIQUE INDEX--------------------------
 CREATE UNIQUE INDEX name_case_insensitive_unique_index ON tags (LOWER(name));
 -----------------------------------------------------------
@@ -59,6 +44,3 @@ CREATE TABLE gift_certificates_tags
     UNIQUE (gift_certificate_id, tag_id)
 );
 ------------------------------------------------------------
-
-
-DROP TABLE gift_certificates_tags;

@@ -46,7 +46,7 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public Optional<TagDto> save(TagDto tagDto) {
-    if (tagValidator.validate(tagDto)) {
+    if (tagValidator.isValid(tagDto)) {
       Tag tag = builder.buildFromDto(tagDto);
       String name = tag.getName();
       Optional<Tag> optionalExistingTag =

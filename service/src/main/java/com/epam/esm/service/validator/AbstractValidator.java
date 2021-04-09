@@ -7,7 +7,16 @@ import java.util.List;
 
 @Component
 public abstract class AbstractValidator<T> {
+  private boolean isResultValid = true;
   private List<String> errorMessages = new ArrayList<>();
+
+  boolean isResultValid() {
+    return isResultValid;
+  }
+
+  void setIsResultValidFalse() {
+    isResultValid = false;
+  }
 
   public String getErrorMessage() {
     return String.join(". ", errorMessages);
@@ -21,5 +30,5 @@ public abstract class AbstractValidator<T> {
     errorMessages = new ArrayList<>();
   }
 
-  public abstract boolean validate(T t);
+  public abstract boolean isValid(T t);
 }

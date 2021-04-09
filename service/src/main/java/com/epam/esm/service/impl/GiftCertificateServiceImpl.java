@@ -57,7 +57,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   @Override
   @Transactional
   public Optional<GiftCertificateDto> save(GiftCertificateDto giftCertificateDto) {
-    if (giftCertificateValidator.validate(giftCertificateDto)) {
+    if (giftCertificateValidator.isValid(giftCertificateDto)) {
       GiftCertificate giftCertificate = builder.buildFromDto(giftCertificateDto);
       giftCertificate =
           giftCertificateRepository
@@ -113,17 +113,27 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   @Override
-  public List<GiftCertificateDto> getAll(String sort) {
-    List<GiftCertificate> giftCertificates =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetAllGiftCertificatesSpecification(sort));
-    return giftCertificates.stream()
+  public List<GiftCertificateDto> getAllByParams(
+      String name, String description, String tagName, String sort) {
+    if (name == null && description == null && tagName == null) {
+      return getAll(sort);
+    }
+    List<GiftCertificateDto> giftCertificateDtos =
+        getGiftCertificatesByNameOrDescriptionPart(name, description, sort);
+    if (tagName != null) {
+      giftCertificateDtos = getGiftCertificateListByTagName(giftCertificateDtos, tagName, sort);
+    }
+    return giftCertificateDtos;
+  }
+
+  private List<GiftCertificateDto> getAll(String sort) {
+    return giftCertificateRepository
+        .getEntityListBySpecification(new GetAllGiftCertificatesSpecification(sort)).stream()
         .map((this::createGiftCertificateDto))
         .collect(Collectors.toList());
   }
 
-  @Override
-  public List<GiftCertificateDto> getGiftCertificatesByNameOrDescriptionPart(
+  private List<GiftCertificateDto> getGiftCertificatesByNameOrDescriptionPart(
       String name, String description, String sort) {
 
     List<GiftCertificate> giftCertificates = new ArrayList<>();
@@ -142,8 +152,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         .collect(Collectors.toList());
   }
 
-  @Override
-  public List<GiftCertificateDto> getGiftCertificateListByTagName(
+  private List<GiftCertificateDto> getGiftCertificateListByTagName(
       List<GiftCertificateDto> giftCertificateDtos, String tagName, String sort) {
     if (giftCertificateDtos.size() == 0) {
       List<GiftCertificate> giftCertificates =
@@ -185,7 +194,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   @Override
   @Transactional
   public Optional<GiftCertificateDto> update(long id, GiftCertificateDto giftCertificateDto) {
-    if (giftCertificateValidator.validate(giftCertificateDto)) {
+    if (giftCertificateValidator.isValid(giftCertificateDto)) {
       GiftCertificate giftCertificate = builder.buildFromDto(giftCertificateDto);
       GiftCertificate existingGiftCertificate =
           giftCertificateRepository

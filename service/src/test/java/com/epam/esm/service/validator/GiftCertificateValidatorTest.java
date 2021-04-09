@@ -61,9 +61,10 @@ class GiftCertificateValidatorTest {
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftCertificateIsNull() {
     // given
     // when
-    // then
-    assertFalse(validator.validate(null));
+    boolean actualIsValid = validator.isValid(null);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(NULL_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 
@@ -72,8 +73,9 @@ class GiftCertificateValidatorTest {
     // given
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     // then
-    assertTrue(validator.validate(giftCertificateDto));
+    assertTrue(actualIsValid);
   }
 
   @Test
@@ -82,9 +84,10 @@ class GiftCertificateValidatorTest {
     giftCertificate.setName(null);
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
-    // then
-    assertFalse(validator.validate(giftCertificateDto));
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 
@@ -94,9 +97,10 @@ class GiftCertificateValidatorTest {
     giftCertificate.setName("");
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
-    // then
-    assertFalse(validator.validate(giftCertificateDto));
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 
@@ -106,9 +110,10 @@ class GiftCertificateValidatorTest {
     giftCertificate.setName("I");
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
-    // then
-    assertFalse(validator.validate(giftCertificateDto));
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 
@@ -118,9 +123,10 @@ class GiftCertificateValidatorTest {
     giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
-    // then
-    assertFalse(validator.validate(giftCertificateDto));
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 
@@ -130,9 +136,10 @@ class GiftCertificateValidatorTest {
     giftCertificate.setPrice(BigDecimal.valueOf(-1));
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
-    // then
-    assertFalse(validator.validate(giftCertificateDto));
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 
@@ -142,9 +149,10 @@ class GiftCertificateValidatorTest {
     giftCertificate.setDuration(-1);
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
-    // then
-    assertFalse(validator.validate(giftCertificateDto));
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 
@@ -155,9 +163,10 @@ class GiftCertificateValidatorTest {
     giftCertificate.setPrice(BigDecimal.valueOf(-1));
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
-    // then
-    assertFalse(validator.validate(giftCertificateDto));
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(INCORRECT_LENGTH_AND_NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 
@@ -168,9 +177,10 @@ class GiftCertificateValidatorTest {
     giftCertificate.setDuration(-1);
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
-    // then
-    assertFalse(validator.validate(giftCertificateDto));
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(
         INCORRECT_LENGTH_AND_NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
@@ -183,9 +193,10 @@ class GiftCertificateValidatorTest {
     giftCertificate.setDuration(-1);
     GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
     // when
-    // then
-    assertFalse(validator.validate(giftCertificateDto));
+    boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(INCORRECT_ALL_DATA_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 }

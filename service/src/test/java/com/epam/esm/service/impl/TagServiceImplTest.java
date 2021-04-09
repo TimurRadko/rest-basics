@@ -71,7 +71,7 @@ class TagServiceImplTest {
     // given
     when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.empty());
     when(tagRepository.save(firstTestTag)).thenReturn(Optional.of(firstTestTag));
-    when(tagValidator.validate(firstTestTagDto)).thenReturn(true);
+    when(tagValidator.isValid(firstTestTagDto)).thenReturn(true);
     when(builder.buildFromDto(firstTestTagDto)).thenReturn(firstTestTag);
     // when
     Optional<TagDto> optionalActualTagDto = tagService.save(firstTestTagDto);
@@ -83,7 +83,7 @@ class TagServiceImplTest {
   void testSave_shouldThrowServiceException_whenTagExistsInDatabase() {
     // given
     when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
-    when(tagValidator.validate(firstTestTagDto)).thenReturn(true);
+    when(tagValidator.isValid(firstTestTagDto)).thenReturn(true);
     when(builder.buildFromDto(firstTestTagDto)).thenReturn(firstTestTag);
     // when
     // then
@@ -94,7 +94,7 @@ class TagServiceImplTest {
   void testSave_shouldThrowServiceException_whenTagIsInvalid() {
     // given
     // when
-    when(tagValidator.validate(any())).thenReturn(false);
+    when(tagValidator.isValid(any())).thenReturn(false);
     // then
     assertThrows(ServiceException.class, () -> tagService.save(firstTestTagDto));
   }

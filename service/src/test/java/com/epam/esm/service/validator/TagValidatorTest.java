@@ -24,7 +24,7 @@ class TagValidatorTest {
 
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenTagIsNull() {
-    assertFalse(validator.validate(null));
+    assertFalse(validator.isValid(null));
     String actualErrorMessage = validator.getErrorMessage();
     assertEquals(EXPECTED_NULL_TAG_MESSAGE, actualErrorMessage);
   }
@@ -34,8 +34,9 @@ class TagValidatorTest {
     // given
     TagDto tagDto = new TagDto(1L, "validName");
     // when
+    boolean actualIsValid = validator.isValid(tagDto);
     // then
-    assertTrue(validator.validate(tagDto));
+    assertTrue(actualIsValid);
   }
 
   @Test
@@ -43,9 +44,10 @@ class TagValidatorTest {
     // given
     TagDto tagDto = new TagDto(1L, null);
     // when
-    // then
-    assertFalse(validator.validate(tagDto));
+    boolean actualIsValid = validator.isValid(tagDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(EXPECTED_NULL_OR_ZERO_LENGTH_NAME_TAG_MESSAGE, actualErrorMessage);
   }
 
@@ -54,9 +56,10 @@ class TagValidatorTest {
     // given
     TagDto tagDto = new TagDto(1L, "");
     // when
-    // then
-    assertFalse(validator.validate(tagDto));
+    boolean actualIsValid = validator.isValid(tagDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(EXPECTED_NULL_OR_ZERO_LENGTH_NAME_TAG_MESSAGE, actualErrorMessage);
   }
 
@@ -65,9 +68,10 @@ class TagValidatorTest {
     // given
     TagDto tagDto = new TagDto(1L, "I");
     // when
-    // then
-    assertFalse(validator.validate(tagDto));
+    boolean actualIsValid = validator.isValid(tagDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(EXPECTED_MIN_OR_MAX_TAG_MESSAGE, actualErrorMessage);
   }
 
@@ -76,9 +80,10 @@ class TagValidatorTest {
     // given
     TagDto tagDto = new TagDto(1L, "nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
     // when
-    // then
-    assertFalse(validator.validate(tagDto));
+    boolean actualIsValid = validator.isValid(tagDto);
     String actualErrorMessage = validator.getErrorMessage();
+    // then
+    assertFalse(actualIsValid);
     assertEquals(EXPECTED_MIN_OR_MAX_TAG_MESSAGE, actualErrorMessage);
   }
 }

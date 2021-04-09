@@ -43,7 +43,7 @@ public class TagsController {
   }
 
   @PostMapping()
-  @ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(HttpStatus.CREATED)
   public TagDto save(@RequestBody TagDto tagDto) {
     Optional<TagDto> optionalTag = tagService.save(tagDto);
     return optionalTag.orElseThrow(

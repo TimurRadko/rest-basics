@@ -106,6 +106,7 @@ class GiftCertificateRepositoryImplTest {
             secondGiftCertificate,
             fourthGiftCertificate,
             firstGiftCertificate);
+    // when
     List<GiftCertificate> actual =
         giftCertificateRepository.getEntityListBySpecification(
             new GetAllGiftCertificatesSpecification("name-desc"));
@@ -122,6 +123,7 @@ class GiftCertificateRepositoryImplTest {
             fourthGiftCertificate,
             secondGiftCertificate,
             thirdGiftCertificate);
+    // when
     List<GiftCertificate> actual =
         giftCertificateRepository.getEntityListBySpecification(
             new GetAllGiftCertificatesSpecification("name-asc"));
@@ -139,6 +141,7 @@ class GiftCertificateRepositoryImplTest {
             thirdGiftCertificate,
             firstGiftCertificate,
             secondGiftCertificate);
+    // when
     List<GiftCertificate> actual =
         giftCertificateRepository.getEntityListBySpecification(
             new GetAllGiftCertificatesSpecification("create-date-asc"));
@@ -156,6 +159,7 @@ class GiftCertificateRepositoryImplTest {
             firstGiftCertificate,
             thirdGiftCertificate,
             fourthGiftCertificate);
+    // when
     List<GiftCertificate> actual =
         giftCertificateRepository.getEntityListBySpecification(
             new GetAllGiftCertificatesSpecification("create-date-desc"));
@@ -167,6 +171,7 @@ class GiftCertificateRepositoryImplTest {
   void testGetEntityListBySpecification_shouldReturnEntityListByNamePart_whenEntitiesExist() {
     // given
     List<GiftCertificate> expected = Collections.singletonList(secondGiftCertificate);
+    // when
     List<GiftCertificate> actual =
         giftCertificateRepository.getEntityListBySpecification(
             new GetGiftCertificatesByNamePartSpecification("sec", null));
@@ -179,6 +184,7 @@ class GiftCertificateRepositoryImplTest {
       testGetEntityListBySpecification_shouldReturnEntityListByDescriptionPart_whenEntitiesExist() {
     // given
     List<GiftCertificate> expected = Collections.singletonList(secondGiftCertificate);
+    // when
     List<GiftCertificate> actual =
         giftCertificateRepository.getEntityListBySpecification(
             new GetGiftCertificatesByDescriptionPartSpecification("sec", null));

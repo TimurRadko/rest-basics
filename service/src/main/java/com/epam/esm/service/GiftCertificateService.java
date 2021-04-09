@@ -8,34 +8,20 @@ import java.util.Optional;
 /** * This interface describes specific realization of CRUD operation on GiftCertificate Entities */
 public interface GiftCertificateService extends Service<GiftCertificateDto> {
   /**
-   * * This method describes a general getting a list of all entities by field name of the Tag
-   * entity operation for all Entities, from persistence layer
+   * * This method describes a general getting a list of all entities by parameters entity. This
+   * operation for all Entities, from the persistence layer
    *
-   * @param giftCertificateDtos List<GiftCertificateDto> - List of GiftCertificateDto necessary for
-   *     searching matching Entities with parameter TagName
+   * @param name - the parameter required to search for GiftCertificate in the name field of this *
+   *     object
+   * @param description - the parameter required to search for GiftCertificate in the describe field
+   *     * of this object
    * @param tagName - the parameter necessary for searching GiftCertificate for Tag name
    * @param sort - the parameter, which describes rules of sorting getting data
    * @return List<GiftCertificateDto> - List of GiftCertificateDto (this is Entity describes the
    *     data-transfer object for working with representation entities necessary for public API)
    */
-  List<GiftCertificateDto> getGiftCertificateListByTagName(
-      List<GiftCertificateDto> giftCertificateDtos, String tagName, String sort);
-
-  /**
-   * * This method describes getting a list of all entities by part of name or/and description
-   * fields operation for all Entities, from persistence layer
-   *
-   * @param name - - the parameter required to search for GiftCertificate in the name field of this
-   *     object
-   * @param description - the parameter required to search for GiftCertificate in the describe field
-   *     of this object
-   * @param sort - the parameter, which describes rules of sorting getting data
-   * @return List<GiftCertificateDto> - List of GiftCertificateDto (this is Entity describes the
-   *     data-transfer object for working with representation entities necessary for public API)
-   */
-  List<GiftCertificateDto> getGiftCertificatesByNameOrDescriptionPart(
-      String name, String description, String sort);
-
+  List<GiftCertificateDto> getAllByParams(
+      String name, String description, String tagName, String sort);
   /**
    * * This method describes update operation with the parameters passed in the GiftCertificateDto
    *

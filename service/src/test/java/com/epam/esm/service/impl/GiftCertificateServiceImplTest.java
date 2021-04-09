@@ -20,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -43,15 +42,12 @@ class GiftCertificateServiceImplTest {
 
   @InjectMocks private GiftCertificateServiceImpl giftCertificateService;
   private GiftCertificate firstExpectedGiftCertificate;
-  private GiftCertificate secondExpectedGiftCertificate;
 
   private static final long ID_FOR_MANIPULATIONS = 1L;
-  private static final String NULL_SORTING = null;
   private List<GiftCertificateDto> expectedGiftCertificateDtos = new ArrayList<>();
   private List<GiftCertificate> expectedGiftCertificates = new ArrayList<>();
-  private Set<Tag> tags = new HashSet<>();
+  private Set<Tag> emptyTagSet = new HashSet<>();
   private Tag firstTag = new Tag(1L, "tag1");
-  private Tag secondTag = new Tag(2L, "tag2");
   private static final String PART_NAME = "va";
   private static final String PART_DESCRIPTION = "es";
   private static final String FIRST_TAG_NAME = "tag1";
@@ -77,25 +73,16 @@ class GiftCertificateServiceImplTest {
             14,
             LocalDateTime.now(),
             LocalDateTime.now());
-    secondExpectedGiftCertificate =
-        new GiftCertificate(
-            2L,
-            "lidName2",
-            "validDcription2",
-            BigDecimal.valueOf(24),
-            28,
-            LocalDateTime.now(),
-            LocalDateTime.now());
   }
 
   @Test
   void testSave_shouldReturnGiftCertificateDto_whenSaveFinishSuccessful() {
     // given
     GiftCertificateDto expectedGiftCertificateDto =
-        new GiftCertificateDto(firstExpectedGiftCertificate, tags);
+        new GiftCertificateDto(firstExpectedGiftCertificate, emptyTagSet);
     when(giftCertificateRepository.save(firstExpectedGiftCertificate))
         .thenReturn(Optional.of(firstExpectedGiftCertificate));
-    when(giftCertificateValidator.validate(expectedGiftCertificateDto)).thenReturn(true);
+    when(giftCertificateValidator.isValid(expectedGiftCertificateDto)).thenReturn(true);
     when(builder.buildFromDto(expectedGiftCertificateDto)).thenReturn(firstExpectedGiftCertificate);
     // when
     Optional<GiftCertificateDto> actualGiftCertificateDto =
@@ -111,7 +98,7 @@ class GiftCertificateServiceImplTest {
         new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag));
     when(giftCertificateRepository.save(firstExpectedGiftCertificate))
         .thenReturn(Optional.of(firstExpectedGiftCertificate));
-    when(giftCertificateValidator.validate(expectedGiftCertificateDto)).thenReturn(true);
+    when(giftCertificateValidator.isValid(expectedGiftCertificateDto)).thenReturn(true);
     when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTag));
     when(builder.buildFromDto(expectedGiftCertificateDto)).thenReturn(firstExpectedGiftCertificate);
     // when
@@ -124,9 +111,9 @@ class GiftCertificateServiceImplTest {
   @Test
   void testSave_shouldThrowServiceException_whenGiftCertificateIsInvalid() {
     // given
-    when(giftCertificateValidator.validate(any())).thenReturn(false);
+    when(giftCertificateValidator.isValid(any())).thenReturn(false);
     GiftCertificateDto expectedGiftCertificateDto =
-        new GiftCertificateDto(firstExpectedGiftCertificate, tags);
+        new GiftCertificateDto(firstExpectedGiftCertificate, emptyTagSet);
     // when
     // then
     assertThrows(
@@ -142,7 +129,7 @@ class GiftCertificateServiceImplTest {
     when(builder.buildFromDto(any())).thenReturn(firstExpectedGiftCertificate);
     // when
     List<GiftCertificateDto> actualGiftCertificateDtos =
-        giftCertificateService.getAll(NULL_SORTING);
+        giftCertificateService.getAllByParams(null, null, null, null);
     List<GiftCertificate> actualGiftCertificates = getGiftCertificates(actualGiftCertificateDtos);
     // then
     assertEquals(expectedGiftCertificates, actualGiftCertificates);
@@ -159,7 +146,7 @@ class GiftCertificateServiceImplTest {
     // given
     // when
     List<GiftCertificateDto> actualGiftCertificateDtos =
-        giftCertificateService.getGiftCertificatesByNameOrDescriptionPart(PART_NAME, null, null);
+        giftCertificateService.getAllByParams(PART_NAME, null, null, null);
     // then
     assertEquals(expectedGiftCertificateDtos, actualGiftCertificateDtos);
   }
@@ -170,8 +157,7 @@ class GiftCertificateServiceImplTest {
     // given
     // when
     List<GiftCertificateDto> actualGiftCertificateDtos =
-        giftCertificateService.getGiftCertificatesByNameOrDescriptionPart(
-            null, PART_DESCRIPTION, null);
+        giftCertificateService.getAllByParams(null, PART_DESCRIPTION, null, null);
     // then
     assertEquals(expectedGiftCertificateDtos, actualGiftCertificateDtos);
   }
@@ -180,17 +166,16 @@ class GiftCertificateServiceImplTest {
   void
       testGetGiftCertificatesByTagName_shouldReturnGiftCertificateList_whenTagExistsAndCollectionNotEmpty() {
     // given
-    List<GiftCertificateDto> incomingGiftCertificateDtos =
-        Arrays.asList(
-            new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag)),
-            new GiftCertificateDto(secondExpectedGiftCertificate, Set.of(secondTag)));
     List<GiftCertificateDto> expectedGiftCertificateDtos =
         Collections.singletonList(
             (new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag))));
+    when(giftCertificateRepository.getEntityListBySpecification(any()))
+        .thenReturn(Collections.singletonList(firstExpectedGiftCertificate));
+    when(tagRepository.getEntityListBySpecification(any()))
+        .thenReturn(Collections.singletonList(firstTag));
     // when
     List<GiftCertificateDto> actualGiftCertificateDtos =
-        giftCertificateService.getGiftCertificateListByTagName(
-            incomingGiftCertificateDtos, FIRST_TAG_NAME, null);
+        giftCertificateService.getAllByParams(null, null, FIRST_TAG_NAME, null);
     // then
     assertEquals(expectedGiftCertificateDtos, actualGiftCertificateDtos);
   }
@@ -199,15 +184,16 @@ class GiftCertificateServiceImplTest {
   void
       testGetGiftCertificatesByTagName_shouldReturnGiftCertificateList_whenTagExistsAndCollectionIsEmpty() {
     // given
-    List<GiftCertificateDto> incomingGiftCertificateDtos = new ArrayList<>();
-    List<GiftCertificate> expectedGiftCertificates =
-        getGiftCertificates(incomingGiftCertificateDtos);
+    List<GiftCertificateDto> expectedGiftCertificateDtos =
+        Collections.singletonList(
+            (new GiftCertificateDto(firstExpectedGiftCertificate, emptyTagSet)));
+    when(giftCertificateRepository.getEntityListBySpecification(any()))
+        .thenReturn(Collections.singletonList(firstExpectedGiftCertificate));
     // when
     List<GiftCertificateDto> actualGiftCertificateDtos =
-        giftCertificateService.getGiftCertificateListByTagName(
-            incomingGiftCertificateDtos, FIRST_TAG_NAME, null);
+        giftCertificateService.getAllByParams(null, null, FIRST_TAG_NAME, null);
     // then
-    assertEquals(expectedGiftCertificates, getGiftCertificates(actualGiftCertificateDtos));
+    assertEquals(expectedGiftCertificateDtos, actualGiftCertificateDtos);
   }
 
   @Test
@@ -248,9 +234,9 @@ class GiftCertificateServiceImplTest {
   @Test
   void testUpdate_shouldThrowServiceException_whenGiftCertificateIsInvalid() {
     // given
-    when(giftCertificateValidator.validate(any())).thenReturn(false);
+    when(giftCertificateValidator.isValid(any())).thenReturn(false);
     GiftCertificateDto expectedGiftCertificateDto =
-        new GiftCertificateDto(firstExpectedGiftCertificate, tags);
+        new GiftCertificateDto(firstExpectedGiftCertificate, emptyTagSet);
     // when
     // then
     assertThrows(
@@ -263,7 +249,7 @@ class GiftCertificateServiceImplTest {
     GiftCertificateDto incomingGiftCertificateDto =
         new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag));
 
-    when(giftCertificateValidator.validate(any())).thenReturn(true);
+    when(giftCertificateValidator.isValid(any())).thenReturn(true);
     when(builder.buildFromDto(any())).thenReturn(changedGiftCertificate);
     // when
     // then
@@ -281,7 +267,7 @@ class GiftCertificateServiceImplTest {
     GiftCertificateDto incomingGiftCertificateDto =
         new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag));
 
-    when(giftCertificateValidator.validate(any())).thenReturn(true);
+    when(giftCertificateValidator.isValid(any())).thenReturn(true);
     when(builder.buildFromDto(any())).thenReturn(changedGiftCertificate);
     // when
     // then
@@ -299,7 +285,7 @@ class GiftCertificateServiceImplTest {
     GiftCertificateDto incomingGiftCertificateDto =
         new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag));
 
-    when(giftCertificateValidator.validate(any())).thenReturn(true);
+    when(giftCertificateValidator.isValid(any())).thenReturn(true);
     when(builder.buildFromDto(any())).thenReturn(changedGiftCertificate);
     when(tagRepository.save(any())).thenReturn(Optional.of(firstTag));
     when(giftCertificateTagRepository.save(any())).thenReturn(Optional.of(giftCertificateTag));

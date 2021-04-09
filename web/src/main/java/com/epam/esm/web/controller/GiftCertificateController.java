@@ -37,17 +37,7 @@ public class GiftCertificateController {
       @RequestParam(value = "description", required = false) String description,
       @RequestParam(value = "tag", required = false) String tagName,
       @RequestParam(value = "sort", required = false) String sort) {
-    if (name == null && description == null && tagName == null) {
-      return giftCertificateService.getAll(sort);
-    }
-    List<GiftCertificateDto> giftCertificateDtos =
-        giftCertificateService.getGiftCertificatesByNameOrDescriptionPart(name, description, sort);
-    if (tagName != null) {
-      giftCertificateDtos =
-          giftCertificateService.getGiftCertificateListByTagName(
-              giftCertificateDtos, tagName, sort);
-    }
-    return giftCertificateDtos;
+    return giftCertificateService.getAllByParams(name, description, tagName, sort);
   }
 
   @GetMapping("/{id}")
@@ -58,7 +48,7 @@ public class GiftCertificateController {
   }
 
   @PostMapping()
-  @ResponseStatus(HttpStatus.OK)
+  @ResponseStatus(HttpStatus.CREATED)
   public GiftCertificateDto save(@RequestBody GiftCertificateDto giftCertificateDto) {
     try {
       Optional<GiftCertificateDto> optionalGiftCertificateDto =
