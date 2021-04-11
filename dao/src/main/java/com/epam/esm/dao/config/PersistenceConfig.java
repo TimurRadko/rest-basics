@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -16,6 +17,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
 
+@Profile("dev")
 @Configuration
 @ComponentScan(basePackages = "com.epam.esm")
 @EnableTransactionManagement

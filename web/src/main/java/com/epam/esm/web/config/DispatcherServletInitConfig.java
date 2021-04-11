@@ -4,8 +4,16 @@ import com.epam.esm.dao.config.PersistenceConfig;
 import com.epam.esm.service.config.ServiceConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import javax.servlet.ServletContext;
+
 public class DispatcherServletInitConfig
     extends AbstractAnnotationConfigDispatcherServletInitializer {
+
+  @Override
+  protected void registerDispatcherServlet(ServletContext servletContext) {
+    servletContext.setInitParameter("spring.profiles.active", "dev");
+    super.registerDispatcherServlet(servletContext);
+  }
 
   @Override
   protected Class<?>[] getRootConfigClasses() {
