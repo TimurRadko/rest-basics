@@ -19,7 +19,6 @@ import javax.sql.DataSource;
 public class TestDaoConfig {
 
   @Bean
-  @Profile("test")
   public DataSource dataSource() {
     return new EmbeddedDatabaseBuilder()
         .setType(EmbeddedDatabaseType.H2)
@@ -29,13 +28,11 @@ public class TestDaoConfig {
   }
 
   @Bean
-  @Profile("test")
   public JdbcTemplate jdbcTemplate() {
     return new JdbcTemplate(dataSource());
   }
 
   @Bean
-  @Profile("test")
   public DataSourceTransactionManager transactionManager() {
     DataSource dataSource = dataSource();
     return new DataSourceTransactionManager(dataSource);
