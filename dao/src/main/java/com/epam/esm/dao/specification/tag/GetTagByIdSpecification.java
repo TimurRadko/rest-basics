@@ -2,7 +2,7 @@ package com.epam.esm.dao.specification.tag;
 
 import com.epam.esm.dao.specification.Specification;
 
-public class GetTagByIdSpecification implements Specification {
+public final class GetTagByIdSpecification implements Specification {
   private final long id;
 
   private static final String QUERY = "SELECT id, name FROM tags WHERE id=?;";

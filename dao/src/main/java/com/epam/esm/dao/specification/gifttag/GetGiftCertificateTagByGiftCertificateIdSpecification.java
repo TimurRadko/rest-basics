@@ -2,7 +2,7 @@ package com.epam.esm.dao.specification.gifttag;
 
 import com.epam.esm.dao.specification.Specification;
 
-public class GetGiftCertificateTagByGiftCertificateIdSpecification implements Specification {
+public final class GetGiftCertificateTagByGiftCertificateIdSpecification implements Specification {
   private final long giftCertificateId;
   private final long tagId;
 

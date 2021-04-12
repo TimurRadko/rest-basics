@@ -5,17 +5,17 @@ public abstract class AbstractEntity {
   /** * This field is id (the primary key) in all Entities located in the Database */
   protected Long id;
 
+  AbstractEntity() {}
+
+  AbstractEntity(Long id) {
+    this.id = id;
+  }
+
   public Long getId() {
     return id;
   }
 
   public void setId(Long id) {
-    this.id = id;
-  }
-
-  AbstractEntity() {}
-
-  AbstractEntity(Long id) {
     this.id = id;
   }
 

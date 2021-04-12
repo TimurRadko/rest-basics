@@ -2,7 +2,7 @@ package com.epam.esm.dao.specification.gift;
 
 import com.epam.esm.dao.specification.Specification;
 
-public class GetGiftCertificateByIdSpecification implements Specification {
+public final class GetGiftCertificateByIdSpecification implements Specification {
   private final long id;
 
   private static final String QUERY =

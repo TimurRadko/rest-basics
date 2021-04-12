@@ -2,7 +2,7 @@ package com.epam.esm.dao.specification.gift;
 
 import com.epam.esm.dao.specification.Specification;
 
-public class GetGiftCertificatesByNamePartSpecification implements Specification {
+public final class GetGiftCertificatesByNamePartSpecification implements Specification {
   private final String name;
   private final String sort;
 

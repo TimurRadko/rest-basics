@@ -2,7 +2,7 @@ package com.epam.esm.dao.specification.tag;
 
 import com.epam.esm.dao.specification.Specification;
 
-public class GetAllTagsSpecification implements Specification {
+public final class GetAllTagsSpecification implements Specification {
   private final String sort;
 
   private static final String QUERY =
