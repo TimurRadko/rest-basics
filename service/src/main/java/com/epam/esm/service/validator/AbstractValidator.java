@@ -18,6 +18,10 @@ public abstract class AbstractValidator<T> {
     isResultValid = false;
   }
 
+  void setIsReturnValidTrue() {
+    isResultValid = true;
+  }
+
   public String getErrorMessage() {
     return String.join(". ", errorMessages);
   }

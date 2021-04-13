@@ -13,6 +13,7 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
 
   @Override
   public boolean isValid(GiftCertificateDto giftCertificateDto) {
+    setIsReturnValidTrue();
     eraseErrorMessages();
 
     if (giftCertificateDto == null) {

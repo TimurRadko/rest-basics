@@ -9,6 +9,7 @@ public class TagValidator extends AbstractValidator<TagDto> {
   private static final int MAX_NAME_LENGTH = 50;
 
   public boolean isValid(TagDto tagDto) {
+    setIsReturnValidTrue();
     eraseErrorMessages();
 
     if (tagDto == null) {
