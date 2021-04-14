@@ -10,6 +10,8 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
   private static final int MIN_NAME_LENGTH = 3;
   private static final int MAX_NAME_LENGTH = 50;
   private static final double MIN_PRICE = 0.0d;
+  private static final double MAX_PRICE = 5000d;
+  private static final int MAX_DURATION = 365;
 
   @Override
   public boolean isValid(GiftCertificateDto giftCertificateDto) {
@@ -28,16 +30,20 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
 
   private void checkDuration(GiftCertificateDto giftCertificateDto) {
     Integer duration = giftCertificateDto.getDuration();
-    if (duration != null && duration < 0) {
-      addErrorMessage("To create a Gift Certificate the duration must be more than 0");
+    if (duration != null && (duration < 0 || duration > MAX_DURATION)) {
+      addErrorMessage(
+          "To create a Gift Certificate the duration must be more than 0 and less than 365");
       setIsResultValidFalse();
     }
   }
 
   private void checkPrice(GiftCertificateDto giftCertificateDto) {
     BigDecimal price = giftCertificateDto.getPrice();
-    if (price != null && price.compareTo(BigDecimal.valueOf(MIN_PRICE)) <= 0) {
-      addErrorMessage("To create a Gift Certificate the price must be more than 0.0");
+    if (price != null
+        && (price.compareTo(BigDecimal.valueOf(MIN_PRICE)) <= 0
+            || price.compareTo(BigDecimal.valueOf(MAX_PRICE)) > 0)) {
+      addErrorMessage(
+          "To create a Gift Certificate the price must be more than 0.0 and less than 5000.0");
       setIsResultValidFalse();
     }
   }

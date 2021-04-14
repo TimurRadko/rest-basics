@@ -6,6 +6,7 @@ import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.exception.EntityNotFoundException;
 import com.epam.esm.web.exception.TagAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/tags")
+@RequestMapping("/api/v1/tags")
 public class TagsController {
   private TagService tagService;
 
@@ -44,10 +47,16 @@ public class TagsController {
 
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
-  public TagDto save(@RequestBody TagDto tagDto) {
+  public TagDto save(
+      @RequestBody TagDto tagDto, HttpServletRequest request, HttpServletResponse response) {
     Optional<TagDto> optionalTag = tagService.save(tagDto);
-    return optionalTag.orElseThrow(
-        () -> new TagAlreadyExistsException("The Tag already exists in the DB"));
+    TagDto savedTagDto =
+        optionalTag.orElseThrow(
+            () -> new TagAlreadyExistsException("The Tag already exists in the DB"));
+    Long id = savedTagDto.getId();
+    String url = request.getRequestURL().toString();
+    response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
+    return savedTagDto;
   }
 
   @DeleteMapping(value = "/{id}")

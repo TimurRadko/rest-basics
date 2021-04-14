@@ -1,10 +1,10 @@
 package com.epam.esm.web.exception.handler;
 
-public class GiftCertificateIncorrectData {
+class SingleExceptionResponse {
   private String errorMessage;
   private Integer errorCode;
 
-  GiftCertificateIncorrectData() {}
+  SingleExceptionResponse() {}
 
   public String getErrorMessage() {
     return errorMessage;
