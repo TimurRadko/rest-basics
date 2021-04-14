@@ -8,6 +8,7 @@ import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.builder.TagBuilder;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,20 +47,18 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public Optional<TagDto> save(TagDto tagDto) {
-    if (tagValidator.isValid(tagDto)) {
-      Tag tag = builder.buildFromDto(tagDto);
-      String name = tag.getName();
-      Optional<Tag> optionalExistingTag =
-          tagRepository.getEntityBySpecification(new GetTagByNameSpecification(name));
-      if (optionalExistingTag.isEmpty()) {
-        Optional<Tag> optionalSavedTag = tagRepository.save(tag);
-        return optionalSavedTag.map(TagDto::new);
-      } else {
-        throw new ServiceException(
-            "The tag with this name (" + name + ") is already in the database");
-      }
+    if (!tagValidator.isValid(tagDto)) {
+      throw new EntityNotValidException(tagValidator.getErrorMessage());
+    }
+    Tag tag = builder.buildFromDto(tagDto);
+    String name = tag.getName();
+    Optional<Tag> optionalExistingTag =
+        tagRepository.getEntityBySpecification(new GetTagByNameSpecification(name));
+    if (optionalExistingTag.isEmpty()) {
+      Optional<Tag> optionalSavedTag = tagRepository.save(tag);
+      return optionalSavedTag.map(TagDto::new);
     } else {
-      throw new ServiceException(tagValidator.getErrorMessage());
+      return Optional.empty();
     }
   }
 

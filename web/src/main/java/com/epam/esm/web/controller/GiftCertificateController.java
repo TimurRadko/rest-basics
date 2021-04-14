@@ -1,7 +1,7 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.web.exception.EntityNotFoundException;
 import com.epam.esm.web.exception.InvalidRequestBodyException;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponents;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,20 +56,16 @@ public class GiftCertificateController {
       @RequestBody GiftCertificateDto giftCertificateDto,
       HttpServletRequest request,
       HttpServletResponse response) {
-    try {
-      Optional<GiftCertificateDto> optionalGiftCertificateDto =
-          giftCertificateService.save(giftCertificateDto);
+    Optional<GiftCertificateDto> optionalGiftCertificateDto =
+        giftCertificateService.save(giftCertificateDto);
 
-      GiftCertificateDto savedGiftCertificateDto =
-          optionalGiftCertificateDto.orElseThrow(
-              () -> new EntityNotFoundException("Gift certificate didn't add to DB"));
-      Long id = savedGiftCertificateDto.getId();
-      String url = request.getRequestURL().toString();
-      response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
-      return giftCertificateDto;
-    } catch (ServiceException e) {
-      throw new InvalidRequestBodyException(e.getMessage());
-    }
+    GiftCertificateDto savedGiftCertificateDto =
+        optionalGiftCertificateDto.orElseThrow(
+            () -> new EntityNotFoundException("Gift certificate didn't add to DB"));
+    Long id = savedGiftCertificateDto.getId();
+    String url = request.getRequestURL().toString();
+    response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
+    return giftCertificateDto;
   }
 
   @PutMapping("/{id}")

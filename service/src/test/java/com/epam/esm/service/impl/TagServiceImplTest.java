@@ -80,14 +80,15 @@ class TagServiceImplTest {
   }
 
   @Test
-  void testSave_shouldThrowServiceException_whenTagExistsInDatabase() {
+  void testSave_shouldReturnOptionalEmpty_whenTagExistsInDatabase() {
     // given
     when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
     when(tagValidator.isValid(firstTestTagDto)).thenReturn(true);
     when(builder.buildFromDto(firstTestTagDto)).thenReturn(firstTestTag);
     // when
+    Optional<TagDto> optionalActualTagDto = tagService.save(firstTestTagDto);
     // then
-    assertThrows(ServiceException.class, () -> tagService.save(firstTestTagDto));
+    assertEquals(Optional.empty(), optionalActualTagDto);
   }
 
   @Test

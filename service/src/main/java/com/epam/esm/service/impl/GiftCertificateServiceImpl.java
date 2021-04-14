@@ -16,6 +16,7 @@ import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.builder.GiftCertificateBuilder;
 import com.epam.esm.service.validator.GiftCertificateValidator;
@@ -57,21 +58,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   @Override
   @Transactional
   public Optional<GiftCertificateDto> save(GiftCertificateDto giftCertificateDto) {
-    if (giftCertificateValidator.isValid(giftCertificateDto)) {
-      GiftCertificate giftCertificate = builder.buildFromDto(giftCertificateDto);
-      giftCertificate =
-          giftCertificateRepository
-              .save(giftCertificate)
-              .orElseThrow(() -> new ServiceException("The Gift Certificate wasn't saved"));
-
-      Set<Tag> tags = giftCertificateDto.getTags();
-      tags = saveTags(tags, giftCertificate.getId());
-
-      giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-      return Optional.of(giftCertificateDto);
-    } else {
-      throw new ServiceException(giftCertificateValidator.getErrorMessage());
+    if (!giftCertificateValidator.isValid(giftCertificateDto)) {
+      throw new EntityNotValidException(giftCertificateValidator.getErrorMessage());
     }
+    GiftCertificate giftCertificate = builder.buildFromDto(giftCertificateDto);
+    giftCertificate =
+        giftCertificateRepository
+            .save(giftCertificate)
+            .orElseThrow(() -> new ServiceException("The Gift Certificate wasn't saved"));
+
+    Set<Tag> tags = giftCertificateDto.getTags();
+    tags = saveTags(tags, giftCertificate.getId());
+
+    giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    return Optional.of(giftCertificateDto);
   }
 
   private Set<Tag> saveTags(Set<Tag> tags, long giftCertificateId) {
@@ -194,33 +194,32 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   @Override
   @Transactional
   public Optional<GiftCertificateDto> update(long id, GiftCertificateDto giftCertificateDto) {
-    if (giftCertificateValidator.isValid(giftCertificateDto)) {
-      GiftCertificate giftCertificate = builder.buildFromDto(giftCertificateDto);
-      GiftCertificate existingGiftCertificate =
-          giftCertificateRepository
-              .getEntityBySpecification(new GetGiftCertificateByIdSpecification(id))
-              .orElseThrow(() -> new ServiceException(CERTIFICATE_NOT_EXISTS_IN_THE_DB));
-
-      giftCertificate =
-          builder.buildNewParameterGiftCertificate(existingGiftCertificate, giftCertificate);
-      GiftCertificate newGiftCertification =
-          giftCertificateRepository
-              .update(giftCertificate)
-              .orElseThrow(() -> new ServiceException(CERTIFICATE_NOT_EXISTS_IN_THE_DB));
-
-      Set<Tag> tags = giftCertificateDto.getTags();
-      tags = saveTags(tags, newGiftCertification.getId());
-
-      List<Tag> existingTag =
-          tagRepository.getEntityListBySpecification(
-              new GetAllTagsByGiftCertificatesIdSpecification(id));
-      tags.addAll(existingTag);
-
-      giftCertificateDto = new GiftCertificateDto(newGiftCertification, tags);
-      return Optional.of(giftCertificateDto);
-    } else {
-      throw new ServiceException(giftCertificateValidator.getErrorMessage());
+    if (!giftCertificateValidator.isValid(giftCertificateDto)) {
+      throw new EntityNotValidException(giftCertificateValidator.getErrorMessage());
     }
+    GiftCertificate giftCertificate = builder.buildFromDto(giftCertificateDto);
+    GiftCertificate existingGiftCertificate =
+        giftCertificateRepository
+            .getEntityBySpecification(new GetGiftCertificateByIdSpecification(id))
+            .orElseThrow(() -> new ServiceException(CERTIFICATE_NOT_EXISTS_IN_THE_DB));
+
+    giftCertificate =
+        builder.buildNewParameterGiftCertificate(existingGiftCertificate, giftCertificate);
+    GiftCertificate newGiftCertification =
+        giftCertificateRepository
+            .update(giftCertificate)
+            .orElseThrow(() -> new ServiceException(CERTIFICATE_NOT_EXISTS_IN_THE_DB));
+
+    Set<Tag> tags = giftCertificateDto.getTags();
+    tags = saveTags(tags, newGiftCertification.getId());
+
+    List<Tag> existingTag =
+        tagRepository.getEntityListBySpecification(
+            new GetAllTagsByGiftCertificatesIdSpecification(id));
+    tags.addAll(existingTag);
+
+    giftCertificateDto = new GiftCertificateDto(newGiftCertification, tags);
+    return Optional.of(giftCertificateDto);
   }
 
   @Override

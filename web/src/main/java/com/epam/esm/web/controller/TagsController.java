@@ -52,7 +52,11 @@ public class TagsController {
     Optional<TagDto> optionalTag = tagService.save(tagDto);
     TagDto savedTagDto =
         optionalTag.orElseThrow(
-            () -> new TagAlreadyExistsException("The Tag already exists in the DB"));
+            () ->
+                new TagAlreadyExistsException(
+                    "The tag with this name ("
+                        + tagDto.getName()
+                        + ") is already in the database"));
     Long id = savedTagDto.getId();
     String url = request.getRequestURL().toString();
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);

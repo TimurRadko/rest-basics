@@ -2,7 +2,7 @@ package com.epam.esm.web.exception.handler;
 
 class SingleExceptionResponse {
   private String errorMessage;
-  private Integer errorCode;
+  private int errorCode;
 
   SingleExceptionResponse() {}
 
@@ -14,11 +14,11 @@ class SingleExceptionResponse {
     this.errorMessage = errorMessage;
   }
 
-  public Integer getErrorCode() {
+  public int getErrorCode() {
     return errorCode;
   }
 
-  void setErrorCode(Integer errorCode) {
+  void setErrorCode(int errorCode) {
     this.errorCode = errorCode;
   }
 }
