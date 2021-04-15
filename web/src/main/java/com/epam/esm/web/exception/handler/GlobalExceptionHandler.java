@@ -25,55 +25,58 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   private static final int ERROR_40001 = 40001;
 
   @ExceptionHandler
-  public ResponseEntity<ExceptionResponse> handleException(EntityNotFoundException exception) {
-    ExceptionResponse data = new ExceptionResponse();
-    data.setMessage(exception.getMessage());
-    data.setErrorCode(ERROR_40401);
-    return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
+  public ResponseEntity<SingleExceptionResponse> handleException(
+      EntityNotFoundException exception) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(ERROR_40401);
+    return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler
-  public ResponseEntity<ExceptionResponse> handleException(TagAlreadyExistsException exception) {
-    ExceptionResponse data = new ExceptionResponse();
-    data.setMessage(exception.getMessage());
-    data.setErrorCode(ERROR_40901);
-    return new ResponseEntity<>(data, HttpStatus.CONFLICT);
+  public ResponseEntity<SingleExceptionResponse> handleException(
+      TagAlreadyExistsException exception) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(ERROR_40901);
+    return new ResponseEntity<>(response, HttpStatus.CONFLICT);
   }
 
   @ExceptionHandler
-  public ResponseEntity<ExceptionResponse> handleException(DeletingTagException exception) {
-    ExceptionResponse data = new ExceptionResponse();
-    data.setMessage(exception.getMessage());
-    data.setErrorCode(ERROR_40001);
-    return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+  public ResponseEntity<SingleExceptionResponse> handleException(DeletingTagException exception) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(ERROR_40001);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler
-  public ResponseEntity<List<ExceptionResponse>> handleException(
+  public ResponseEntity<MultipleExceptionResponse> handleException(
       EntityNotValidException exception) {
-    List<ExceptionResponse> exceptionList = new ArrayList<>();
-    Arrays.asList(exception.getMessage().split("\n"))
-        .forEach((ex) -> exceptionList.add(new ExceptionResponse(ex, ERROR_40001)));
-    return new ResponseEntity<>(exceptionList, HttpStatus.BAD_REQUEST);
+    MultipleExceptionResponse response = new MultipleExceptionResponse();
+    List<String> exceptionList = new ArrayList<>(Arrays.asList(exception.getMessage().split("\n")));
+    response.setErrorMessages(exceptionList);
+    response.setErrorCode(ERROR_40001);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
   @Override
   protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
-      HttpMediaTypeNotSupportedException ex,
+      HttpMediaTypeNotSupportedException exception,
       HttpHeaders headers,
       HttpStatus status,
       WebRequest request) {
-    ExceptionResponse data = new ExceptionResponse();
-    data.setMessage(ex.getMessage());
-    data.setErrorCode(ERROR_41501);
-    return new ResponseEntity<>(data, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(ERROR_41501);
+    return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
   }
 
   @ExceptionHandler
-  public ResponseEntity<ExceptionResponse> handleException(Exception exception) {
-    ExceptionResponse data = new ExceptionResponse();
-    data.setMessage(exception.getMessage());
-    data.setErrorCode(ERROR_40001);
-    return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+  public ResponseEntity<SingleExceptionResponse> handleException(Exception exception) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(ERROR_40001);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 }

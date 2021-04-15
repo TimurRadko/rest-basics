@@ -13,9 +13,9 @@ class TagValidatorTest {
   private static final String EXPECTED_NULL_TAG_MESSAGE =
       "To create a Tag you must send the Tag Entity";
   private static final String EXPECTED_NULL_OR_ZERO_LENGTH_NAME_TAG_MESSAGE =
-      "To create a Tag the " + "name is required";
+      "The name is required";
   private static final String EXPECTED_MIN_OR_MAX_TAG_MESSAGE =
-      "To create a Tag, the name must be " + "between 3 and 50 characters long";
+      "The name must be between 3 and 50 characters long";
 
   @BeforeEach
   void setUp() {
