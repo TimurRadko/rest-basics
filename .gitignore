@@ -5,7 +5,8 @@
 build
 /.idea/
 /gradle/
-/settings.gradle
 /gradlew.bat
 /gradlew
 /.gitattributes
+/persistence/out/
+/dao/out/

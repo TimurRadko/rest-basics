@@ -1,16 +1,36 @@
-plugins {
-    id 'java'
+allprojects {
+    group 'com.epam.esm'
+    version '1.0-SNAPSHOT'
+    repositories {
+        mavenCentral()
+    }
 }
 
-group 'com.epam.esm'
-version '1.0-SNAPSHOT'
+subprojects {
+    apply plugin: 'java-library'
 
-sourceCompatibility = 1.8
+    compileJava {
+        sourceCompatibility = '11'
+        targetCompatibility = '11'
+    }
 
-repositories {
-    mavenCentral()
-}
+    dependencies {
+        implementation 'org.springframework:spring-context:5.2.13.RELEASE'
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+        implementation 'org.springframework:spring-beans:5.2.13.RELEASE'
+
+        implementation 'org.springframework:spring-core:5.2.13.RELEASE'
+
+        implementation 'org.springframework:spring-orm:5.2.13.RELEASE'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+        testImplementation 'org.mockito:mockito-junit-jupiter:3.8.0'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 }

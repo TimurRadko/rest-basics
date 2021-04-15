@@ -1,0 +1,15 @@
+dependencies {
+    implementation 'com.zaxxer:HikariCP:4.0.3'
+
+    implementation 'org.springframework:spring-jdbc:5.2.13.RELEASE'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.2'
+
+    implementation 'org.postgresql:postgresql:42.2.19'
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.1'
+
+    testRuntimeOnly 'com.h2database:h2:1.4.199'
+
+    implementation 'org.springframework:spring-test:5.2.11.RELEASE'
+}

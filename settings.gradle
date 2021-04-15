@@ -1,0 +1,4 @@
+rootProject.name = 'rest-basics'
+include 'dao'
+include 'web'
+include 'service'

@@ -1,0 +1,51 @@
+package com.epam.esm.service.validator;
+
+import com.epam.esm.service.dto.GiftCertificateDto;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+
+@Component
+public class GiftCertificateValidator extends AbstractValidator<GiftCertificateDto> {
+  private static final double MIN_PRICE = 0.0d;
+  private static final double MAX_PRICE = 5000d;
+  private static final int MAX_DURATION = 365;
+
+  @Override
+  public boolean isValid(GiftCertificateDto giftCertificateDto) {
+    setIsReturnValidTrue();
+    eraseErrorMessages();
+
+    if (giftCertificateDto == null) {
+      addErrorMessage("To create a Gift Certificate you must send the GiftCertificate Entity");
+      return false;
+    }
+    checkName(giftCertificateDto.getName());
+    checkPrice(giftCertificateDto);
+    checkDuration(giftCertificateDto);
+    return isResultValid();
+  }
+
+  private void checkDuration(GiftCertificateDto giftCertificateDto) {
+    Integer duration = giftCertificateDto.getDuration();
+    if (duration == null) {
+      addErrorMessage("The duration is required");
+      setIsResultValidFalse();
+    } else if (duration < 0 || duration > MAX_DURATION) {
+      addErrorMessage("The duration must be more than 0 and less than 365");
+      setIsResultValidFalse();
+    }
+  }
+
+  private void checkPrice(GiftCertificateDto giftCertificateDto) {
+    BigDecimal price = giftCertificateDto.getPrice();
+    if (price == null) {
+      addErrorMessage("The price is required");
+      setIsResultValidFalse();
+    } else if ((price.compareTo(BigDecimal.valueOf(MIN_PRICE)) <= 0
+        || price.compareTo(BigDecimal.valueOf(MAX_PRICE)) > 0)) {
+      addErrorMessage("The price must be more than 0.0 and less than 5000.0");
+      setIsResultValidFalse();
+    }
+  }
+}

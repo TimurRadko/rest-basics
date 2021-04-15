@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <property name="File">
+            %d{dd.MM.yyyy HH:mm:ss} [%t] %-5level %logger{5} - %msg%n
+        </property>
+        <property name="Console">
+            %d{HH:mm:ss.SSS} [%t] %-5level %logger{5} - %msg%n
+        </property>
+    </Properties>
+
+    <Appenders>
+        <File Name="TxtFile" filename="logs\log4j2.log" bufferedIO="true">
+            <PatternLayout pattern="${File}"/>
+        </File>
+        <Console name="InConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="${Console}"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <Appender-ref ref="TxtFile" level="debug"/>
+            <Appender-ref ref="InConsole" level="debug"/>
+        </Root>
+    </Loggers>
+</Configuration>
