@@ -14,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @ControllerAdvice
@@ -51,10 +52,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   public ResponseEntity<List<ExceptionResponse>> handleException(
       EntityNotValidException exception) {
     List<ExceptionResponse> exceptionList = new ArrayList<>();
-    String[] exceptions = exception.getMessage().split("\n");
-    for (String ex : exceptions) {
-      exceptionList.add(new ExceptionResponse(ex, ERROR_40401));
-    }
+    Arrays.asList(exception.getMessage().split("\n"))
+        .forEach((ex) -> exceptionList.add(new ExceptionResponse(ex, ERROR_40401)));
     return new ResponseEntity<>(exceptionList, HttpStatus.BAD_REQUEST);
   }
 
