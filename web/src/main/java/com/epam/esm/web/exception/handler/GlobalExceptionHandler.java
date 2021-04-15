@@ -53,7 +53,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       EntityNotValidException exception) {
     List<ExceptionResponse> exceptionList = new ArrayList<>();
     Arrays.asList(exception.getMessage().split("\n"))
-        .forEach((ex) -> exceptionList.add(new ExceptionResponse(ex, ERROR_40401)));
+        .forEach((ex) -> exceptionList.add(new ExceptionResponse(ex, ERROR_40001)));
     return new ResponseEntity<>(exceptionList, HttpStatus.BAD_REQUEST);
   }
 
