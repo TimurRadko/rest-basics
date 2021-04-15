@@ -40,16 +40,16 @@ class GiftCertificateValidatorTest {
       "To create " + "a Gift Certificate the duration must be more than 0 and less than 365";
   private static final String INCORRECT_LENGTH_AND_NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE =
       "To create a Gift certificate, "
-          + "the name must be between 3 and 50 characters long. To create a Gift "
+          + "the name must be between 3 and 50 characters long\nTo create a Gift "
           + "Certificate the price must be more than 0.0 and less than 5000.0";
   private static final String INCORRECT_LENGTH_AND_NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE =
       "To create a Gift certificate, "
-          + "the name must be between 3 and 50 characters long. To create "
+          + "the name must be between 3 and 50 characters long\nTo create "
           + "a Gift Certificate the duration must be more than 0 and less than 365";
   private static final String INCORRECT_ALL_DATA_GIFT_CERTIFICATE_MESSAGE =
       "To create a Gift certificate, "
-          + "the name must be between 3 and 50 characters long. To create a Gift "
-          + "Certificate the price must be more than 0.0 and less than 5000.0. To create "
+          + "the name must be between 3 and 50 characters long\nTo create a Gift "
+          + "Certificate the price must be more than 0.0 and less than 5000.0\nTo create "
           + "a Gift Certificate the duration must be more than 0 and less than 365";
 
   @BeforeEach

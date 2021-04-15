@@ -16,7 +16,7 @@ public class GiftCertificateDto {
   private String name;
   private String description;
   private BigDecimal price;
-  private int duration;
+  private Integer duration;
 
   @JsonSerialize(using = LocalDateSerializer.class)
   @JsonDeserialize(using = LocalDateDeserializer.class)
@@ -92,11 +92,11 @@ public class GiftCertificateDto {
     this.price = price;
   }
 
-  public int getDuration() {
+  public Integer getDuration() {
     return duration;
   }
 
-  public void setDuration(int duration) {
+  public void setDuration(Integer duration) {
     this.duration = duration;
   }
 
@@ -135,9 +135,6 @@ public class GiftCertificateDto {
 
     GiftCertificateDto that = (GiftCertificateDto) o;
 
-    if (getDuration() != that.getDuration()) {
-      return false;
-    }
     if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) {
       return false;
     }
@@ -150,6 +147,11 @@ public class GiftCertificateDto {
       return false;
     }
     if (getPrice() != null ? !getPrice().equals(that.getPrice()) : that.getPrice() != null) {
+      return false;
+    }
+    if (getDuration() != null
+        ? !getDuration().equals(that.getDuration())
+        : that.getDuration() != null) {
       return false;
     }
     if (getCreateDate() != null
@@ -171,7 +173,7 @@ public class GiftCertificateDto {
     result = 31 * result + (getName() != null ? getName().hashCode() : 0);
     result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
     result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);
-    result = 31 * result + getDuration();
+    result = 31 * result + (getDuration() != null ? getDuration().hashCode() : 0);
     result = 31 * result + (getCreateDate() != null ? getCreateDate().hashCode() : 0);
     result = 31 * result + (getLastUpdateDate() != null ? getLastUpdateDate().hashCode() : 0);
     result = 31 * result + (getTags() != null ? getTags().hashCode() : 0);

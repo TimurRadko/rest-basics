@@ -23,6 +23,9 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
   private static final String INSERT =
       "INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id) VALUES (?,?);";
 
+  private static final String DELETE_TAG_FROM_GIFT_CERTIFICATES =
+      "DELETE FROM gift_certificates_tags WHERE tag_id = ?;";
+
   @Autowired
   public GiftCertificateTagRepositoryImpl(JdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
@@ -67,5 +70,10 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
     }
     giftCertificateTag.setId((Long) keyHolder.getKeys().get("id"));
     return Optional.of(giftCertificateTag);
+  }
+
+  @Override
+  public int delete(long id) {
+    return jdbcTemplate.update(DELETE_TAG_FROM_GIFT_CERTIFICATES, id);
   }
 }

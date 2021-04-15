@@ -1,15 +1,20 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dao.entity.GiftCertificateTag;
 import com.epam.esm.dao.entity.Tag;
+import com.epam.esm.dao.repository.GiftCertificateTagRepository;
 import com.epam.esm.dao.repository.TagRepository;
+import com.epam.esm.dao.specification.gifttag.GetGiftCertificateTagByTagIdSpecification;
 import com.epam.esm.dao.specification.tag.GetAllTagsSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.builder.TagBuilder;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.exception.DeletingTagException;
+import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
-import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.exception.TagAlreadyExistsException;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,13 +27,18 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
   private final TagRepository tagRepository;
   private final TagValidator tagValidator;
+  private final GiftCertificateTagRepository giftCertificateTagRepository;
   private TagBuilder builder;
 
   @Autowired
   public TagServiceImpl(
-      TagRepository tagRepository, TagValidator tagValidator, TagBuilder builder) {
+      TagRepository tagRepository,
+      TagValidator tagValidator,
+      GiftCertificateTagRepository giftCertificateTagRepository,
+      TagBuilder builder) {
     this.tagRepository = tagRepository;
     this.tagValidator = tagValidator;
+    this.giftCertificateTagRepository = giftCertificateTagRepository;
     this.builder = builder;
   }
 
@@ -58,14 +68,24 @@ public class TagServiceImpl implements TagService {
       Optional<Tag> optionalSavedTag = tagRepository.save(tag);
       return optionalSavedTag.map(TagDto::new);
     } else {
-      return Optional.empty();
+      throw new TagAlreadyExistsException(
+          "The tag with this name (" + tagDto.getName() + ") is already in the database");
     }
   }
 
   @Override
   public int delete(long id) {
-    getById(id)
-        .orElseThrow(() -> new ServiceException("Requested resource not found (id = " + id + ")"));
+    tagRepository
+        .getEntityBySpecification(new GetTagByIdSpecification(id))
+        .orElseThrow(
+            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+    List<GiftCertificateTag> existingGiftCertificateTags =
+        giftCertificateTagRepository.getEntityListBySpecification(
+            new GetGiftCertificateTagByTagIdSpecification(id));
+    if (!existingGiftCertificateTags.isEmpty()) {
+      throw new DeletingTagException(
+          "The tag with id = " + id + " attached to the Gift Certificate. Deletion denied.");
+    }
     return tagRepository.delete(id);
   }
 }

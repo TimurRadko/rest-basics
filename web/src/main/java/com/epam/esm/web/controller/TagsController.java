@@ -2,9 +2,8 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.web.exception.EntityNotFoundException;
-import com.epam.esm.web.exception.TagAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,9 +39,10 @@ public class TagsController {
 
   @GetMapping("/{id}")
   public TagDto get(@PathVariable Long id) throws ServiceException {
-    Optional<TagDto> optionalTagDto = tagService.getById(id);
-    return optionalTagDto.orElseThrow(
-        () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+    return tagService
+        .getById(id)
+        .orElseThrow(
+            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
   }
 
   @PostMapping()
@@ -51,14 +51,11 @@ public class TagsController {
       @RequestBody TagDto tagDto, HttpServletRequest request, HttpServletResponse response) {
     Optional<TagDto> optionalTag = tagService.save(tagDto);
     TagDto savedTagDto =
-        optionalTag.orElseThrow(
-            () ->
-                new TagAlreadyExistsException(
-                    "The tag with this name ("
-                        + tagDto.getName()
-                        + ") is already in the database"));
+        optionalTag.orElseThrow(() -> new EntityNotFoundException("The Tag didn't add to DB"));
+
     Long id = savedTagDto.getId();
     String url = request.getRequestURL().toString();
+
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
     return savedTagDto;
   }

@@ -83,3 +83,7 @@ FROM tags;
 SELECT id, gift_certificate_id, tag_id
 FROM gift_certificates_tags
 WHERE gift_certificate_id=2;
+
+SELECT *
+FROM gift_certificates_tags
+WHERE tag_id = 2;

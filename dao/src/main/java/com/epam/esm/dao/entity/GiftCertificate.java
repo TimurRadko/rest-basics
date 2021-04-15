@@ -12,7 +12,7 @@ public class GiftCertificate extends AbstractEntity {
   private String name;
   private String description;
   private BigDecimal price;
-  private int duration;
+  private Integer duration;
 
   @JsonSerialize(using = LocalDateSerializer.class)
   @JsonDeserialize(using = LocalDateDeserializer.class)
@@ -65,11 +65,11 @@ public class GiftCertificate extends AbstractEntity {
     this.price = price;
   }
 
-  public int getDuration() {
+  public Integer getDuration() {
     return duration;
   }
 
-  public void setDuration(int duration) {
+  public void setDuration(Integer duration) {
     this.duration = duration;
   }
 
@@ -103,9 +103,6 @@ public class GiftCertificate extends AbstractEntity {
 
     GiftCertificate that = (GiftCertificate) o;
 
-    if (getDuration() != that.getDuration()) {
-      return false;
-    }
     if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) {
       return false;
     }
@@ -115,6 +112,11 @@ public class GiftCertificate extends AbstractEntity {
       return false;
     }
     if (getPrice() != null ? !getPrice().equals(that.getPrice()) : that.getPrice() != null) {
+      return false;
+    }
+    if (getDuration() != null
+        ? !getDuration().equals(that.getDuration())
+        : that.getDuration() != null) {
       return false;
     }
     if (getCreateDate() != null
@@ -133,7 +135,7 @@ public class GiftCertificate extends AbstractEntity {
     result = 31 * result + (getName() != null ? getName().hashCode() : 0);
     result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
     result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);
-    result = 31 * result + getDuration();
+    result = 31 * result + (getDuration() != null ? getDuration().hashCode() : 0);
     result = 31 * result + (getCreateDate() != null ? getCreateDate().hashCode() : 0);
     result = 31 * result + (getLastUpdateDate() != null ? getLastUpdateDate().hashCode() : 0);
     return result;

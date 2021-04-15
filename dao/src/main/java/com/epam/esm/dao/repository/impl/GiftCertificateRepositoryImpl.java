@@ -91,12 +91,6 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   }
 
   @Override
-  public int delete(long id) {
-    jdbcTemplate.update(DELETE_TAGS_FROM_GIFT_CERTIFICATE, id);
-    return jdbcTemplate.update(DELETE_GIFT_CERTIFICATE_BY_ID, id);
-  }
-
-  @Override
   public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
     jdbcTemplate.update(
         UPDATE,
@@ -107,5 +101,11 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         Timestamp.valueOf(LocalDateTime.now()),
         giftCertificate.getId());
     return Optional.of(giftCertificate);
+  }
+
+  @Override
+  public int delete(long id) {
+    jdbcTemplate.update(DELETE_TAGS_FROM_GIFT_CERTIFICATE, id);
+    return jdbcTemplate.update(DELETE_GIFT_CERTIFICATE_BY_ID, id);
   }
 }

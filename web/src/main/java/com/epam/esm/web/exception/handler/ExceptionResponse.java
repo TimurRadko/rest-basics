@@ -1,10 +1,15 @@
 package com.epam.esm.web.exception.handler;
 
-class SingleExceptionResponse {
+class ExceptionResponse {
   private String errorMessage;
   private int errorCode;
 
-  SingleExceptionResponse() {}
+  ExceptionResponse() {}
+
+  ExceptionResponse(String errorMessage, int errorCode) {
+    this.errorMessage = errorMessage;
+    this.errorCode = errorCode;
+  }
 
   public String getErrorMessage() {
     return errorMessage;

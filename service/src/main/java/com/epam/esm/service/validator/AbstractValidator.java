@@ -23,7 +23,7 @@ public abstract class AbstractValidator<T> {
   }
 
   public String getErrorMessage() {
-    return String.join(". ", errorMessages);
+    return String.join("\n", errorMessages);
   }
 
   void addErrorMessage(String errorMessage) {

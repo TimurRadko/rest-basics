@@ -2,9 +2,7 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
-import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.web.exception.EntityNotFoundException;
-import com.epam.esm.web.exception.InvalidRequestBodyException;
+import com.epam.esm.service.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,9 +43,10 @@ public class GiftCertificateController {
 
   @GetMapping("/{id}")
   public GiftCertificateDto get(@PathVariable Long id) {
-    Optional<GiftCertificateDto> optionalGiftCertificateDto = giftCertificateService.getById(id);
-    return optionalGiftCertificateDto.orElseThrow(
-        () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+    return giftCertificateService
+        .getById(id)
+        .orElseThrow(
+            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
   }
 
   @PostMapping()
@@ -56,16 +55,19 @@ public class GiftCertificateController {
       @RequestBody GiftCertificateDto giftCertificateDto,
       HttpServletRequest request,
       HttpServletResponse response) {
+
     Optional<GiftCertificateDto> optionalGiftCertificateDto =
         giftCertificateService.save(giftCertificateDto);
 
     GiftCertificateDto savedGiftCertificateDto =
         optionalGiftCertificateDto.orElseThrow(
-            () -> new EntityNotFoundException("Gift certificate didn't add to DB"));
+            () -> new EntityNotFoundException("The Gift certificate didn't add to DB"));
+
     Long id = savedGiftCertificateDto.getId();
     String url = request.getRequestURL().toString();
+
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
-    return giftCertificateDto;
+    return savedGiftCertificateDto;
   }
 
   @PutMapping("/{id}")

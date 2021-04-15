@@ -16,13 +16,4 @@ public interface GiftCertificateRepository extends Repository<GiftCertificate> {
    * @return Optional<T> - container that is contained Entity (typed parameter)
    */
   Optional<GiftCertificate> update(GiftCertificate giftCertificate);
-
-  /**
-   * * Delete GiftCertificate with the specified id
-   *
-   * @param id - passed into the method id parameter that is contained in one of all tables in the
-   *     DB
-   * @return int - return value more than 0, when GiftCertificate was deleted
-   */
-  int delete(long id);
 }

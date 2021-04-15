@@ -10,6 +10,7 @@ import com.epam.esm.dao.specification.gift.GetGiftCertificatesByDescriptionPartS
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNamePartSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByTagNameSpecification;
 import com.epam.esm.dao.specification.gifttag.GetGiftCertificateTagByGiftCertificateIdSpecification;
+import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.dao.specification.tag.GetAllTagsByGiftCertificatesIdSpecification;
 import com.epam.esm.service.dto.GiftCertificateDto;
@@ -83,8 +84,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   private Tag saveTagIfNotExist(Tag tag, long giftCertificateId) {
-    Optional<Tag> optionalExistingTag =
-        tagRepository.getEntityBySpecification(new GetTagByNameSpecification(tag.getName()));
+    Optional<Tag> optionalExistingTag;
+    if (tag.getId() == null) {
+      optionalExistingTag =
+          tagRepository.getEntityBySpecification(new GetTagByNameSpecification(tag.getName()));
+    } else {
+      optionalExistingTag =
+          tagRepository.getEntityBySpecification(new GetTagByIdSpecification(tag.getId()));
+    }
     if (optionalExistingTag.isEmpty()) {
       Tag createdTag =
           tagRepository.save(tag).orElseThrow(() -> new ServiceException("The Tag wasn't saved"));
@@ -143,9 +150,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
               new GetGiftCertificatesByNamePartSpecification(name, sort));
     }
     if (description != null && description.trim().length() != 0) {
-      giftCertificates =
+      List<GiftCertificate> partDescriptionGiftCertificates =
           giftCertificateRepository.getEntityListBySpecification(
               new GetGiftCertificatesByDescriptionPartSpecification(description, sort));
+      giftCertificates =
+          giftCertificates.stream()
+              .filter((partDescriptionGiftCertificates::contains))
+              .collect(Collectors.toList());
     }
     return giftCertificates.stream()
         .map((this::createGiftCertificateDto))
@@ -213,13 +224,22 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     Set<Tag> tags = giftCertificateDto.getTags();
     tags = saveTags(tags, newGiftCertification.getId());
 
-    List<Tag> existingTag =
-        tagRepository.getEntityListBySpecification(
-            new GetAllTagsByGiftCertificatesIdSpecification(id));
-    tags.addAll(existingTag);
+    deletingNonTransmittedTags(id, tags);
 
     giftCertificateDto = new GiftCertificateDto(newGiftCertification, tags);
     return Optional.of(giftCertificateDto);
+  }
+
+  private void deletingNonTransmittedTags(long id, Set<Tag> tags) {
+    List<Tag> existingTags =
+        tagRepository.getEntityListBySpecification(
+            new GetAllTagsByGiftCertificatesIdSpecification(id));
+
+    for (Tag existingTag : existingTags) {
+      if (!tags.contains(existingTag)) {
+        giftCertificateTagRepository.delete(existingTag.getId());
+      }
+    }
   }
 
   @Override

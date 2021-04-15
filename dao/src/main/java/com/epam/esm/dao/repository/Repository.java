@@ -37,4 +37,14 @@ public interface Repository<T extends AbstractEntity> {
    * @return Optional<T> - container that is contained Entity (typed parameter)
    */
   Optional<T> getEntityBySpecification(Specification specification);
+
+  /**
+   * * his method describes a general delete operation for all Entities with the specified id,
+   * located in the DB
+   *
+   * @param id id - passed into the method id parameter that is contained in one of all tables in
+   *     the DB
+   * @return int - return value more than 0, when Tag was deleted
+   */
+  int delete(long id);
 }
