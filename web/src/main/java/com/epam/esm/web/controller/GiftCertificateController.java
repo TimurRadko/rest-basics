@@ -2,12 +2,14 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
+import com.epam.esm.service.dto.GiftCertificatePriceDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/certificates")
+@RequestMapping("/api/v2/certificates")
 public class GiftCertificateController {
   private GiftCertificateService giftCertificateService;
 
@@ -84,5 +86,17 @@ public class GiftCertificateController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable long id) {
     giftCertificateService.delete(id);
+  }
+
+  @PatchMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public GiftCertificateDto updatePrice(
+      @PathVariable long id, @RequestBody GiftCertificatePriceDto giftCertificatePriceDto) {
+    return giftCertificateService
+        .updatePrice(id, giftCertificatePriceDto)
+        .orElseThrow(
+            () ->
+                new EntityNotFoundException(
+                    "The price of the Gift certificate with id=" + id + " didn't update"));
   }
 }

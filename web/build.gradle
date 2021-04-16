@@ -1,16 +1,4 @@
-plugins {
-    id 'war'
-}
-
 dependencies {
-    implementation 'org.springframework:spring-webmvc:5.2.13.RELEASE'
-
-    implementation 'org.springframework:spring-web:5.2.13.RELEASE'
-
-    implementation 'javax.servlet:javax.servlet-api:4.0.1'
-
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.2'
-
     implementation project(":service")
 
     implementation project(":dao")

@@ -7,8 +7,7 @@ import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.service.builder.TagBuilder;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DeletingTagException;
-import com.epam.esm.service.exception.EntityNotValidException;
-import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.TagAlreadyExistsException;
 import com.epam.esm.service.validator.TagValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -106,7 +105,7 @@ class TagServiceImplTest {
     // when
     when(tagValidator.isValid(any())).thenReturn(false);
     // then
-    assertThrows(EntityNotValidException.class, () -> tagService.save(firstTestTagDto));
+    assertThrows(EntityNotValidMultipleException.class, () -> tagService.save(firstTestTagDto));
   }
 
   @Test

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/tags")
+@RequestMapping("/api/v2/tags")
 public class TagsController {
   private TagService tagService;
 

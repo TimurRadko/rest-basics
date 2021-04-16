@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 
 @Component
 public class GiftCertificateValidator extends AbstractValidator<GiftCertificateDto> {
+  private static final int MIN_NAME_LENGTH = 3;
+  private static final int MAX_NAME_LENGTH = 50;
   private static final double MIN_PRICE = 0.0d;
   private static final double MAX_PRICE = 5000d;
   private static final int MAX_DURATION = 365;
@@ -21,9 +23,30 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
       return false;
     }
     checkName(giftCertificateDto.getName());
-    checkPrice(giftCertificateDto);
+    checkPrice(giftCertificateDto.getPrice());
     checkDuration(giftCertificateDto);
     return isResultValid();
+  }
+
+  private void checkName(String name) {
+    if (name == null || name.trim().length() == 0) {
+      addErrorMessage("The name is required");
+      setIsResultValidFalse();
+    } else if (name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH) {
+      addErrorMessage("The name must be between 3 and 50 characters long");
+      setIsResultValidFalse();
+    }
+  }
+
+  private void checkPrice(BigDecimal price) {
+    if (price == null) {
+      addErrorMessage("The price is required");
+      setIsResultValidFalse();
+    } else if ((price.compareTo(BigDecimal.valueOf(MIN_PRICE)) <= 0
+        || price.compareTo(BigDecimal.valueOf(MAX_PRICE)) > 0)) {
+      addErrorMessage("The price must be more than 0.0 and less than 5000.0");
+      setIsResultValidFalse();
+    }
   }
 
   private void checkDuration(GiftCertificateDto giftCertificateDto) {
@@ -33,18 +56,6 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
       setIsResultValidFalse();
     } else if (duration < 0 || duration > MAX_DURATION) {
       addErrorMessage("The duration must be more than 0 and less than 365");
-      setIsResultValidFalse();
-    }
-  }
-
-  private void checkPrice(GiftCertificateDto giftCertificateDto) {
-    BigDecimal price = giftCertificateDto.getPrice();
-    if (price == null) {
-      addErrorMessage("The price is required");
-      setIsResultValidFalse();
-    } else if ((price.compareTo(BigDecimal.valueOf(MIN_PRICE)) <= 0
-        || price.compareTo(BigDecimal.valueOf(MAX_PRICE)) > 0)) {
-      addErrorMessage("The price must be more than 0.0 and less than 5000.0");
       setIsResultValidFalse();
     }
   }

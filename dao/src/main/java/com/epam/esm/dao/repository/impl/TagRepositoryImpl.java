@@ -22,7 +22,7 @@ public class TagRepositoryImpl implements TagRepository {
 
   private static final String INSERT = "INSERT INTO tags (name) VALUES (?);";
 
-  private static final String DELETE_TAG_BY_ID = "DELETE FROM tags WHERE id = ?;";
+  private static final String DELETE_BY_ID = "DELETE FROM tags WHERE id = ?;";
 
   @Autowired
   public TagRepositoryImpl(JdbcTemplate jdbcTemplate) {
@@ -69,6 +69,6 @@ public class TagRepositoryImpl implements TagRepository {
 
   @Override
   public int delete(long id) {
-    return jdbcTemplate.update(DELETE_TAG_BY_ID, id);
+    return jdbcTemplate.update(DELETE_BY_ID, id);
   }
 }

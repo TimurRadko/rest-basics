@@ -6,8 +6,8 @@ CREATE TABLE gift_certificates
     description      varchar(255),
     price            double precision,
     duration         integer,
-    create_date      timestamp         NOT NULL,
-    last_update_date timestamp        NOT NULL,
+    create_date      timestamp    NOT NULL,
+    last_update_date timestamp    NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -44,3 +44,17 @@ CREATE TABLE gift_certificates_tags
     UNIQUE (gift_certificate_id, tag_id)
 );
 ------------------------------------------------------------
+
+
+-------------CREATE TABLE USERS-----------------------------
+CREATE TABLE users
+(
+    id       bigserial    NOT NULL,
+    login    varchar(255) NOT NULL,
+    password varchar(255) NOT NULL,
+    account  double precision
+);
+
+ALTER TABLE users
+    OWNER to postgres;
+-----------------------------------------------------------

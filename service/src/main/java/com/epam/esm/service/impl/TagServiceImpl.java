@@ -13,7 +13,7 @@ import com.epam.esm.service.builder.TagBuilder;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DeletingTagException;
 import com.epam.esm.service.exception.EntityNotFoundException;
-import com.epam.esm.service.exception.EntityNotValidException;
+import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.TagAlreadyExistsException;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,21 +44,20 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public List<TagDto> getAll(String sort) {
-    List<Tag> tags = tagRepository.getEntityListBySpecification(new GetAllTagsSpecification(sort));
-    return tags.stream().map((TagDto::new)).collect(Collectors.toList());
+    return tagRepository.getEntityListBySpecification(new GetAllTagsSpecification(sort)).stream()
+        .map((TagDto::new))
+        .collect(Collectors.toList());
   }
 
   @Override
   public Optional<TagDto> getById(long id) {
-    Optional<Tag> optionalTag =
-        tagRepository.getEntityBySpecification(new GetTagByIdSpecification(id));
-    return optionalTag.map(TagDto::new);
+    return tagRepository.getEntityBySpecification(new GetTagByIdSpecification(id)).map(TagDto::new);
   }
 
   @Override
   public Optional<TagDto> save(TagDto tagDto) {
     if (!tagValidator.isValid(tagDto)) {
-      throw new EntityNotValidException(tagValidator.getErrorMessage());
+      throw new EntityNotValidMultipleException(tagValidator.getErrorMessage());
     }
     Tag tag = builder.buildFromDto(tagDto);
     String name = tag.getName();
