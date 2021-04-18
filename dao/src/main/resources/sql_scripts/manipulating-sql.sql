@@ -82,8 +82,24 @@ FROM tags;
 
 SELECT id, gift_certificate_id, tag_id
 FROM gift_certificates_tags
-WHERE gift_certificate_id=2;
+WHERE gift_certificate_id = 2;
 
 SELECT *
 FROM gift_certificates_tags
 WHERE tag_id = 2;
+
+SELECT *
+FROM orders;
+
+SELECT gift_certificates.id,
+       gift_certificates.name,
+       gift_certificates.description,
+       gift_certificates.price,
+       gift_certificates.duration,
+       gift_certificates.create_date,
+       gift_certificates.last_update_date
+FROM gift_certificates
+         JOIN orders_gift_certificates ogc
+              ON gift_certificates.id = ogc.gift_certificate_id
+WHERE ogc.order_id = 2;
+

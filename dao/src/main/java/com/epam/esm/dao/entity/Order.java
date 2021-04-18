@@ -1,5 +1,10 @@
 package com.epam.esm.dao.entity;
 
+import com.epam.esm.dao.serialization.LocalDateDeserializer;
+import com.epam.esm.dao.serialization.LocalDateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -7,17 +12,20 @@ public class Order extends AbstractEntity {
   private Long userId;
   private Long giftCertificateId;
   private BigDecimal cost;
-  private LocalDateTime createDate;
+
+  @JsonSerialize(using = LocalDateSerializer.class)
+  @JsonDeserialize(using = LocalDateDeserializer.class)
+  private LocalDateTime orderDate;
 
   public Order() {}
 
   public Order(
-      Long id, Long userId, Long giftCertificateId, BigDecimal cost, LocalDateTime createDate) {
+      Long id, Long userId, Long giftCertificateId, BigDecimal cost, LocalDateTime orderDate) {
     super(id);
     this.userId = userId;
     this.giftCertificateId = giftCertificateId;
     this.cost = cost;
-    this.createDate = createDate;
+    this.orderDate = orderDate;
   }
 
   public Long getUserId() {
@@ -44,12 +52,12 @@ public class Order extends AbstractEntity {
     this.cost = cost;
   }
 
-  public LocalDateTime getCreateDate() {
-    return createDate;
+  public LocalDateTime getOrderDate() {
+    return orderDate;
   }
 
-  public void setCreateDate(LocalDateTime createDate) {
-    this.createDate = createDate;
+  public void setOrderDate(LocalDateTime orderDate) {
+    this.orderDate = orderDate;
   }
 
   @Override
@@ -77,9 +85,9 @@ public class Order extends AbstractEntity {
     if (getCost() != null ? !getCost().equals(order.getCost()) : order.getCost() != null) {
       return false;
     }
-    return getCreateDate() != null
-        ? getCreateDate().equals(order.getCreateDate())
-        : order.getCreateDate() == null;
+    return getOrderDate() != null
+        ? getOrderDate().equals(order.getOrderDate())
+        : order.getOrderDate() == null;
   }
 
   @Override
@@ -88,7 +96,7 @@ public class Order extends AbstractEntity {
     result = 31 * result + (getUserId() != null ? getUserId().hashCode() : 0);
     result = 31 * result + (getGiftCertificateId() != null ? getGiftCertificateId().hashCode() : 0);
     result = 31 * result + (getCost() != null ? getCost().hashCode() : 0);
-    result = 31 * result + (getCreateDate() != null ? getCreateDate().hashCode() : 0);
+    result = 31 * result + (getOrderDate() != null ? getOrderDate().hashCode() : 0);
     return result;
   }
 
@@ -103,8 +111,8 @@ public class Order extends AbstractEntity {
         + giftCertificateId
         + ", cost="
         + cost
-        + ", createDate="
-        + createDate
+        + ", orderDate="
+        + orderDate
         + '}';
   }
 }

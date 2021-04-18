@@ -12,7 +12,7 @@ public interface GiftCertificateService extends Service<GiftCertificateDto> {
    * * This method describes a general getting a list of all entities by parameters entity. This
    * operation for all Entities, from the persistence layer
    *
-   * @param name - the parameter required to search for GiftCertificate in the name field of this *
+   * @param name - the parameter required to search for GiftCertificate in the name field of this
    *     object
    * @param description - the parameter required to search for GiftCertificate in the describe field
    *     * of this object

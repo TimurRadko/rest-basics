@@ -1,5 +1,10 @@
 package com.epam.esm.dao.entity;
 
+import com.epam.esm.dao.serialization.LocalDateDeserializer;
+import com.epam.esm.dao.serialization.LocalDateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -8,7 +13,13 @@ public class GiftCertificate extends AbstractEntity {
   private String description;
   private BigDecimal price;
   private Integer duration;
+
+  @JsonSerialize(using = LocalDateSerializer.class)
+  @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime createDate;
+
+  @JsonSerialize(using = LocalDateSerializer.class)
+  @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime lastUpdateDate;
 
   public GiftCertificate() {}
