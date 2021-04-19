@@ -12,7 +12,7 @@ public final class GetAllGiftCertificatesSpecification implements Specification 
           + "CASE WHEN ? ='name-asc' THEN name END ASC, "
           + "CASE WHEN ? ='name-desc' THEN name END DESC, "
           + "CASE WHEN ? ='create-date-asc' THEN create_date END ASC, "
-          + "CASE WHEN ? ='create-date-desc' THEN create_date END DESC, id ASC;";
+          + "CASE WHEN ? ='create-date-desc' THEN create_date END DESC, id ASC";
 
   public GetAllGiftCertificatesSpecification(String sort) {
     this.sort = sort;

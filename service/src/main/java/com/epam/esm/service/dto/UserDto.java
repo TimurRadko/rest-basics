@@ -10,22 +10,22 @@ public class UserDto {
   private Long id;
   private String login;
   private BigDecimal account;
-  private List<OrderDto> orderDtos;
+  private List<OrderDto> orders;
 
   public UserDto() {}
 
-  public UserDto(Long id, String login, BigDecimal account, List<OrderDto> orderDtos) {
+  public UserDto(Long id, String login, BigDecimal account, List<OrderDto> orders) {
     this.id = id;
     this.login = login;
     this.account = account;
-    this.orderDtos = orderDtos;
+    this.orders = orders;
   }
 
-  public UserDto(User user, List<OrderDto> orderDtos) {
+  public UserDto(User user, List<OrderDto> orders) {
     this.id = user.getId();
     this.login = user.getLogin();
     this.account = user.getAccount();
-    this.orderDtos = orderDtos;
+    this.orders = orders;
   }
 
   public Long getId() {
@@ -52,12 +52,12 @@ public class UserDto {
     this.account = account;
   }
 
-  public List<OrderDto> getOrderDtos() {
-    return Collections.unmodifiableList(orderDtos);
+  public List<OrderDto> getOrders() {
+    return Collections.unmodifiableList(orders);
   }
 
-  public void setOrderDtos(List<OrderDto> orderDtos) {
-    this.orderDtos = orderDtos;
+  public void setOrders(List<OrderDto> orders) {
+    this.orders = orders;
   }
 
   @Override
@@ -82,9 +82,9 @@ public class UserDto {
         : userDto.getAccount() != null) {
       return false;
     }
-    return getOrderDtos() != null
-        ? getOrderDtos().equals(userDto.getOrderDtos())
-        : userDto.getOrderDtos() == null;
+    return getOrders() != null
+        ? getOrders().equals(userDto.getOrders())
+        : userDto.getOrders() == null;
   }
 
   @Override
@@ -92,7 +92,7 @@ public class UserDto {
     int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getLogin() != null ? getLogin().hashCode() : 0);
     result = 31 * result + (getAccount() != null ? getAccount().hashCode() : 0);
-    result = 31 * result + (getOrderDtos() != null ? getOrderDtos().hashCode() : 0);
+    result = 31 * result + (getOrders() != null ? getOrders().hashCode() : 0);
     return result;
   }
 
@@ -107,7 +107,7 @@ public class UserDto {
         + ", account="
         + account
         + ", orderDtos="
-        + orderDtos
+        + orders
         + '}';
   }
 }

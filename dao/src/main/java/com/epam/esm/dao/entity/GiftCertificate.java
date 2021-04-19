@@ -5,19 +5,38 @@ import com.epam.esm.dao.serialization.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class GiftCertificate extends AbstractEntity {
+@Entity
+@Table(name = "gift_certificates")
+public class GiftCertificate implements TableEntity {
+  @Id
+  @Column(name = "id")
+  private Long id;
+
+  @Column(name = "name")
   private String name;
+
+  @Column(name = "description")
   private String description;
+
+  @Column(name = "price")
   private BigDecimal price;
+
+  @Column(name = "duration")
   private Integer duration;
 
+  @Column(name = "create_date")
   @JsonSerialize(using = LocalDateSerializer.class)
   @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime createDate;
 
+  @Column(name = "last_update_date")
   @JsonSerialize(using = LocalDateSerializer.class)
   @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime lastUpdateDate;
@@ -29,16 +48,26 @@ public class GiftCertificate extends AbstractEntity {
       String name,
       String description,
       BigDecimal price,
-      int duration,
+      Integer duration,
       LocalDateTime createDate,
       LocalDateTime lastUpdateDate) {
-    super(id);
+    this.id = id;
     this.name = name;
     this.description = description;
     this.price = price;
     this.duration = duration;
     this.createDate = createDate;
     this.lastUpdateDate = lastUpdateDate;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getName() {
@@ -97,12 +126,12 @@ public class GiftCertificate extends AbstractEntity {
     if (!(o instanceof GiftCertificate)) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
 
     GiftCertificate that = (GiftCertificate) o;
 
+    if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) {
+      return false;
+    }
     if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) {
       return false;
     }
@@ -121,9 +150,7 @@ public class GiftCertificate extends AbstractEntity {
     }
     if (getCreateDate() != null
         ? !getCreateDate().equals(that.getCreateDate())
-        : that.getCreateDate() != null) {
-      return false;
-    }
+        : that.getCreateDate() != null) return false;
     return getLastUpdateDate() != null
         ? getLastUpdateDate().equals(that.getLastUpdateDate())
         : that.getLastUpdateDate() == null;
@@ -131,7 +158,7 @@ public class GiftCertificate extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    int result = super.hashCode();
+    int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getName() != null ? getName().hashCode() : 0);
     result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
     result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);

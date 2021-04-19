@@ -5,27 +5,48 @@ import com.epam.esm.dao.serialization.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class Order extends AbstractEntity {
+@Entity
+@Table(name = "orders")
+public class Order implements TableEntity {
+  @Id
+  @Column(name = "id")
+  protected Long id;
+
+  @Column(name = "user_id")
   private Long userId;
-  private Long giftCertificateId;
+
+  @Column(name = "cost")
   private BigDecimal cost;
 
+  @Column(name = "order_date")
   @JsonSerialize(using = LocalDateSerializer.class)
   @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime orderDate;
 
   public Order() {}
 
-  public Order(
-      Long id, Long userId, Long giftCertificateId, BigDecimal cost, LocalDateTime orderDate) {
-    super(id);
+  public Order(Long id, Long userId, BigDecimal cost, LocalDateTime orderDate) {
+    this.id = id;
     this.userId = userId;
-    this.giftCertificateId = giftCertificateId;
     this.cost = cost;
     this.orderDate = orderDate;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public Long getUserId() {
@@ -34,14 +55,6 @@ public class Order extends AbstractEntity {
 
   public void setUserId(Long userId) {
     this.userId = userId;
-  }
-
-  public Long getGiftCertificateId() {
-    return giftCertificateId;
-  }
-
-  public void setGiftCertificateId(Long giftCertificateId) {
-    this.giftCertificateId = giftCertificateId;
   }
 
   public BigDecimal getCost() {
@@ -68,18 +81,13 @@ public class Order extends AbstractEntity {
     if (!(o instanceof Order)) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
 
     Order order = (Order) o;
 
-    if (getUserId() != null ? !getUserId().equals(order.getUserId()) : order.getUserId() != null) {
+    if (getId() != null ? !getId().equals(order.getId()) : order.getId() != null) {
       return false;
     }
-    if (getGiftCertificateId() != null
-        ? !getGiftCertificateId().equals(order.getGiftCertificateId())
-        : order.getGiftCertificateId() != null) {
+    if (getUserId() != null ? !getUserId().equals(order.getUserId()) : order.getUserId() != null) {
       return false;
     }
     if (getCost() != null ? !getCost().equals(order.getCost()) : order.getCost() != null) {
@@ -92,9 +100,8 @@ public class Order extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    int result = super.hashCode();
+    int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getUserId() != null ? getUserId().hashCode() : 0);
-    result = 31 * result + (getGiftCertificateId() != null ? getGiftCertificateId().hashCode() : 0);
     result = 31 * result + (getCost() != null ? getCost().hashCode() : 0);
     result = 31 * result + (getOrderDate() != null ? getOrderDate().hashCode() : 0);
     return result;
@@ -107,8 +114,6 @@ public class Order extends AbstractEntity {
         + id
         + ", userId="
         + userId
-        + ", giftCertificateId="
-        + giftCertificateId
         + ", cost="
         + cost
         + ", orderDate="

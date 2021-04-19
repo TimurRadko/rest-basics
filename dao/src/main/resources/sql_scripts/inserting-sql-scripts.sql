@@ -6,10 +6,10 @@ VALUES ('The first', 'The first certificate', 55.0, 14, '2021-03-25 00:00:00.084
 
 
 INSERT INTO tags(name)
-VALUES ('tag1'),
-       ('tag2'),
-       ('tag3'),
-       ('tag4');
+                VALUES ('tag1'),
+                       ('tag2'),
+                       ('tag3'),
+                       ('tag4');
 
 INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
 VALUES (1, 1),

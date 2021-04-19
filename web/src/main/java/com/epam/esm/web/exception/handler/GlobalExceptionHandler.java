@@ -86,13 +86,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
   }
 
-  @ExceptionHandler
-  public ResponseEntity<SingleExceptionResponse> handleException(Exception exception) {
-    SingleExceptionResponse response = new SingleExceptionResponse();
-    response.setErrorMessage(exception.getMessage());
-    response.setErrorCode(ERROR_40001);
-    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-  }
+//  @ExceptionHandler
+//  public ResponseEntity<SingleExceptionResponse> handleException(Exception exception) {
+//    SingleExceptionResponse response = new SingleExceptionResponse();
+//    response.setErrorMessage(exception.getMessage());
+//    response.setErrorCode(ERROR_40001);
+//    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//  }
 
   @Override
   protected ResponseEntity<Object> handleNoHandlerFoundException(

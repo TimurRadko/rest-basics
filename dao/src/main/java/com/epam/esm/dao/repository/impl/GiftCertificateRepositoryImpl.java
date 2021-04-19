@@ -4,108 +4,64 @@ import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class GiftCertificateRepositoryImpl implements GiftCertificateRepository {
-  private JdbcTemplate jdbcTemplate;
-
-  private static final String INSERT =
-      "INSERT INTO gift_certificates (name, description, price, duration, create_date, last_update_date)"
-          + " VALUES (?,?,?,?,?,?);";
-
-  private static final String UPDATE =
-      "UPDATE  gift_certificates SET (name, description, price, duration, last_update_date) "
-          + " = (?,?,?,?,?) WHERE id=?;";
-
-  private static final String DELETE_TAGS_FROM_GIFT_CERTIFICATE =
-      "DELETE FROM gift_certificates_tags WHERE gift_certificate_id=?;";
-
-  private static final String DELETE_GIFT_CERTIFICATE_BY_ID =
-      "DELETE FROM  gift_certificates WHERE id=?;";
+  private EntityManager entityManager;
 
   @Autowired
-  public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
+  public GiftCertificateRepositoryImpl(EntityManager entityManager) {
+    this.entityManager = entityManager;
   }
 
   @Override
-  public List<GiftCertificate> getEntityListBySpecification(Specification specification) {
-    return jdbcTemplate.query(
-        specification.getQuery(),
-        specification.getArgs(),
-        new BeanPropertyRowMapper<>(GiftCertificate.class));
+  public List<GiftCertificate> getGiftCertificatesBySpecification(Specification specification) {
+    return entityManager
+        .createQuery("SELECT t FROM GiftCertificate t", GiftCertificate.class)
+        .getResultList();
   }
 
   @Override
-  public Optional<GiftCertificate> getEntityBySpecification(Specification specification) {
-    try {
-      GiftCertificate giftCertificate =
-          jdbcTemplate.queryForObject(
-              specification.getQuery(),
-              specification.getArgs(),
-              new BeanPropertyRowMapper<>(GiftCertificate.class));
-      return Optional.ofNullable(giftCertificate);
-    } catch (EmptyResultDataAccessException e) {
-      return Optional.empty();
-    }
+  public List<GiftCertificate> getSortedGiftCertificates(String sort) {
+    return entityManager
+            .createQuery("SELECT t FROM GiftCertificate t ORDER BY t.name ASC", GiftCertificate.class)
+            .getResultList();
+  }
+
+  @Override
+  public Optional<GiftCertificate> getGiftCertificateById(long id) {
+    return Optional.of(entityManager.find(GiftCertificate.class, id));
   }
 
   @Override
   public Optional<GiftCertificate> save(GiftCertificate giftCertificate) {
-    KeyHolder keyHolder = new GeneratedKeyHolder();
     LocalDateTime now = LocalDateTime.now();
-    jdbcTemplate.update(
-        connection -> {
-          PreparedStatement ps =
-              connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-          ps.setString(1, giftCertificate.getName());
-          ps.setString(2, giftCertificate.getDescription());
-          ps.setBigDecimal(3, giftCertificate.getPrice());
-          ps.setInt(4, giftCertificate.getDuration());
-          ps.setTimestamp(5, Timestamp.valueOf(now));
-          ps.setTimestamp(6, Timestamp.valueOf(now));
-          return ps;
-        },
-        keyHolder);
-    if (keyHolder.getKeys() == null) {
-      return Optional.empty();
-    }
-    giftCertificate.setId((Long) keyHolder.getKeys().get("id"));
     giftCertificate.setCreateDate(now);
     giftCertificate.setLastUpdateDate(now);
-
-    return Optional.of(giftCertificate);
+    return Optional.of(entityManager.merge(giftCertificate));
   }
 
   @Override
   public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
-    jdbcTemplate.update(
-        UPDATE,
-        giftCertificate.getName(),
-        giftCertificate.getDescription(),
-        giftCertificate.getPrice(),
-        giftCertificate.getDuration(),
-        Timestamp.valueOf(LocalDateTime.now()),
-        giftCertificate.getId());
-    return Optional.of(giftCertificate);
+    giftCertificate.setLastUpdateDate(LocalDateTime.now());
+    return Optional.of(entityManager.merge(giftCertificate));
   }
 
   @Override
   public int delete(long id) {
-    jdbcTemplate.update(DELETE_TAGS_FROM_GIFT_CERTIFICATE, id);
-    return jdbcTemplate.update(DELETE_GIFT_CERTIFICATE_BY_ID, id);
+    entityManager
+        .createQuery("DELETE FROM GiftCertificateTag WHERE giftCertificateId = :id")
+        .setParameter("id", id)
+        .executeUpdate();
+    return entityManager
+        .createQuery("DELETE FROM GiftCertificate WHERE id = :id")
+        .setParameter("id", id)
+        .executeUpdate();
   }
 }

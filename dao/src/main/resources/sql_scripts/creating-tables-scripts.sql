@@ -1,7 +1,7 @@
 ----------------CREATE TABLE GIFT-CERTIFICATES------------
 CREATE TABLE gift_certificates
 (
-    id               bigserial    NOT NULL,
+    id               SERIAL    NOT NULL,
     name             varchar(255) NOT NULL,
     description      varchar(255),
     price            double precision,
@@ -19,7 +19,7 @@ ALTER TABLE gift_certificates
 ----------------CREATE TABLE TAGS------------------------
 CREATE TABLE tags
 (
-    id   bigserial    NOT NULL,
+    id   SERIAL       NOT NULL,
     name varchar(255) NOT NULL,
     PRIMARY KEY (id),
     UNIQUE (name)
@@ -38,7 +38,7 @@ CREATE UNIQUE INDEX name_case_insensitive_unique_index ON tags (LOWER(name));
 ------------CREATE TABLE GIFT-CERTIFICATES-TAGS------------
 CREATE TABLE gift_certificates_tags
 (
-    id                  BIGSERIAL,
+    id                  SERIAL,
     gift_certificate_id BIGINT NOT NULL REFERENCES gift_certificates (id),
     tag_id              BIGINT NOT NULL REFERENCES tags (id),
     UNIQUE (gift_certificate_id, tag_id),
@@ -50,7 +50,7 @@ CREATE TABLE gift_certificates_tags
 -------------CREATE TABLE USERS-----------------------------
 CREATE TABLE users
 (
-    id       bigserial    NOT NULL,
+    id       SERIAL       NOT NULL,
     login    varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
     account  double precision,
@@ -65,10 +65,10 @@ ALTER TABLE users
 -------------CREATE TABLE ORDERS-----------------------------
 CREATE TABLE orders
 (
-    id                  bigserial NOT NULL,
-    user_id             BIGINT    NOT NULL REFERENCES users (id),
-    cost                double precision,
-    order_date          timestamp NOT NULL,
+    id         SERIAL    NOT NULL,
+    user_id    BIGINT    NOT NULL REFERENCES users (id),
+    cost       double precision,
+    order_date timestamp NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -79,7 +79,7 @@ ALTER TABLE orders
 ------------CREATE TABLE ORDERS-GIFT-CERTIFICATES------------
 CREATE TABLE orders_gift_certificates
 (
-    id                  BIGSERIAL,
+    id                  SERIAL,
     order_id            BIGINT NOT NULL REFERENCES orders (id),
     gift_certificate_id BIGINT NOT NULL REFERENCES gift_certificates (id),
     PRIMARY KEY (id)

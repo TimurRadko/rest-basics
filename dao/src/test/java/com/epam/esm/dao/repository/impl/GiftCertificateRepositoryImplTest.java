@@ -79,209 +79,209 @@ class GiftCertificateRepositoryImplTest {
             LocalDateTime.parse("2020-10-07T00:00:00"));
   }
 
-  @Test
-  void testGetEntityListBySpecification_shouldReturnUnsortedEntityList_whenEntitiesExist() {
-    // given
-    List<GiftCertificate> expected =
-        Arrays.asList(
-            firstGiftCertificate,
-            secondGiftCertificate,
-            thirdGiftCertificate,
-            fourthGiftCertificate);
-    // when
-    List<GiftCertificate> actual =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetAllGiftCertificatesSpecification(null));
-    // then
-    assertEquals(actual, expected);
-  }
-
-  @Test
-  void
-      testGetEntityListBySpecification_shouldReturnSortedByNameDescEntityList_whenEntitiesIsExist() {
-    // given
-    List<GiftCertificate> expected =
-        Arrays.asList(
-            thirdGiftCertificate,
-            secondGiftCertificate,
-            fourthGiftCertificate,
-            firstGiftCertificate);
-    // when
-    List<GiftCertificate> actual =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetAllGiftCertificatesSpecification("name-desc"));
-    // then
-    assertEquals(actual, expected);
-  }
-
-  @Test
-  void testGetEntityListBySpecification_shouldReturnSortedByNameAscEntityList_whenEntitiesExist() {
-    // given
-    List<GiftCertificate> expected =
-        Arrays.asList(
-            firstGiftCertificate,
-            fourthGiftCertificate,
-            secondGiftCertificate,
-            thirdGiftCertificate);
-    // when
-    List<GiftCertificate> actual =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetAllGiftCertificatesSpecification("name-asc"));
-    // then
-    assertEquals(actual, expected);
-  }
-
-  @Test
-  void
-      testGetEntityListBySpecification_shouldReturnSortedByCreateDateAscEntityList_whenEntitiesExist() {
-    // given
-    List<GiftCertificate> expected =
-        Arrays.asList(
-            fourthGiftCertificate,
-            thirdGiftCertificate,
-            firstGiftCertificate,
-            secondGiftCertificate);
-    // when
-    List<GiftCertificate> actual =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetAllGiftCertificatesSpecification("create-date-asc"));
-    // then
-    assertEquals(actual, expected);
-  }
-
-  @Test
-  void
-      testGetEntityListBySpecification_shouldReturnSortedByCreateDateDescEntityList_whenEntitiesExist() {
-    // given
-    List<GiftCertificate> expected =
-        Arrays.asList(
-            secondGiftCertificate,
-            firstGiftCertificate,
-            thirdGiftCertificate,
-            fourthGiftCertificate);
-    // when
-    List<GiftCertificate> actual =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetAllGiftCertificatesSpecification("create-date-desc"));
-    // then
-    assertEquals(actual, expected);
-  }
-
-  @Test
-  void testGetEntityListBySpecification_shouldReturnEntityListByNamePart_whenEntitiesExist() {
-    // given
-    List<GiftCertificate> expected = Collections.singletonList(secondGiftCertificate);
-    // when
-    List<GiftCertificate> actual =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetGiftCertificatesByNamePartSpecification("sec", null));
-    // then
-    assertEquals(actual, expected);
-  }
-
-  @Test
-  void
-      testGetEntityListBySpecification_shouldReturnEntityListByDescriptionPart_whenEntitiesExist() {
-    // given
-    List<GiftCertificate> expected = Collections.singletonList(secondGiftCertificate);
-    // when
-    List<GiftCertificate> actual =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetGiftCertificatesByDescriptionPartSpecification("sec", null));
-    // then
-    assertEquals(actual, expected);
-  }
-
-  @Test
-  void testGetEntityBySpecification_shouldReturnGift_whenItExists() {
-    // given
-    // when
-    Optional<GiftCertificate> optionalGiftCertificate =
-        giftCertificateRepository.getEntityBySpecification(
-            new GetGiftCertificateByIdSpecification(2L));
-    GiftCertificate actualGiftCertificate = optionalGiftCertificate.get();
-    // then
-    assertEquals(secondGiftCertificate, actualGiftCertificate);
-  }
-
-  @Test
-  void testGetEntityBySpecification_shouldReturnEmptyOptional_whenItDoesNotExist() {
-    // given
-    // when
-    Optional<GiftCertificate> optionalGiftCertificate =
-        giftCertificateRepository.getEntityBySpecification(
-            new GetGiftCertificateByIdSpecification(10L));
-    // then
-    assertEquals(Optional.empty(), optionalGiftCertificate);
-  }
-
-  @Test
-  @Transactional
-  @Rollback
-  void testSave_shouldReturnOptionalGift_whenSavingFinishSuccessfully() {
-    // given
-    GiftCertificate expectedGiftCertificate = prepareGiftForSave();
-    // when
-    Optional<GiftCertificate> optionalGiftCertificate =
-        giftCertificateRepository.save(expectedGiftCertificate);
-    GiftCertificate actualGiftCertificate = optionalGiftCertificate.get();
-    expectedGiftCertificate.setCreateDate(actualGiftCertificate.getCreateDate());
-    expectedGiftCertificate.setLastUpdateDate(actualGiftCertificate.getLastUpdateDate());
-    // then
-    assertEquals(optionalGiftCertificate, optionalGiftCertificate);
-  }
-
-  private GiftCertificate prepareGiftForSave() {
-    GiftCertificate giftCertificate = new GiftCertificate();
-    giftCertificate.setName("The fifth");
-    giftCertificate.setDescription("The fifth certificate");
-    giftCertificate.setPrice(BigDecimal.valueOf(50.0));
-    giftCertificate.setDuration(56);
-    return giftCertificate;
-  }
-
-  @Test
-  @Transactional
-  @Rollback
-  void testUpdate_shouldReturnUpdatedGift_whenUpdatingFinishSuccessfully() {
-    // given
-    GiftCertificate expectedGiftCertificate = prepareGiftForSave();
-    Optional<GiftCertificate> optionalGiftCertificate =
-        giftCertificateRepository.save(expectedGiftCertificate);
-    GiftCertificate actualGiftCertificate = optionalGiftCertificate.get();
-    expectedGiftCertificate.setCreateDate(actualGiftCertificate.getCreateDate());
-    expectedGiftCertificate.setLastUpdateDate(actualGiftCertificate.getLastUpdateDate());
-    actualGiftCertificate.setName("AnotherName");
-    // when
-    Optional<GiftCertificate> updatedOptionalGiftCertificate =
-        giftCertificateRepository.update(actualGiftCertificate);
-    GiftCertificate updatedGiftCertificate = updatedOptionalGiftCertificate.get();
-    actualGiftCertificate.setLastUpdateDate(updatedGiftCertificate.getLastUpdateDate());
-    // then
-    assertEquals(actualGiftCertificate, updatedGiftCertificate);
-  }
-
-  @Test
-  @Transactional
-  @Rollback
-  void testDelete_shouldDelete_whenEntityExists() {
-    // given
-    GiftCertificate giftCertificateForDeleting = preparingForDeleting();
-    Optional<GiftCertificate> optionalGiftCertificate =
-        giftCertificateRepository.save(giftCertificateForDeleting);
-    Long id = optionalGiftCertificate.get().getId();
-    // when
-    int actualResult = giftCertificateRepository.delete(id);
-    // then
-    assertEquals(1, actualResult);
-  }
-
-  private GiftCertificate preparingForDeleting() {
-    GiftCertificate giftCertificateForDeleting = new GiftCertificate();
-    giftCertificateForDeleting.setName("DeleteName");
-    giftCertificateForDeleting.setDescription("DeleteDescription");
-    giftCertificateForDeleting.setPrice(BigDecimal.valueOf(45));
-    giftCertificateForDeleting.setDuration(3);
-    return giftCertificateForDeleting;
-  }
+//  @Test
+//  void testGetEntityListBySpecification_shouldReturnUnsortedEntityList_whenEntitiesExist() {
+//    // given
+//    List<GiftCertificate> expected =
+//        Arrays.asList(
+//            firstGiftCertificate,
+//            secondGiftCertificate,
+//            thirdGiftCertificate,
+//            fourthGiftCertificate);
+//    // when
+//    List<GiftCertificate> actual =
+//        giftCertificateRepository.getEntityListBySpecification(
+//            new GetAllGiftCertificatesSpecification(null));
+//    // then
+//    assertEquals(actual, expected);
+//  }
+//
+//  @Test
+//  void
+//      testGetEntityListBySpecification_shouldReturnSortedByNameDescEntityList_whenEntitiesIsExist() {
+//    // given
+//    List<GiftCertificate> expected =
+//        Arrays.asList(
+//            thirdGiftCertificate,
+//            secondGiftCertificate,
+//            fourthGiftCertificate,
+//            firstGiftCertificate);
+//    // when
+//    List<GiftCertificate> actual =
+//        giftCertificateRepository.getEntityListBySpecification(
+//            new GetAllGiftCertificatesSpecification("name-desc"));
+//    // then
+//    assertEquals(actual, expected);
+//  }
+//
+//  @Test
+//  void testGetEntityListBySpecification_shouldReturnSortedByNameAscEntityList_whenEntitiesExist() {
+//    // given
+//    List<GiftCertificate> expected =
+//        Arrays.asList(
+//            firstGiftCertificate,
+//            fourthGiftCertificate,
+//            secondGiftCertificate,
+//            thirdGiftCertificate);
+//    // when
+//    List<GiftCertificate> actual =
+//        giftCertificateRepository.getEntityListBySpecification(
+//            new GetAllGiftCertificatesSpecification("name-asc"));
+//    // then
+//    assertEquals(actual, expected);
+//  }
+//
+//  @Test
+//  void
+//      testGetEntityListBySpecification_shouldReturnSortedByCreateDateAscEntityList_whenEntitiesExist() {
+//    // given
+//    List<GiftCertificate> expected =
+//        Arrays.asList(
+//            fourthGiftCertificate,
+//            thirdGiftCertificate,
+//            firstGiftCertificate,
+//            secondGiftCertificate);
+//    // when
+//    List<GiftCertificate> actual =
+//        giftCertificateRepository.getEntityListBySpecification(
+//            new GetAllGiftCertificatesSpecification("create-date-asc"));
+//    // then
+//    assertEquals(actual, expected);
+//  }
+//
+//  @Test
+//  void
+//      testGetEntityListBySpecification_shouldReturnSortedByCreateDateDescEntityList_whenEntitiesExist() {
+//    // given
+//    List<GiftCertificate> expected =
+//        Arrays.asList(
+//            secondGiftCertificate,
+//            firstGiftCertificate,
+//            thirdGiftCertificate,
+//            fourthGiftCertificate);
+//    // when
+//    List<GiftCertificate> actual =
+//        giftCertificateRepository.getEntityListBySpecification(
+//            new GetAllGiftCertificatesSpecification("create-date-desc"));
+//    // then
+//    assertEquals(actual, expected);
+//  }
+//
+//  @Test
+//  void testGetEntityListBySpecification_shouldReturnEntityListByNamePart_whenEntitiesExist() {
+//    // given
+//    List<GiftCertificate> expected = Collections.singletonList(secondGiftCertificate);
+//    // when
+//    List<GiftCertificate> actual =
+//        giftCertificateRepository.getEntityListBySpecification(
+//            new GetGiftCertificatesByNamePartSpecification("sec", null));
+//    // then
+//    assertEquals(actual, expected);
+//  }
+//
+//  @Test
+//  void
+//      testGetEntityListBySpecification_shouldReturnEntityListByDescriptionPart_whenEntitiesExist() {
+//    // given
+//    List<GiftCertificate> expected = Collections.singletonList(secondGiftCertificate);
+//    // when
+//    List<GiftCertificate> actual =
+//        giftCertificateRepository.getEntityListBySpecification(
+//            new GetGiftCertificatesByDescriptionPartSpecification("sec", null));
+//    // then
+//    assertEquals(actual, expected);
+//  }
+//
+//  @Test
+//  void testGetEntityBySpecification_shouldReturnGift_whenItExists() {
+//    // given
+//    // when
+//    Optional<GiftCertificate> optionalGiftCertificate =
+//        giftCertificateRepository.getEntityBySpecification(
+//            new GetGiftCertificateByIdSpecification(2L));
+//    GiftCertificate actualGiftCertificate = optionalGiftCertificate.get();
+//    // then
+//    assertEquals(secondGiftCertificate, actualGiftCertificate);
+//  }
+//
+//  @Test
+//  void testGetEntityBySpecification_shouldReturnEmptyOptional_whenItDoesNotExist() {
+//    // given
+//    // when
+//    Optional<GiftCertificate> optionalGiftCertificate =
+//        giftCertificateRepository.getEntityBySpecification(
+//            new GetGiftCertificateByIdSpecification(10L));
+//    // then
+//    assertEquals(Optional.empty(), optionalGiftCertificate);
+//  }
+//
+//  @Test
+//  @Transactional
+//  @Rollback
+//  void testSave_shouldReturnOptionalGift_whenSavingFinishSuccessfully() {
+//    // given
+//    GiftCertificate expectedGiftCertificate = prepareGiftForSave();
+//    // when
+//    Optional<GiftCertificate> optionalGiftCertificate =
+//        giftCertificateRepository.save(expectedGiftCertificate);
+//    GiftCertificate actualGiftCertificate = optionalGiftCertificate.get();
+//    expectedGiftCertificate.setCreateDate(actualGiftCertificate.getCreateDate());
+//    expectedGiftCertificate.setLastUpdateDate(actualGiftCertificate.getLastUpdateDate());
+//    // then
+//    assertEquals(optionalGiftCertificate, optionalGiftCertificate);
+//  }
+//
+//  private GiftCertificate prepareGiftForSave() {
+//    GiftCertificate giftCertificate = new GiftCertificate();
+//    giftCertificate.setName("The fifth");
+//    giftCertificate.setDescription("The fifth certificate");
+//    giftCertificate.setPrice(BigDecimal.valueOf(50.0));
+//    giftCertificate.setDuration(56);
+//    return giftCertificate;
+//  }
+//
+//  @Test
+//  @Transactional
+//  @Rollback
+//  void testUpdate_shouldReturnUpdatedGift_whenUpdatingFinishSuccessfully() {
+//    // given
+//    GiftCertificate expectedGiftCertificate = prepareGiftForSave();
+//    Optional<GiftCertificate> optionalGiftCertificate =
+//        giftCertificateRepository.save(expectedGiftCertificate);
+//    GiftCertificate actualGiftCertificate = optionalGiftCertificate.get();
+//    expectedGiftCertificate.setCreateDate(actualGiftCertificate.getCreateDate());
+//    expectedGiftCertificate.setLastUpdateDate(actualGiftCertificate.getLastUpdateDate());
+//    actualGiftCertificate.setName("AnotherName");
+//    // when
+//    Optional<GiftCertificate> updatedOptionalGiftCertificate =
+//        giftCertificateRepository.update(actualGiftCertificate);
+//    GiftCertificate updatedGiftCertificate = updatedOptionalGiftCertificate.get();
+//    actualGiftCertificate.setLastUpdateDate(updatedGiftCertificate.getLastUpdateDate());
+//    // then
+//    assertEquals(actualGiftCertificate, updatedGiftCertificate);
+//  }
+//
+//  @Test
+//  @Transactional
+//  @Rollback
+//  void testDelete_shouldDelete_whenEntityExists() {
+//    // given
+//    GiftCertificate giftCertificateForDeleting = preparingForDeleting();
+//    Optional<GiftCertificate> optionalGiftCertificate =
+//        giftCertificateRepository.save(giftCertificateForDeleting);
+//    Long id = optionalGiftCertificate.get().getId();
+//    // when
+//    int actualResult = giftCertificateRepository.delete(id);
+//    // then
+//    assertEquals(1, actualResult);
+//  }
+//
+//  private GiftCertificate preparingForDeleting() {
+//    GiftCertificate giftCertificateForDeleting = new GiftCertificate();
+//    giftCertificateForDeleting.setName("DeleteName");
+//    giftCertificateForDeleting.setDescription("DeleteDescription");
+//    giftCertificateForDeleting.setPrice(BigDecimal.valueOf(45));
+//    giftCertificateForDeleting.setDuration(3);
+//    return giftCertificateForDeleting;
+//  }
 }

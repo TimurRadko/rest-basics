@@ -1,19 +1,44 @@
 package com.epam.esm.dao.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 
-public class User extends AbstractEntity {
+@Entity
+@Table(name = "users")
+public class User implements TableEntity {
+  @Id
+  @Column(name = "id")
+  protected Long id;
+
+  @Column(name = "login")
   private String login;
+
+  @Column(name = "password")
   private String password;
+
+  @Column(name = "account")
   private BigDecimal account;
 
   public User() {}
 
   public User(Long id, String login, String password, BigDecimal account) {
-    super(id);
+    this.id = id;
     this.login = login;
     this.password = password;
     this.account = account;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getLogin() {
@@ -48,12 +73,12 @@ public class User extends AbstractEntity {
     if (!(o instanceof User)) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
 
     User user = (User) o;
 
+    if (getId() != null ? !getId().equals(user.getId()) : user.getId() != null) {
+      return false;
+    }
     if (getLogin() != null ? !getLogin().equals(user.getLogin()) : user.getLogin() != null) {
       return false;
     }
@@ -69,7 +94,7 @@ public class User extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    int result = super.hashCode();
+    int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getLogin() != null ? getLogin().hashCode() : 0);
     result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
     result = 31 * result + (getAccount() != null ? getAccount().hashCode() : 0);

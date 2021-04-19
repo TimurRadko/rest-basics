@@ -4,10 +4,7 @@ import com.epam.esm.dao.entity.GiftCertificateTag;
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.repository.GiftCertificateTagRepository;
 import com.epam.esm.dao.repository.TagRepository;
-import com.epam.esm.dao.specification.gifttag.GetGiftCertificateTagByTagIdSpecification;
 import com.epam.esm.dao.specification.tag.GetAllTagsSpecification;
-import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
-import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.builder.TagBuilder;
 import com.epam.esm.service.dto.TagDto;
@@ -44,14 +41,14 @@ public class TagServiceImpl implements TagService {
 
   @Override
   public List<TagDto> getAll(String sort) {
-    return tagRepository.getEntityListBySpecification(new GetAllTagsSpecification(sort)).stream()
+    return tagRepository.getTagsBySpecification(new GetAllTagsSpecification(sort)).stream()
         .map((TagDto::new))
         .collect(Collectors.toList());
   }
 
   @Override
   public Optional<TagDto> getById(long id) {
-    return tagRepository.getEntityBySpecification(new GetTagByIdSpecification(id)).map(TagDto::new);
+    return tagRepository.getTagById(id).map(TagDto::new);
   }
 
   @Override
@@ -60,9 +57,7 @@ public class TagServiceImpl implements TagService {
       throw new EntityNotValidMultipleException(tagValidator.getErrorMessage());
     }
     Tag tag = builder.buildFromDto(tagDto);
-    String name = tag.getName();
-    Optional<Tag> optionalExistingTag =
-        tagRepository.getEntityBySpecification(new GetTagByNameSpecification(name));
+    Optional<Tag> optionalExistingTag = tagRepository.getTagByName(tag.getName());
     if (optionalExistingTag.isEmpty()) {
       Optional<Tag> optionalSavedTag = tagRepository.save(tag);
       return optionalSavedTag.map(TagDto::new);
@@ -75,12 +70,11 @@ public class TagServiceImpl implements TagService {
   @Override
   public int delete(long id) {
     tagRepository
-        .getEntityBySpecification(new GetTagByIdSpecification(id))
+        .getTagById(id)
         .orElseThrow(
             () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
     List<GiftCertificateTag> existingGiftCertificateTags =
-        giftCertificateTagRepository.getEntityListBySpecification(
-            new GetGiftCertificateTagByTagIdSpecification(id));
+        giftCertificateTagRepository.getGiftCertificateTagsByGiftCertificateId(id);
     if (!existingGiftCertificateTags.isEmpty()) {
       throw new DeletingTagException(
           "The tag with id = " + id + " attached to the Gift Certificate. Deletion denied.");

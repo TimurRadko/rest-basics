@@ -1,13 +1,38 @@
 package com.epam.esm.dao.entity;
 
-public class Tag extends AbstractEntity {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "tags")
+public class Tag implements TableEntity {
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.TABLE)
+  private Long id;
+
+  @Column(name = "name")
   private String name;
 
   public Tag() {}
 
   public Tag(Long id, String name) {
-    super(id);
+    this.id = id;
     this.name = name;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getName() {
@@ -26,18 +51,18 @@ public class Tag extends AbstractEntity {
     if (!(o instanceof Tag)) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
 
     Tag tag = (Tag) o;
 
+    if (getId() != null ? !getId().equals(tag.getId()) : tag.getId() != null) {
+      return false;
+    }
     return getName() != null ? getName().equals(tag.getName()) : tag.getName() == null;
   }
 
   @Override
   public int hashCode() {
-    int result = super.hashCode();
+    int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getName() != null ? getName().hashCode() : 0);
     return result;
   }

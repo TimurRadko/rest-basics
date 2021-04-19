@@ -2,52 +2,29 @@ package com.epam.esm.dao.repository.impl;
 
 import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.repository.UserRepository;
-import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-  private JdbcTemplate jdbcTemplate;
+  private EntityManager entityManager;
 
   @Autowired
-  public UserRepositoryImpl(JdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
+  public UserRepositoryImpl(EntityManager entityManager) {
+    this.entityManager = entityManager;
   }
 
   @Override
-  public List<User> getEntityListBySpecification(Specification specification) {
-    return jdbcTemplate.query(
-        specification.getQuery(), specification.getArgs(), new BeanPropertyRowMapper<>(User.class));
+  public List<User> getAllUsers() {
+    return entityManager.createQuery("SELECT t FROM User t", User.class).getResultList();
   }
 
   @Override
-  public Optional<User> getEntityBySpecification(Specification specification) {
-    try {
-      User user =
-          jdbcTemplate.queryForObject(
-              specification.getQuery(),
-              specification.getArgs(),
-              new BeanPropertyRowMapper<>(User.class));
-      return Optional.ofNullable(user);
-    } catch (EmptyResultDataAccessException e) {
-      return Optional.empty();
-    }
-  }
-
-  @Override
-  public Optional<User> save(User user) {
-    return Optional.empty();
-  }
-
-  @Override
-  public int delete(long id) {
-    return 0;
+  public Optional<User> getUserById(long id) {
+    return Optional.of(entityManager.find(User.class, id));
   }
 }

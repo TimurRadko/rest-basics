@@ -6,9 +6,7 @@ import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.OrderRepository;
 import com.epam.esm.dao.repository.UserRepository;
-import com.epam.esm.dao.specification.order.GetAllOrdersByUserIdSpecification;
-import com.epam.esm.dao.specification.user.GetAllUsersSpecification;
-import com.epam.esm.dao.specification.user.GetUserByIdSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesByOrderIdSpecification;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.OrderDto;
@@ -39,23 +37,29 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public Optional<UserDto> save(UserDto userDto) {
+    return Optional.empty();
+  }
+
+  @Override
+  public int delete(long id) {
+    return 0;
+  }
+
+  @Override
   public List<UserDto> getAll() {
-    return userRepository.getEntityListBySpecification(new GetAllUsersSpecification()).stream()
+    return userRepository.getAllUsers().stream()
         .map((this::createUserDto))
         .collect(Collectors.toList());
   }
 
   @Override
   public Optional<UserDto> getById(long id) {
-    return userRepository
-        .getEntityBySpecification(new GetUserByIdSpecification(id))
-        .map(this::createUserDto);
+    return userRepository.getUserById(id).map(this::createUserDto);
   }
 
   private UserDto createUserDto(User user) {
-    long id = user.getId();
-    List<Order> orders =
-        orderRepository.getEntityListBySpecification(new GetAllOrdersByUserIdSpecification(id));
+    List<Order> orders = orderRepository.getOrdersByUserId(user.getId());
     return new UserDto(
         user,
         orders.stream()
@@ -63,21 +67,21 @@ public class UserServiceImpl implements UserService {
             .collect(Collectors.toList()));
   }
 
-  //TODO: Write this method
   private List<GiftCertificate> getAllGiftCertificateByOrderId(long id) {
-    return null;
+    return giftCertificateRepository.getGiftCertificatesBySpecification(
+        new GetGiftCertificatesByOrderIdSpecification(id));
   }
 
   @Override
   public Optional<UserDto> makeOrder(Long id, List<GiftCertificateDto> giftCertificateDtos) {
     User user =
         userRepository
-            .getEntityBySpecification(new GetUserByIdSpecification(id))
+            .getUserById(id)
             .orElseThrow(
                 () ->
                     new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
 
-    //TODO; Write this method
+    // TODO; Write this method
     BigDecimal resultPrice = new BigDecimal(0);
     for (GiftCertificateDto giftCertificateDto : giftCertificateDtos) {
       BigDecimal price = giftCertificateDto.getPrice();
@@ -86,15 +90,5 @@ public class UserServiceImpl implements UserService {
     BigDecimal userAccount = user.getAccount();
 
     return Optional.empty();
-  }
-
-  @Override
-  public Optional<UserDto> save(UserDto userDto) {
-    return Optional.empty();
-  }
-
-  @Override
-  public int delete(long id) {
-    return 0;
   }
 }

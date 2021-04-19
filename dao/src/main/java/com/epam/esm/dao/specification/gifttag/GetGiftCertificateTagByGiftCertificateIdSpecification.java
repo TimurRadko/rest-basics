@@ -4,13 +4,13 @@ import com.epam.esm.dao.specification.Specification;
 
 public final class GetGiftCertificateTagByGiftCertificateIdSpecification implements Specification {
   private final long giftCertificateId;
-  private final long tagId;
+  private final Object tagId;
 
   private static final String QUERY =
       "SELECT id, gift_certificate_id, tag_id "
           + "FROM gift_certificates_tags WHERE gift_certificate_id=? AND tag_id=?;";
 
-  public GetGiftCertificateTagByGiftCertificateIdSpecification(long giftCertificateId, long tagId) {
+  public GetGiftCertificateTagByGiftCertificateIdSpecification(long giftCertificateId, Object tagId) {
     this.giftCertificateId = giftCertificateId;
     this.tagId = tagId;
   }

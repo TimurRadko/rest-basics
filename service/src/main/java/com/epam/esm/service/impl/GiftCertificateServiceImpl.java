@@ -7,14 +7,10 @@ import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.GiftCertificateTagRepository;
 import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificateByIdSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByDescriptionPartSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNamePartSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByTagNameSpecification;
-import com.epam.esm.dao.specification.gifttag.GetGiftCertificateTagByGiftCertificateIdSpecification;
 import com.epam.esm.dao.specification.tag.GetAllTagsByGiftCertificatesIdSpecification;
-import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
-import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.builder.GiftCertificateBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
@@ -92,11 +88,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   private Tag saveTagIfNotExist(Tag tag, long giftCertificateId) {
     Optional<Tag> optionalExistingTag;
     if (tag.getId() == null) {
-      optionalExistingTag =
-          tagRepository.getEntityBySpecification(new GetTagByNameSpecification(tag.getName()));
+      optionalExistingTag = tagRepository.getTagByName(tag.getName());
     } else {
-      optionalExistingTag =
-          tagRepository.getEntityBySpecification(new GetTagByIdSpecification(tag.getId()));
+      optionalExistingTag = tagRepository.getTagById(tag.getId());
     }
     if (optionalExistingTag.isEmpty()) {
       Tag createdTag =
@@ -106,9 +100,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       return createdTag;
     } else {
       Optional<GiftCertificateTag> optionalGiftCertificateTag =
-          giftCertificateTagRepository.getEntityBySpecification(
-              new GetGiftCertificateTagByGiftCertificateIdSpecification(
-                  giftCertificateId, optionalExistingTag.get().getId()));
+          giftCertificateTagRepository.getGiftCertificateTagByGiftCertificateIdAndTagId(
+              giftCertificateId, optionalExistingTag.get().getId());
       if (optionalGiftCertificateTag.isEmpty()) {
         Tag existingTag = optionalExistingTag.get();
         saveGiftCertificateTag(giftCertificateId, existingTag);
@@ -141,7 +134,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   private List<GiftCertificateDto> getAll(String sort) {
     return giftCertificateRepository
-        .getEntityListBySpecification(new GetAllGiftCertificatesSpecification(sort)).stream()
+        .getGiftCertificatesBySpecification(new GetAllGiftCertificatesSpecification(sort)).stream()
         .map((this::createGiftCertificateDto))
         .collect(Collectors.toList());
   }
@@ -152,12 +145,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     List<GiftCertificate> giftCertificates = new ArrayList<>();
     if (name != null && name.trim().length() != 0) {
       giftCertificates =
-          giftCertificateRepository.getEntityListBySpecification(
+          giftCertificateRepository.getGiftCertificatesBySpecification(
               new GetGiftCertificatesByNamePartSpecification(name, sort));
     }
     if (description != null && description.trim().length() != 0) {
       List<GiftCertificate> partDescriptionGiftCertificates =
-          giftCertificateRepository.getEntityListBySpecification(
+          giftCertificateRepository.getGiftCertificatesBySpecification(
               new GetGiftCertificatesByDescriptionPartSpecification(description, sort));
       giftCertificates =
           giftCertificates.stream()
@@ -173,7 +166,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       List<GiftCertificateDto> giftCertificateDtos, String tagName, String sort) {
     if (giftCertificateDtos.size() == 0) {
       List<GiftCertificate> giftCertificates =
-          giftCertificateRepository.getEntityListBySpecification(
+          giftCertificateRepository.getGiftCertificatesBySpecification(
               new GetGiftCertificatesByTagNameSpecification(tagName, sort));
       return giftCertificates.stream()
           .map((this::createGiftCertificateDto))
@@ -191,8 +184,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   @Override
   public Optional<GiftCertificateDto> getById(long id) {
     Optional<GiftCertificate> optionalGiftCertificate =
-        giftCertificateRepository.getEntityBySpecification(
-            new GetGiftCertificateByIdSpecification(id));
+        giftCertificateRepository.getGiftCertificateById(id);
     if (optionalGiftCertificate.isPresent()) {
       GiftCertificate giftCertificate = optionalGiftCertificate.get();
       return Optional.of(createGiftCertificateDto(giftCertificate));
@@ -201,10 +193,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   private GiftCertificateDto createGiftCertificateDto(GiftCertificate giftCertificate) {
-    long id = giftCertificate.getId();
-    List<Tag> tags =
-        tagRepository.getEntityListBySpecification(
-            new GetAllTagsByGiftCertificatesIdSpecification(id));
+    List<Tag> tags = tagRepository.getTagsByGiftCertificateId(giftCertificate.getId());
     return new GiftCertificateDto(giftCertificate, Set.copyOf(tags));
   }
 
@@ -234,12 +223,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   private void deletingNonTransmittedTags(long id, Set<Tag> tags) {
     List<Tag> existingTags =
-        tagRepository.getEntityListBySpecification(
-            new GetAllTagsByGiftCertificatesIdSpecification(id));
+        tagRepository.getTagsBySpecification(new GetAllTagsByGiftCertificatesIdSpecification(id));
 
     for (Tag existingTag : existingTags) {
       if (!tags.contains(existingTag)) {
-        giftCertificateTagRepository.delete(existingTag.getId());
+        giftCertificateTagRepository.delete((Long) existingTag.getId());
       }
     }
   }
@@ -265,7 +253,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   private GiftCertificate getGiftCertificateById(Long id) {
     return giftCertificateRepository
-        .getEntityBySpecification(new GetGiftCertificateByIdSpecification(id))
+        .getGiftCertificateById(id)
         .orElseThrow(() -> new ServiceException(CERTIFICATE_NOT_EXISTS_IN_THE_DB));
   }
 

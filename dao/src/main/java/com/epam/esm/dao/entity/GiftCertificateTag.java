@@ -1,15 +1,39 @@
 package com.epam.esm.dao.entity;
 
-public class GiftCertificateTag extends AbstractEntity {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "gift_certificates_tags")
+public class GiftCertificateTag implements TableEntity {
+  @Id
+  @Column(name = "id")
+  private Long id;
+
+  @Column(name = "gift_certificate_id")
   private Long giftCertificateId;
+
+  @Column(name = "tag_id")
   private Long tagId;
 
   public GiftCertificateTag() {}
 
   public GiftCertificateTag(Long id, Long giftCertificateId, Long tagId) {
-    super(id);
+    this.id = id;
     this.giftCertificateId = giftCertificateId;
     this.tagId = tagId;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public Long getGiftCertificateId() {
@@ -36,12 +60,12 @@ public class GiftCertificateTag extends AbstractEntity {
     if (!(o instanceof GiftCertificateTag)) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
 
     GiftCertificateTag that = (GiftCertificateTag) o;
 
+    if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) {
+      return false;
+    }
     if (getGiftCertificateId() != null
         ? !getGiftCertificateId().equals(that.getGiftCertificateId())
         : that.getGiftCertificateId() != null) {
@@ -52,7 +76,7 @@ public class GiftCertificateTag extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    int result = super.hashCode();
+    int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getGiftCertificateId() != null ? getGiftCertificateId().hashCode() : 0);
     result = 31 * result + (getTagId() != null ? getTagId().hashCode() : 0);
     return result;

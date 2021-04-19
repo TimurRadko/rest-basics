@@ -2,78 +2,67 @@ package com.epam.esm.dao.repository.impl;
 
 import com.epam.esm.dao.entity.GiftCertificateTag;
 import com.epam.esm.dao.repository.GiftCertificateTagRepository;
-import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepository {
-  private JdbcTemplate jdbcTemplate;
-
-  private static final String INSERT =
-      "INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id) VALUES (?,?);";
-
-  private static final String DELETE_TAG_FROM_GIFT_CERTIFICATES =
-      "DELETE FROM gift_certificates_tags WHERE tag_id = ?;";
+  private EntityManager entityManager;
 
   @Autowired
-  public GiftCertificateTagRepositoryImpl(JdbcTemplate jdbcTemplate) {
-    this.jdbcTemplate = jdbcTemplate;
+  public GiftCertificateTagRepositoryImpl(EntityManager entityManager) {
+    this.entityManager = entityManager;
   }
 
   @Override
-  public List<GiftCertificateTag> getEntityListBySpecification(Specification specification) {
-    return jdbcTemplate.query(
-        specification.getQuery(),
-        specification.getArgs(),
-        new BeanPropertyRowMapper<>(GiftCertificateTag.class));
+  public List<GiftCertificateTag> getGiftCertificateTags() {
+    return entityManager
+        .createQuery("SELECT t FROM GiftCertificateTag t", GiftCertificateTag.class)
+        .getResultList();
   }
 
   @Override
-  public Optional<GiftCertificateTag> getEntityBySpecification(Specification specification) {
-    try {
-      GiftCertificateTag giftCertificateTag =
-          jdbcTemplate.queryForObject(
-              specification.getQuery(),
-              specification.getArgs(),
-              new BeanPropertyRowMapper<>(GiftCertificateTag.class));
-      return Optional.ofNullable(giftCertificateTag);
-    } catch (EmptyResultDataAccessException e) {
-      return Optional.empty();
-    }
+  public List<GiftCertificateTag> getGiftCertificateTagsByGiftCertificateId(long id) {
+    return entityManager
+        .createQuery(
+            "SELECT t FROM GiftCertificateTag t WHERE giftCertificateId=?1",
+            GiftCertificateTag.class)
+        .setParameter(1, id)
+        .getResultList();
+  }
+
+  @Override
+  public Optional<GiftCertificateTag> getGiftCertificateTagById(long id) {
+    return Optional.of(entityManager.find(GiftCertificateTag.class, id));
+  }
+
+  @Override
+  public Optional<GiftCertificateTag> getGiftCertificateTagByGiftCertificateIdAndTagId(
+      long giftCertificateId, long tagId) {
+    return Optional.of(
+        entityManager
+            .createQuery(
+                "SELECT t FROM GiftCertificateTag t WHERE giftCertificateId=?1 AND tagId=?2",
+                GiftCertificateTag.class)
+            .setParameter(1, giftCertificateId)
+            .setParameter(2, tagId)
+            .getSingleResult());
   }
 
   @Override
   public Optional<GiftCertificateTag> save(GiftCertificateTag giftCertificateTag) {
-    KeyHolder keyHolder = new GeneratedKeyHolder();
-    jdbcTemplate.update(
-        connection -> {
-          PreparedStatement ps =
-              connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
-          ps.setLong(1, giftCertificateTag.getGiftCertificateId());
-          ps.setLong(2, giftCertificateTag.getTagId());
-          return ps;
-        },
-        keyHolder);
-    if (keyHolder.getKeys() == null) {
-      return Optional.empty();
-    }
-    giftCertificateTag.setId((Long) keyHolder.getKeys().get("id"));
-    return Optional.of(giftCertificateTag);
+    return Optional.of(entityManager.merge(giftCertificateTag));
   }
 
   @Override
   public int delete(long id) {
-    return jdbcTemplate.update(DELETE_TAG_FROM_GIFT_CERTIFICATES, id);
+    return entityManager
+        .createQuery("DELETE FROM GiftCertificateTag WHERE id = :tagId")
+        .setParameter("tagId", id)
+        .executeUpdate();
   }
 }
