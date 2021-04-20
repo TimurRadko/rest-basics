@@ -1,8 +1,13 @@
 package com.epam.esm.dao.specification.gift;
 
+import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.specification.Specification;
 
-public final class GetGiftCertificatesByNamePartSpecification implements Specification {
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+public final class GetGiftCertificatesByNamePartSpecification implements Specification<GiftCertificate> {
   private final String name;
   private final String sort;
 
@@ -28,12 +33,11 @@ public final class GetGiftCertificatesByNamePartSpecification implements Specifi
   }
 
   @Override
-  public String getQuery() {
-    return QUERY;
-  }
-
-  @Override
-  public Object[] getArgs() {
-    return new Object[] {name, sort, sort, sort, sort, sort, sort};
+  public CriteriaQuery<GiftCertificate> getCriteriaQuery(CriteriaBuilder builder) {
+    CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
+    Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
+    criteria.select(root);
+    criteria.where(builder.like(builder.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+    return criteria;
   }
 }

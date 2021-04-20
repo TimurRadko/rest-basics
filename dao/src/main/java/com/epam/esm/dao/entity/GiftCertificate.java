@@ -7,16 +7,28 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "gift_certificates")
 public class GiftCertificate implements TableEntity {
   @Id
   @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.TABLE)
   private Long id;
 
   @Column(name = "name")
@@ -40,6 +52,18 @@ public class GiftCertificate implements TableEntity {
   @JsonSerialize(using = LocalDateSerializer.class)
   @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime lastUpdateDate;
+
+  //      @ManyToMany(fetch = FetchType.EAGER)
+  //      @JoinTable(
+  //          name = "gift_certificates_tags",
+  //          joinColumns = @JoinColumn(name = "gift_certificate_id"),
+  //          inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  @ManyToMany
+  @JoinTable(
+      name = "gift_certificates_tags",
+      joinColumns = @JoinColumn(name = "gift_certificate_id"),
+      inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  private Set<Tag> tags;
 
   public GiftCertificate() {}
 
@@ -68,6 +92,14 @@ public class GiftCertificate implements TableEntity {
   @Override
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public Set<Tag> getTags() {
+    return tags;
+  }
+
+  public void setTags(Set<Tag> tags) {
+    this.tags = tags;
   }
 
   public String getName() {

@@ -7,18 +7,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public final class GetGiftCertificateTagByGiftCertificateIdSpecification
+public class GetGiftCertificateTagByTagIdSpecification
     implements Specification<GiftCertificateTag> {
-  private final long giftCertificateId;
-  private final Object tagId;
+  private final long tagId;
 
-  private static final String QUERY =
-      "SELECT id, gift_certificate_id, tag_id "
-          + "FROM gift_certificates_tags WHERE gift_certificate_id=? AND tag_id=?;";
-
-  public GetGiftCertificateTagByGiftCertificateIdSpecification(
-      long giftCertificateId, Object tagId) {
-    this.giftCertificateId = giftCertificateId;
+  public GetGiftCertificateTagByTagIdSpecification(long tagId) {
     this.tagId = tagId;
   }
 
@@ -26,10 +19,8 @@ public final class GetGiftCertificateTagByGiftCertificateIdSpecification
   public CriteriaQuery<GiftCertificateTag> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<GiftCertificateTag> criteria = builder.createQuery(GiftCertificateTag.class);
     Root<GiftCertificateTag> root = criteria.from(GiftCertificateTag.class);
-    criteria.multiselect(root);
-    builder.and(
-        builder.equal(root.get("giftCertificateId"), giftCertificateId),
-        builder.equal(root.get("tagId"), tagId));
+    criteria.select(root);
+    criteria.where(builder.equal(root.get("tagId"), tagId));
     return criteria;
   }
 }

@@ -99,7 +99,7 @@ class GiftCertificateServiceImplTest {
 //    when(giftCertificateRepository.save(firstExpectedGiftCertificate))
 //        .thenReturn(Optional.of(firstExpectedGiftCertificate));
 //    when(giftCertificateValidator.isValid(expectedGiftCertificateDto)).thenReturn(true);
-//    when(tagRepository.getTagBySpecification(any())).thenReturn(Optional.of(firstTag));
+//    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTag));
 //    when(builder.buildFromDto(expectedGiftCertificateDto)).thenReturn(firstExpectedGiftCertificate);
 //    // when
 //    Optional<GiftCertificateDto> actualGiftCertificateDto =
@@ -124,7 +124,7 @@ class GiftCertificateServiceImplTest {
 //  void testGetAll_shouldReturnGiftCertificateList_whenGiftCertificatesExist() {
 //    // given
 //    expectedGiftCertificates.add(firstExpectedGiftCertificate);
-//    when(giftCertificateRepository.getGiftCertificatesBySpecification(any()))
+//    when(giftCertificateRepository.getEntityListBySpecification(any()))
 //        .thenReturn(expectedGiftCertificates);
 //    when(builder.buildFromDto(any())).thenReturn(firstExpectedGiftCertificate);
 //    // when
@@ -169,9 +169,9 @@ class GiftCertificateServiceImplTest {
 //    List<GiftCertificateDto> expectedGiftCertificateDtos =
 //        Collections.singletonList(
 //            (new GiftCertificateDto(firstExpectedGiftCertificate, Set.of(firstTag))));
-//    when(giftCertificateRepository.getGiftCertificatesBySpecification(any()))
+//    when(giftCertificateRepository.getEntityListBySpecification(any()))
 //        .thenReturn(Collections.singletonList(firstExpectedGiftCertificate));
-//    when(tagRepository.getTagsBySpecification(any()))
+//    when(tagRepository.getEntityListBySpecification(any()))
 //        .thenReturn(Collections.singletonList(firstTag));
 //    // when
 //    List<GiftCertificateDto> actualGiftCertificateDtos =
@@ -187,7 +187,7 @@ class GiftCertificateServiceImplTest {
 //    List<GiftCertificateDto> expectedGiftCertificateDtos =
 //        Collections.singletonList(
 //            (new GiftCertificateDto(firstExpectedGiftCertificate, emptyTagSet)));
-//    when(giftCertificateRepository.getGiftCertificatesBySpecification(any()))
+//    when(giftCertificateRepository.getEntityListBySpecification(any()))
 //        .thenReturn(Collections.singletonList(firstExpectedGiftCertificate));
 //    // when
 //    List<GiftCertificateDto> actualGiftCertificateDtos =
@@ -199,7 +199,7 @@ class GiftCertificateServiceImplTest {
 //  @Test
 //  void testGetById_shouldReturnGiftCertificate_whenItExists() {
 //    // given
-//    when(giftCertificateRepository.getGiftCertificateBySpecification(any()))
+//    when(giftCertificateRepository.getEntityBySpecification(any()))
 //        .thenReturn(Optional.of(firstExpectedGiftCertificate));
 //    // when
 //    Optional<GiftCertificateDto> optionalActualGiftCertificateDto =
@@ -223,7 +223,7 @@ class GiftCertificateServiceImplTest {
 //  @Test
 //  void testGetById_shouldReturnEmptyOptional_whenGiftDoesNotExist() {
 //    // given
-//    when(giftCertificateRepository.getGiftCertificateBySpecification(any())).thenReturn(Optional.empty());
+//    when(giftCertificateRepository.getEntityBySpecification(any())).thenReturn(Optional.empty());
 //    // when
 //    Optional<GiftCertificateDto> actualOptionalGiftCertificateDto =
 //        giftCertificateService.getById(ID_FOR_MANIPULATIONS);
@@ -261,7 +261,7 @@ class GiftCertificateServiceImplTest {
 //  @Test
 //  void testUpdate_shouldThrowServiceException_whenTagWasNotSaved() {
 //    // given
-//    when(giftCertificateRepository.getGiftCertificateBySpecification(any()))
+//    when(giftCertificateRepository.getEntityBySpecification(any()))
 //        .thenReturn(Optional.ofNullable(firstExpectedGiftCertificate));
 //    when(giftCertificateRepository.update(any())).thenReturn(Optional.of(changedGiftCertificate));
 //    GiftCertificateDto incomingGiftCertificateDto =
@@ -279,7 +279,7 @@ class GiftCertificateServiceImplTest {
 //  @Test
 //  void testUpdate_ShouldReturnUpdatedGift_whenGiftIsExists() {
 //    // given
-//    when(giftCertificateRepository.getGiftCertificateBySpecification(any()))
+//    when(giftCertificateRepository.getEntityBySpecification(any()))
 //        .thenReturn(Optional.ofNullable(firstExpectedGiftCertificate));
 //    when(giftCertificateRepository.update(any())).thenReturn(Optional.of(changedGiftCertificate));
 //    GiftCertificateDto incomingGiftCertificateDto =
@@ -290,7 +290,7 @@ class GiftCertificateServiceImplTest {
 //    when(tagRepository.save(any())).thenReturn(Optional.of(firstTag));
 //    when(giftCertificateTagRepository.save(any())).thenReturn(Optional.of(giftCertificateTag));
 //
-//    when(tagRepository.getTagsBySpecification(any()))
+//    when(tagRepository.getEntityListBySpecification(any()))
 //        .thenReturn(Collections.singletonList(firstTag));
 //    // when
 //    Optional<GiftCertificateDto> actualGiftCertificateDto =
@@ -305,7 +305,7 @@ class GiftCertificateServiceImplTest {
 //    // given
 //    int expectedResult = 1;
 //    when(giftCertificateRepository.delete(ID_FOR_MANIPULATIONS)).thenReturn(expectedResult);
-//    when(giftCertificateRepository.getGiftCertificateBySpecification(any()))
+//    when(giftCertificateRepository.getEntityBySpecification(any()))
 //        .thenReturn(Optional.of(firstExpectedGiftCertificate));
 //    // when
 //    int actualResult = giftCertificateService.delete(ID_FOR_MANIPULATIONS);

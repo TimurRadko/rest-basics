@@ -46,83 +46,85 @@ class TagRepositoryImplTest {
     tagForManipulations.setName("tag5");
   }
 
-//  @Test
-//  void testGetEntityListBySpecification_shouldReturnUnsortedEntityList_whenEntitiesExist() {
-//    // given
-//    List<Tag> expected = Arrays.asList(firstTag, secondTag, thirdTag, fourthTag);
-//    // when
-//    List<Tag> actual =
-//        tagRepository.getEntityListBySpecification(new GetAllTagsSpecification(null));
-//    // then
-//    assertEquals(actual, expected);
-//  }
-//
-//  @Test
-//  void testGetEntityListBySpecification_shouldReturnSortedNameAscEntityList_whenEntitiesExist() {
-//    // given
-//    List<Tag> expected = Arrays.asList(firstTag, secondTag, thirdTag, fourthTag);
-//    // when
-//    List<Tag> actual =
-//        tagRepository.getEntityListBySpecification(new GetAllTagsSpecification("name-asc"));
-//    // then
-//    assertEquals(actual, expected);
-//  }
-//
-//  @Test
-//  void testGetEntityListBySpecification_shouldReturnSortedNameDescEntityList_whenEntitiesExist() {
-//    // given
-//    List<Tag> expected = Arrays.asList(fourthTag, thirdTag, secondTag, firstTag);
-//    // when
-//    List<Tag> actual =
-//        tagRepository.getEntityListBySpecification(new GetAllTagsSpecification("name-desc"));
-//    // then
-//    assertEquals(actual, expected);
-//  }
-//
-//  @Test
-//  void testGetEntityBySpecification_shouldReturnTag_whenItExists() {
-//    // given
-//    // when
-//    Optional<Tag> optionalActualTag =
-//        tagRepository.getEntityBySpecification(new GetTagByIdSpecification(1L));
-//    Tag actualTag = optionalActualTag.get();
-//    // then
-//    assertEquals(firstTag, actualTag);
-//  }
-//
-//  @Test
-//  void testGetEntityBySpecification_shouldReturnEmptyOptional_whenTagDoesNotExist() {
-//    // given
-//    // when
-//    Optional<Tag> optionalActualTag =
-//        tagRepository.getEntityBySpecification(new GetTagByIdSpecification(10L));
-//    // then
-//    assertEquals(Optional.empty(), optionalActualTag);
-//  }
-//
-//  @Test
-//  @Transactional
-//  @Rollback
-//  void testDelete_shouldDelete_whenTagIsExists() {
-//    // given
-//    Optional<Tag> optionalSavedTag = tagRepository.save(tagForManipulations);
-//    Long id = optionalSavedTag.get().getId();
-//    // when
-//    int actualResult = tagRepository.delete(id);
-//    // then
-//    assertEquals(1, actualResult);
-//  }
-//
-//  @Test
-//  @Transactional
-//  @Rollback
-//  void testSave_shouldReturnTag_whenUpdateWasSuccessful() {
-//    // given
-//    // when
-//    Optional<Tag> optionalSavedTag = tagRepository.save(tagForManipulations);
-//    Tag actualSavedTag = optionalSavedTag.get();
-//    tagForManipulations.setId(actualSavedTag.getId());
-//    // then
-//    assertEquals(tagForManipulations, actualSavedTag);
-//  }
+  //  @Test
+  //  void testGetEntityListBySpecification_shouldReturnUnsortedEntityList_whenEntitiesExist() {
+  //    // given
+  //    List<Tag> expected = Arrays.asList(firstTag, secondTag, thirdTag, fourthTag);
+  //    // when
+  //    String query = queryFactory.getQuery(null);
+  //    List<Tag> actual = tagRepository.getTags(query);
+  //    // then
+  //    assertEquals(actual, expected);
+  //  }
+  //
+  //  @Test
+  //  void testGetEntityListBySpecification_shouldReturnSortedNameAscEntityList_whenEntitiesExist()
+  // {
+  //    // given
+  //    List<Tag> expected = Arrays.asList(firstTag, secondTag, thirdTag, fourthTag);
+  //    // when
+  //    List<Tag> actual =
+  //        tagRepository.getEntityListBySpecification(new GetAllTagsSpecification("name-asc"));
+  //    // then
+  //    assertEquals(actual, expected);
+  //  }
+  //
+  //  @Test
+  //  void testGetEntityListBySpecification_shouldReturnSortedNameDescEntityList_whenEntitiesExist()
+  // {
+  //    // given
+  //    List<Tag> expected = Arrays.asList(fourthTag, thirdTag, secondTag, firstTag);
+  //    // when
+  //    List<Tag> actual =
+  //        tagRepository.getEntityListBySpecification(new GetAllTagsSpecification("name-desc"));
+  //    // then
+  //    assertEquals(actual, expected);
+  //  }
+  //
+  //  @Test
+  //  void testGetEntityBySpecification_shouldReturnTag_whenItExists() {
+  //    // given
+  //    // when
+  //    Optional<Tag> optionalActualTag =
+  //        tagRepository.getEntityBySpecification(new GetTagByIdSpecification(1L));
+  //    Tag actualTag = optionalActualTag.get();
+  //    // then
+  //    assertEquals(firstTag, actualTag);
+  //  }
+  //
+  //  @Test
+  //  void testGetEntityBySpecification_shouldReturnEmptyOptional_whenTagDoesNotExist() {
+  //    // given
+  //    // when
+  //    Optional<Tag> optionalActualTag =
+  //        tagRepository.getEntityBySpecification(new GetTagByIdSpecification(10L));
+  //    // then
+  //    assertEquals(Optional.empty(), optionalActualTag);
+  //  }
+  //
+  //  @Test
+  //  @Transactional
+  //  @Rollback
+  //  void testDelete_shouldDelete_whenTagIsExists() {
+  //    // given
+  //    Optional<Tag> optionalSavedTag = tagRepository.save(tagForManipulations);
+  //    Long id = optionalSavedTag.get().getId();
+  //    // when
+  //    int actualResult = tagRepository.delete(id);
+  //    // then
+  //    assertEquals(1, actualResult);
+  //  }
+  //
+  //  @Test
+  //  @Transactional
+  //  @Rollback
+  //  void testSave_shouldReturnTag_whenUpdateWasSuccessful() {
+  //    // given
+  //    // when
+  //    Optional<Tag> optionalSavedTag = tagRepository.save(tagForManipulations);
+  //    Tag actualSavedTag = optionalSavedTag.get();
+  //    tagForManipulations.setId(actualSavedTag.getId());
+  //    // then
+  //    assertEquals(tagForManipulations, actualSavedTag);
+  //  }
 }

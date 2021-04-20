@@ -5,8 +5,12 @@ import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,44 +24,35 @@ public class TagRepositoryImpl implements TagRepository {
   }
 
   @Override
-  public List<Tag> getTagsBySpecification(Specification specification) {
-    return entityManager.createQuery("SELECT t FROM Tag t", Tag.class).getResultList();
+  public List<Tag> getEntityListBySpecification(Specification<Tag> specification) {
+    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Tag> criteriaQuery = specification.getCriteriaQuery(builder);
+    return entityManager.createQuery(criteriaQuery).getResultList();
   }
 
   @Override
-  public List<Tag> getTagsByGiftCertificateId(long id) {
-    return entityManager
-        .createQuery(
-            "SELECT t FROM Tag t INNER JOIN GiftCertificateTag gct ON t.id=gct.tagId WHERE gct.giftCertificateId=?1",
-            Tag.class)
-        .setParameter(1, id)
-        .getResultList();
-  }
-
-  @Override
-  public Optional<Tag> getTagById(long id) {
-    return Optional.of(entityManager.find(Tag.class, id));
-  }
-
-  @Override
-  public Optional<Tag> getTagByName(String name) {
-    return Optional.of(
-        entityManager
-            .createQuery("SELECT t FROM Tag t WHERE name=?1", Tag.class)
-            .setParameter(1, name)
-            .getSingleResult());
-  }
-
-  @Override
+  @Transactional
   public Optional<Tag> save(Tag tag) {
     return Optional.of(entityManager.merge(tag));
   }
 
   @Override
+  public Optional<Tag> getEntityBySpecification(Specification<Tag> specification) {
+    try {
+      CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+      CriteriaQuery<Tag> criteriaQuery = specification.getCriteriaQuery(builder);
+      return Optional.of(entityManager.createQuery(criteriaQuery).getSingleResult());
+    } catch (NoResultException e) {
+      return Optional.empty();
+    }
+  }
+
+  @Override
+  @Transactional
   public int delete(long id) {
     return entityManager
-        .createQuery("DELETE FROM Tag WHERE id = :tagId")
-        .setParameter("tagId", id)
+        .createQuery("DELETE FROM Tag t WHERE t.id = :id")
+        .setParameter("id", id)
         .executeUpdate();
   }
 }

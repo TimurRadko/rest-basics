@@ -7,25 +7,19 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public final class GetAllTagsSpecification implements Specification<Tag> {
-  private final String sort;
+public final class GetTagByNameSpecification implements Specification<Tag> {
+  private final String name;
 
-  public GetAllTagsSpecification(String sort) {
-    this.sort = sort;
+  public GetTagByNameSpecification(String name) {
+    this.name = name;
   }
 
   @Override
   public CriteriaQuery<Tag> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
     Root<Tag> root = criteria.from(Tag.class);
-    if (sort == null) {
-      return criteria.orderBy(builder.asc(root.get("id")));
-    }
-    if (sort.equals("name-asc")) {
-      criteria.orderBy(builder.asc(root.get("name")));
-    } else if (sort.equals("name-desc")) {
-      criteria.orderBy(builder.desc(root.get("name")));
-    }
+    criteria.select(root);
+    criteria.where(builder.equal(root.get("name"), name));
     return criteria;
   }
 }

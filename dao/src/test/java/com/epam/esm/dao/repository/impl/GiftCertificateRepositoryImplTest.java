@@ -2,26 +2,15 @@ package com.epam.esm.dao.repository.impl;
 
 import com.epam.esm.dao.config.TestDaoConfig;
 import com.epam.esm.dao.entity.GiftCertificate;
-import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificateByIdSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByDescriptionPartSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNamePartSpecification;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

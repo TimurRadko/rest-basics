@@ -27,19 +27,16 @@ public interface Repository<T extends TableEntity> {
    * @param specification - specification used to search for Entities in the database
    * @return List<T> - List of T contained in one of all tables in the DB
    */
-  List<T> getEntityListBySpecification(Specification specification);
+  List<T> getEntityListBySpecification(Specification<T> specification);
 
   /**
    * * This method describes a general get (getting a entity by parameter) operation for all
    * Entities, located in the DB
    *
-   * @param id - passed into the method id parameter that is contained in one of all tables in the
-   *     DB
+   * @param specification - specification used to search for Entities in the database
    * @return Optional<T> - container that is contained Entity (typed parameter)
    */
-  Optional<T> getEntityById(Long id);
-
-  List<T> getAllEntities();
+  Optional<T> getEntityBySpecification(Specification<T> specification);
 
   /**
    * * his method describes a general delete operation for all Entities with the specified id,

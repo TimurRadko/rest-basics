@@ -33,14 +33,19 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public List<OrderDto> getAllOrdersByUserId(long id) {
-    List<Order> orders = orderRepository.getOrdersByUserId(id);
-    return orders.stream()
-        .map(order -> new OrderDto(order, getAllGiftCertificateByOrderId(order.getId())))
-        .collect(Collectors.toList());
+    return null;
   }
 
-  private List<GiftCertificate> getAllGiftCertificateByOrderId(long id) {
-    return giftCertificateRepository.getGiftCertificatesBySpecification(
-        new GetGiftCertificatesByOrderIdSpecification(id));
-  }
+  //  @Override
+//  public List<OrderDto> getAllOrdersByUserId(long id) {
+//    List<Order> orders = orderRepository.getOrdersByUserId(id);
+//    return orders.stream()
+//        .map(order -> new OrderDto(order, getAllGiftCertificateByOrderId(order.getId())))
+//        .collect(Collectors.toList());
+//  }
+//
+//  private List<GiftCertificate> getAllGiftCertificateByOrderId(long id) {
+//    return giftCertificateRepository.getGiftCertificatesBySpecification(
+//        new GetGiftCertificatesByOrderIdSpecification(id));
+//  }
 }

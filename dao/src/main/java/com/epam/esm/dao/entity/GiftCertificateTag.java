@@ -5,17 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "gift_certificates_tags")
 public class GiftCertificateTag implements TableEntity {
-  @Id
-  @Column(name = "id")
   private Long id;
 
-  @Column(name = "gift_certificate_id")
   private Long giftCertificateId;
 
-  @Column(name = "tag_id")
   private Long tagId;
 
   public GiftCertificateTag() {}

@@ -7,7 +7,7 @@ import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.service.builder.TagBuilder;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DeletingTagException;
-import com.epam.esm.service.exception.EntityNotValidMultipleException;
+import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.TagAlreadyExistsException;
 import com.epam.esm.service.validator.TagValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +58,7 @@ class TagServiceImplTest {
 //  @Test
 //  void testGetAll_shouldReturnTagList_whenTagsExist() {
 //    // given
-//    when(tagRepository.getTagsBySpecification(any())).thenReturn(expectedTags);
+//    when(tagRepository.getEntityListBySpecification(any())).thenReturn(expectedTags);
 //    // when
 //    List<TagDto> actualTagDtos = tagService.getAll(NULL_SORTING);
 //    // then
@@ -68,7 +68,7 @@ class TagServiceImplTest {
 //  @Test
 //  void testGetById_shouldReturnRightTag_whenItExists() {
 //    // given
-//    when(tagRepository.getTagBySpecification(any())).thenReturn(Optional.of(firstTestTag));
+//    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
 //    // when
 //    TagDto actualTagDto = tagService.getById(ID_FOR_MANIPULATIONS).orElse(new TagDto());
 //    // then
@@ -78,7 +78,7 @@ class TagServiceImplTest {
 //  @Test
 //  void testSave_shouldReturnSavedTag_whenParametersIsValid() {
 //    // given
-//    when(tagRepository.getTagBySpecification(any())).thenReturn(Optional.empty());
+//    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.empty());
 //    when(tagRepository.save(firstTestTag)).thenReturn(Optional.of(firstTestTag));
 //    when(tagValidator.isValid(firstTestTagDto)).thenReturn(true);
 //    when(builder.buildFromDto(firstTestTagDto)).thenReturn(firstTestTag);
@@ -91,7 +91,7 @@ class TagServiceImplTest {
 //  @Test
 //  void testSave_shouldThrowTagAlreadyExistsException_whenTagExistsInDatabase() {
 //    // given
-//    when(tagRepository.getTagBySpecification(any())).thenReturn(Optional.of(firstTestTag));
+//    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
 //    when(tagValidator.isValid(firstTestTagDto)).thenReturn(true);
 //    when(builder.buildFromDto(firstTestTagDto)).thenReturn(firstTestTag);
 //    // when
@@ -105,15 +105,15 @@ class TagServiceImplTest {
 //    // when
 //    when(tagValidator.isValid(any())).thenReturn(false);
 //    // then
-//    assertThrows(EntityNotValidMultipleException.class, () -> tagService.save(firstTestTagDto));
+//    assertThrows(EntityNotValidException.class, () -> tagService.save(firstTestTagDto));
 //  }
 //
 //  @Test
 //  void testDelete_ShouldThrowDeletingTagException_whenItExists() {
 //    // given
 //    int expectedResult = 1;
-//    when(tagRepository.getTagBySpecification(any())).thenReturn(Optional.of(firstTestTag));
-//    when(giftCertificateTagRepository.getGiftCertificateTagsBySpecification(any()))
+//    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
+//    when(giftCertificateTagRepository.getEntityListBySpecification(any()))
 //        .thenReturn(giftCertificateTags);
 //    // when
 //    // then
@@ -125,8 +125,8 @@ class TagServiceImplTest {
 //    // given
 //    int expectedResult = 1;
 //    when(tagRepository.delete(ID_FOR_MANIPULATIONS)).thenReturn(expectedResult);
-//    when(tagRepository.getTagBySpecification(any())).thenReturn(Optional.of(firstTestTag));
-//    when(giftCertificateTagRepository.getGiftCertificateTagsBySpecification(any()))
+//    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
+//    when(giftCertificateTagRepository.getEntityListBySpecification(any()))
 //        .thenReturn(Collections.emptyList());
 //    // when
 //    int actualResult = tagService.delete(ID_FOR_MANIPULATIONS);

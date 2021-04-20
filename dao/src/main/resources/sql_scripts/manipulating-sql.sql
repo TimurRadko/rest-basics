@@ -115,4 +115,18 @@ FROM gift_certificates gc
               ON gc.id = ogc.gift_certificate_id;
 
 
+SELECT t.id, t.name
+FROM tags t
+JOIN gift_certificates_tags gct
+ON t.id = gct.tag_id
+WHERE gct.gift_certificate_id = 2;
+
+SELECT t.id, t.name
+FROM tags t
+         JOIN gift_certificates_tags gct
+              ON t.id = gct.tag_id
+WHERE gct.gift_certificate_id = 2;
+
+
+
 

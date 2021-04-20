@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,22 +23,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   }
 
   @Override
-  public List<GiftCertificate> getGiftCertificatesBySpecification(Specification specification) {
-    return entityManager
-        .createQuery("SELECT t FROM GiftCertificate t", GiftCertificate.class)
-        .getResultList();
-  }
-
-  @Override
-  public List<GiftCertificate> getSortedGiftCertificates(String sort) {
-    return entityManager
-            .createQuery("SELECT t FROM GiftCertificate t ORDER BY t.name ASC", GiftCertificate.class)
-            .getResultList();
-  }
-
-  @Override
-  public Optional<GiftCertificate> getGiftCertificateById(long id) {
-    return Optional.of(entityManager.find(GiftCertificate.class, id));
+  public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
+    giftCertificate.setLastUpdateDate(LocalDateTime.now());
+    return Optional.of(entityManager.merge(giftCertificate));
   }
 
   @Override
@@ -48,19 +37,29 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   }
 
   @Override
-  public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
-    giftCertificate.setLastUpdateDate(LocalDateTime.now());
-    return Optional.of(entityManager.merge(giftCertificate));
+  public List<GiftCertificate> getEntityListBySpecification(
+      Specification<GiftCertificate> specification) {
+    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<GiftCertificate> criteriaQuery = specification.getCriteriaQuery(builder);
+    return entityManager.createQuery(criteriaQuery).getResultList();
+  }
+
+  @Override
+  public Optional<GiftCertificate> getEntityBySpecification(
+      Specification<GiftCertificate> specification) {
+    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<GiftCertificate> criteriaQuery = specification.getCriteriaQuery(builder);
+    return entityManager.createQuery(criteriaQuery).getResultList().stream().findFirst();
   }
 
   @Override
   public int delete(long id) {
     entityManager
-        .createQuery("DELETE FROM GiftCertificateTag WHERE giftCertificateId = :id")
+        .createQuery("DELETE FROM GiftCertificateTag t WHERE t.giftCertificateId = :id")
         .setParameter("id", id)
         .executeUpdate();
     return entityManager
-        .createQuery("DELETE FROM GiftCertificate WHERE id = :id")
+        .createQuery("DELETE FROM GiftCertificate t WHERE t.id = :id")
         .setParameter("id", id)
         .executeUpdate();
   }

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 public class GiftCertificateDto {
@@ -39,6 +40,17 @@ public class GiftCertificateDto {
     this.createDate = giftCertificate.getCreateDate();
     this.lastUpdateDate = giftCertificate.getLastUpdateDate();
     this.tags = tags;
+  }
+
+  public GiftCertificateDto(GiftCertificate giftCertificate) {
+    this.id = giftCertificate.getId();
+    this.name = giftCertificate.getName();
+    this.description = giftCertificate.getDescription();
+    this.price = giftCertificate.getPrice();
+    this.duration = giftCertificate.getDuration();
+    this.createDate = giftCertificate.getCreateDate();
+    this.lastUpdateDate = giftCertificate.getLastUpdateDate();
+    this.tags = new HashSet<>(giftCertificate.getTags());
   }
 
   public GiftCertificateDto(

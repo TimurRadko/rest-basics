@@ -48,47 +48,62 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<UserDto> getAll() {
-    return userRepository.getAllUsers().stream()
-        .map((this::createUserDto))
-        .collect(Collectors.toList());
-  }
-
-  @Override
-  public Optional<UserDto> getById(long id) {
-    return userRepository.getUserById(id).map(this::createUserDto);
-  }
-
-  private UserDto createUserDto(User user) {
-    List<Order> orders = orderRepository.getOrdersByUserId(user.getId());
-    return new UserDto(
-        user,
-        orders.stream()
-            .map(order -> new OrderDto(order, getAllGiftCertificateByOrderId(order.getId())))
-            .collect(Collectors.toList()));
-  }
-
-  private List<GiftCertificate> getAllGiftCertificateByOrderId(long id) {
-    return giftCertificateRepository.getGiftCertificatesBySpecification(
-        new GetGiftCertificatesByOrderIdSpecification(id));
+    return null;
   }
 
   @Override
   public Optional<UserDto> makeOrder(Long id, List<GiftCertificateDto> giftCertificateDtos) {
-    User user =
-        userRepository
-            .getUserById(id)
-            .orElseThrow(
-                () ->
-                    new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
-
-    // TODO; Write this method
-    BigDecimal resultPrice = new BigDecimal(0);
-    for (GiftCertificateDto giftCertificateDto : giftCertificateDtos) {
-      BigDecimal price = giftCertificateDto.getPrice();
-      resultPrice = resultPrice.add(price);
-    }
-    BigDecimal userAccount = user.getAccount();
-
     return Optional.empty();
   }
+
+  @Override
+  public Optional<UserDto> getById(long id) {
+    return Optional.empty();
+  }
+
+  //  @Override
+//  public List<UserDto> getAll() {
+//    return userRepository.getAllUsers().stream()
+//        .map((this::createUserDto))
+//        .collect(Collectors.toList());
+//  }
+//
+//  @Override
+//  public Optional<UserDto> getById(long id) {
+//    return userRepository.getUserById(id).map(this::createUserDto);
+//  }
+//
+//  private UserDto createUserDto(User user) {
+//    List<Order> orders = orderRepository.getOrdersByUserId(user.getId());
+//    return new UserDto(
+//        user,
+//        orders.stream()
+//            .map(order -> new OrderDto(order, getAllGiftCertificateByOrderId(order.getId())))
+//            .collect(Collectors.toList()));
+//  }
+//
+//  private List<GiftCertificate> getAllGiftCertificateByOrderId(long id) {
+//    return giftCertificateRepository.getGiftCertificatesBySpecification(
+//        new GetGiftCertificatesByOrderIdSpecification(id));
+//  }
+//
+//  @Override
+//  public Optional<UserDto> makeOrder(Long id, List<GiftCertificateDto> giftCertificateDtos) {
+//    User user =
+//        userRepository
+//            .getUserById(id)
+//            .orElseThrow(
+//                () ->
+//                    new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+//
+//    // TODO; Write this method
+//    BigDecimal resultPrice = new BigDecimal(0);
+//    for (GiftCertificateDto giftCertificateDto : giftCertificateDtos) {
+//      BigDecimal price = giftCertificateDto.getPrice();
+//      resultPrice = resultPrice.add(price);
+//    }
+//    BigDecimal userAccount = user.getAccount();
+//
+//    return Optional.empty();
+//  }
 }

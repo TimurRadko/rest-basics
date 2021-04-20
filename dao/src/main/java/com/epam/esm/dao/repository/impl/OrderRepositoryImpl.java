@@ -18,16 +18,16 @@ public class OrderRepositoryImpl implements OrderRepository {
     this.entityManager = entityManager;
   }
 
-  @Override
-  public List<Order> getOrdersByUserId(long id) {
-    return entityManager
-        .createQuery("SELECT t FROM Order t WHERE user_id=?1", Order.class)
-        .setParameter(1, id)
-        .getResultList();
-  }
-
-  @Override
-  public Optional<Order> getOrderById(long id) {
-    return Optional.of(entityManager.find(Order.class, id));
-  }
+//  @Override
+//  public List<Order> getOrdersByUserId(long id) {
+//    return entityManager
+//        .createQuery("SELECT t FROM Order t WHERE t.user_id=?1", Order.class)
+//        .setParameter(1, id)
+//        .getResultList();
+//  }
+//
+//  @Override
+//  public Optional<Order> getOrderById(long id) {
+//    return Optional.of(entityManager.find(Order.class, id));
+//  }
 }

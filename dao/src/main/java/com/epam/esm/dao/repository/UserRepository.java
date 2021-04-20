@@ -6,8 +6,4 @@ import java.util.List;
 import java.util.Optional;
 
 /** * This interface describes a common operations with User's Entities situated in the DB */
-public interface UserRepository {
-  List<User> getAllUsers();
-
-  Optional<User> getUserById(long id);
-}
+public interface UserRepository extends Repository<User> {}

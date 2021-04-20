@@ -1,8 +1,12 @@
 package com.epam.esm.dao.specification.gift;
 
+import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.specification.Specification;
 
-public final class GetGiftCertificatesByTagNameSpecification implements Specification {
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+
+public final class GetGiftCertificatesByTagNameSpecification implements Specification<GiftCertificate> {
   private final String tagName;
   private final String sort;
 
@@ -20,12 +24,7 @@ public final class GetGiftCertificatesByTagNameSpecification implements Specific
   }
 
   @Override
-  public String getQuery() {
-    return QUERY;
-  }
-
-  @Override
-  public Object[] getArgs() {
-    return new Object[] {tagName, sort, sort};
+  public CriteriaQuery<GiftCertificate> getCriteriaQuery(CriteriaBuilder builder) {
+    return null;
   }
 }

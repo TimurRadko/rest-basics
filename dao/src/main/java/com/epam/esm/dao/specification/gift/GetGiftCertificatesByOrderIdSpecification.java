@@ -1,8 +1,12 @@
 package com.epam.esm.dao.specification.gift;
 
+import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.specification.Specification;
 
-public class GetGiftCertificatesByOrderIdSpecification implements Specification {
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+
+public class GetGiftCertificatesByOrderIdSpecification implements Specification<GiftCertificate> {
   private final long id;
   private static final String QUERY =
       "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration,"
@@ -16,12 +20,7 @@ public class GetGiftCertificatesByOrderIdSpecification implements Specification 
   }
 
   @Override
-  public String getQuery() {
-    return QUERY;
-  }
-
-  @Override
-  public Object[] getArgs() {
-    return new Object[] {id};
+  public CriteriaQuery<GiftCertificate> getCriteriaQuery(CriteriaBuilder builder) {
+    return null;
   }
 }

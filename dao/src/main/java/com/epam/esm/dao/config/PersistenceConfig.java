@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @ComponentScan(basePackages = "com.epam.esm")
 @EnableTransactionManagement
-@EntityScan(basePackages = "com.epam.esm")
+@EntityScan(basePackages = "com.epam.esm.dao.entity")
 public class PersistenceConfig {}
