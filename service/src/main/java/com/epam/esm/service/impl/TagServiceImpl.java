@@ -26,18 +26,15 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
   private final TagRepository tagRepository;
   private final TagValidator tagValidator;
-  private final GiftCertificateRepository giftCertificateRepository;
   private TagBuilder builder;
 
   @Autowired
   public TagServiceImpl(
       TagRepository tagRepository,
       TagValidator tagValidator,
-      GiftCertificateRepository giftCertificateRepository,
       TagBuilder builder) {
     this.tagRepository = tagRepository;
     this.tagValidator = tagValidator;
-    this.giftCertificateRepository = giftCertificateRepository;
     this.builder = builder;
   }
 

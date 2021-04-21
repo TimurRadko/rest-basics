@@ -1,6 +1,7 @@
 package com.epam.esm.dao.specification.gift;
 
 import com.epam.esm.dao.entity.GiftCertificate;
+import com.epam.esm.dao.sort.GiftCertificateSorter;
 import com.epam.esm.dao.specification.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -10,6 +11,7 @@ import javax.persistence.criteria.Root;
 
 public final class GetAllGiftCertificatesSpecification implements Specification<GiftCertificate> {
   private final String sort;
+  private final GiftCertificateSorter giftCertificateSorter;
 
   private static final String QUERY =
       "SELECT id, name, description, price, "
@@ -22,6 +24,7 @@ public final class GetAllGiftCertificatesSpecification implements Specification<
 
   public GetAllGiftCertificatesSpecification(String sort) {
     this.sort = sort;
+    this.giftCertificateSorter = new GiftCertificateSorter();
   }
 
   @Override
@@ -30,21 +33,11 @@ public final class GetAllGiftCertificatesSpecification implements Specification<
     Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
     root.fetch("tags", JoinType.LEFT);
     criteria.select(root).distinct(true);
-//    if (sort == null) {
-//      return criteria.orderBy(builder.asc(root.get("id")));
-//    }
-//    if (sort.equals("name-asc")) {
-//      criteria.orderBy(builder.asc(root.get("name")));
-//    } else if (sort.equals("name-desc")) {
-//      criteria.orderBy(builder.desc(root.get("name")));
-//    }
-//
-//    if (sort.equals("create-date-asc")) {
-//      criteria.orderBy(builder.asc(root.get("create-date")));
-//    } else if (sort.equals("create-date-desc")) {
-//      criteria.orderBy(builder.desc(root.get("create-date")));
-//    }
 
+    if (sort == null) {
+      return criteria.orderBy(builder.asc(root.get("id")));
+    }
+    giftCertificateSorter.sort(criteria, builder, root, sort);
     return criteria;
   }
 }

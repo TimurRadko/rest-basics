@@ -10,23 +10,12 @@ import java.util.stream.Collectors;
 @Component
 public class GiftCertificateBuilder {
 
-  public GiftCertificate buildWithoutTags(GiftCertificateDto giftCertificateDto) {
-    return new GiftCertificate(
-        giftCertificateDto.getId(),
-        giftCertificateDto.getName(),
-        giftCertificateDto.getDescription(),
-        giftCertificateDto.getPrice(),
-        giftCertificateDto.getDuration(),
-        giftCertificateDto.getCreateDate(),
-        giftCertificateDto.getLastUpdateDate());
-  }
-
   public GiftCertificate buildNewParameterGiftCertificate(
-      GiftCertificate existingGiftCertificate, GiftCertificate giftCertificate) {
-    String name = giftCertificate.getName();
-    String description = giftCertificate.getDescription();
-    BigDecimal price = giftCertificate.getPrice();
-    Integer duration = giftCertificate.getDuration();
+      GiftCertificate existingGiftCertificate, GiftCertificateDto giftCertificateDto) {
+    String name = giftCertificateDto.getName();
+    String description = giftCertificateDto.getDescription();
+    BigDecimal price = giftCertificateDto.getPrice();
+    Integer duration = giftCertificateDto.getDuration();
     if (name != null) {
       existingGiftCertificate.setName(name);
     }
@@ -39,27 +28,32 @@ public class GiftCertificateBuilder {
     if (duration != null) {
       existingGiftCertificate.setDuration(duration);
     }
+    setTagsFromTagDtos(existingGiftCertificate, giftCertificateDto);
     return existingGiftCertificate;
   }
 
   public GiftCertificate build(GiftCertificateDto giftCertificateDto) {
     GiftCertificate giftCertificate = getGiftCertificate(giftCertificateDto);
+    setTagsFromTagDtos(giftCertificate, giftCertificateDto);
+    return giftCertificate;
+  }
+
+  private void setTagsFromTagDtos(
+      GiftCertificate giftCertificate, GiftCertificateDto giftCertificateDto) {
     giftCertificate.setTags(
         giftCertificateDto.getTags().stream()
             .map(tagDto -> new TagBuilder().build(tagDto))
             .collect(Collectors.toSet()));
-    return giftCertificate;
   }
 
   private GiftCertificate getGiftCertificate(GiftCertificateDto giftCertificateDto) {
-    GiftCertificate giftCertificate = new GiftCertificate();
-    giftCertificate.setId(giftCertificateDto.getId());
-    giftCertificate.setName(giftCertificateDto.getName());
-    giftCertificate.setDescription(giftCertificateDto.getDescription());
-    giftCertificate.setPrice(giftCertificateDto.getPrice());
-    giftCertificate.setDuration(giftCertificateDto.getDuration());
-    giftCertificate.setCreateDate(giftCertificateDto.getCreateDate());
-    giftCertificate.setLastUpdateDate(giftCertificateDto.getLastUpdateDate());
-    return giftCertificate;
+    return new GiftCertificate(
+        giftCertificateDto.getId(),
+        giftCertificateDto.getName(),
+        giftCertificateDto.getDescription(),
+        giftCertificateDto.getPrice(),
+        giftCertificateDto.getDuration(),
+        giftCertificateDto.getCreateDate(),
+        giftCertificateDto.getLastUpdateDate());
   }
 }

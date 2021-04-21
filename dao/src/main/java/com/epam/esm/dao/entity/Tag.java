@@ -1,7 +1,5 @@
 package com.epam.esm.dao.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,7 +15,7 @@ import java.util.Set;
 public class Tag implements TableEntity {
   @Id
   @Column(name = "id")
-  @GeneratedValue(strategy = GenerationType.TABLE)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(name = "name")

@@ -34,7 +34,8 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     LocalDateTime now = LocalDateTime.now();
     giftCertificate.setCreateDate(now);
     giftCertificate.setLastUpdateDate(now);
-    return Optional.ofNullable(entityManager.merge(giftCertificate));
+    entityManager.persist(giftCertificate);
+    return Optional.ofNullable(giftCertificate);
   }
 
   @Override

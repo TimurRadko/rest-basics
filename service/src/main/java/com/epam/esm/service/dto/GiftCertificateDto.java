@@ -105,7 +105,7 @@ public class GiftCertificateDto {
   }
 
   public Set<TagDto> getTags() {
-    return new HashSet<>(tags);
+    return (tags == null) ? null : new HashSet<>(tags);
   }
 
   public void setTags(Set<TagDto> tags) {
@@ -152,9 +152,7 @@ public class GiftCertificateDto {
         : that.getLastUpdateDate() != null) {
       return false;
     }
-    return getTags() != null
-        ? getTags().equals(that.getTags())
-        : that.getTags() == null;
+    return getTags() != null ? getTags().equals(that.getTags()) : that.getTags() == null;
   }
 
   @Override

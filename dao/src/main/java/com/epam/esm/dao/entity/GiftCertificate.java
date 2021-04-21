@@ -1,11 +1,5 @@
 package com.epam.esm.dao.entity;
 
-import com.epam.esm.dao.serialization.LocalDateDeserializer;
-import com.epam.esm.dao.serialization.LocalDateSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +11,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -24,7 +19,7 @@ import java.util.Set;
 public class GiftCertificate implements TableEntity {
   @Id
   @Column(name = "id")
-  @GeneratedValue(strategy = GenerationType.TABLE)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(name = "name")
@@ -45,8 +40,7 @@ public class GiftCertificate implements TableEntity {
   @Column(name = "last_update_date")
   private LocalDateTime lastUpdateDate;
 
-  @ManyToMany(
-      cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+  @ManyToMany()
   @JoinTable(
       name = "gift_certificates_tags",
       joinColumns = @JoinColumn(name = "gift_certificate_id"),
@@ -83,7 +77,7 @@ public class GiftCertificate implements TableEntity {
   }
 
   public Set<Tag> getTags() {
-    return tags;
+    return (tags == null) ? null : new HashSet<>(tags);
   }
 
   public void setTags(Set<Tag> tags) {
