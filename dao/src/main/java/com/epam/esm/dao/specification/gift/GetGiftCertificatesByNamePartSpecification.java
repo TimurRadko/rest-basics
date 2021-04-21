@@ -7,7 +7,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public final class GetGiftCertificatesByNamePartSpecification implements Specification<GiftCertificate> {
+public final class GetGiftCertificatesByNamePartSpecification
+    implements Specification<GiftCertificate> {
   private final String name;
   private final String sort;
 

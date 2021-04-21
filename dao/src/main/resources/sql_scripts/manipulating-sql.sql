@@ -117,8 +117,8 @@ FROM gift_certificates gc
 
 SELECT t.id, t.name
 FROM tags t
-JOIN gift_certificates_tags gct
-ON t.id = gct.tag_id
+         JOIN gift_certificates_tags gct
+              ON t.id = gct.tag_id
 WHERE gct.gift_certificate_id = 2;
 
 SELECT t.id, t.name
@@ -126,6 +126,102 @@ FROM tags t
          JOIN gift_certificates_tags gct
               ON t.id = gct.tag_id
 WHERE gct.gift_certificate_id = 2;
+
+select distinct giftcertif0_.id               as id1_0_0_,
+                tag2_.id                      as id1_3_1_,
+                giftcertif0_.create_date      as create_d2_0_0_,
+                giftcertif0_.description      as descript3_0_0_,
+                giftcertif0_.duration         as duration4_0_0_,
+                giftcertif0_.last_update_date as last_upd5_0_0_,
+                giftcertif0_.name             as name6_0_0_,
+                giftcertif0_.price            as price7_0_0_,
+                tag2_.name                    as name2_3_1_,
+                tags1_.gift_certificate_id    as gift_cer1_1_0__,
+                tags1_.tag_id                 as tag_id2_1_0__
+from gift_certificates giftcertif0_
+         left outer join gift_certificates_tags tags1_ on giftcertif0_.id = tags1_.gift_certificate_id
+         left outer join tags tag2_ on tags1_.tag_id = tag2_.id
+where giftcertif0_.id = 1;
+
+select distinct giftcertif0_.id               as id1_0_0_,
+                tag2_.id                      as id1_3_1_,
+                giftcertif0_.create_date      as create_d2_0_0_,
+                giftcertif0_.description      as descript3_0_0_,
+                giftcertif0_.duration         as duration4_0_0_,
+                giftcertif0_.last_update_date as last_upd5_0_0_,
+                giftcertif0_.name             as name6_0_0_,
+                giftcertif0_.price            as price7_0_0_,
+                tag2_.name                    as name2_3_1_,
+                tags1_.gift_certificate_id    as gift_cer1_1_0__,
+                tags1_.tag_id                 as tag_id2_1_0__
+from gift_certificates giftcertif0_
+         left outer join gift_certificates_tags tags1_ on giftcertif0_.id = tags1_.gift_certificate_id
+         left outer join tags tag2_ on tags1_.tag_id = tag2_.id;
+
+select giftcertif0_.id               as id1_0_,
+       giftcertif0_.create_date      as create_d2_0_,
+       giftcertif0_.description      as descript3_0_,
+       giftcertif0_.duration         as duration4_0_,
+       giftcertif0_.last_update_date as last_upd5_0_,
+       giftcertif0_.name             as name6_0_,
+       giftcertif0_.price            as price7_0_
+from gift_certificates giftcertif0_
+where lower(giftcertif0_.name) like '%fi%';
+
+select giftcertif0_.id               as id1_0_,
+       giftcertif0_.create_date      as create_d2_0_,
+       giftcertif0_.description      as descript3_0_,
+       giftcertif0_.duration         as duration4_0_,
+       giftcertif0_.last_update_date as last_upd5_0_,
+       giftcertif0_.name             as name6_0_,
+       giftcertif0_.price            as price7_0_
+from gift_certificates giftcertif0_
+where lower(giftcertif0_.name) like lower('fi');
+
+select tag0_.id as id1_3_, tag0_.name as name2_3_
+from tags tag0_
+where tag0_.id = 6;
+
+select distinct giftcertif0_.id               as id1_0_0_,
+                tag2_.id                      as id1_3_1_,
+                giftcertif0_.create_date      as create_d2_0_0_,
+                giftcertif0_.description      as descript3_0_0_,
+                giftcertif0_.duration         as duration4_0_0_,
+                giftcertif0_.last_update_date as last_upd5_0_0_,
+                giftcertif0_.name             as name6_0_0_,
+                giftcertif0_.price            as price7_0_0_,
+                tag2_.name                    as name2_3_1_,
+                tags1_.gift_certificate_id    as gift_cer1_1_0__,
+                tags1_.tag_id                 as tag_id2_1_0__
+from gift_certificates giftcertif0_
+         left outer join gift_certificates_tags tags1_ on giftcertif0_.id = tags1_.gift_certificate_id
+         left outer join tags tag2_ on tags1_.tag_id = tag2_.id
+where tag2_.id = 1;
+
+select distinct tag0_.id                         as id1_3_0_,
+                giftcertif2_.id                  as id1_0_1_,
+                tag0_.name                       as name2_3_0_,
+                giftcertif2_.create_date         as create_d2_0_1_,
+                giftcertif2_.description         as descript3_0_1_,
+                giftcertif2_.duration            as duration4_0_1_,
+                giftcertif2_.last_update_date    as last_upd5_0_1_,
+                giftcertif2_.name                as name6_0_1_,
+                giftcertif2_.price               as price7_0_1_,
+                giftcertif1_.tag_id              as tag_id2_1_0__,
+                giftcertif1_.gift_certificate_id as gift_cer1_1_0__
+from tags tag0_
+         left outer join gift_certificates_tags giftcertif1_ on tag0_.id = giftcertif1_.tag_id
+         left outer join gift_certificates giftcertif2_ on giftcertif1_.gift_certificate_id = giftcertif2_.id
+where tag0_.id = 6;
+
+select distinct tag0_.id as id1_3_, tag0_.name as name2_3_
+from tags tag0_
+         left outer join gift_certificates_tags giftcertif1_ on tag0_.id = giftcertif1_.tag_id
+         left outer join gift_certificates giftcertif2_ on giftcertif1_.gift_certificate_id = giftcertif2_.id
+where tag0_.id = 4
+  and (giftcertif2_.id = 5);
+
+SELECT * FROM gift_certificates_tags;
 
 
 

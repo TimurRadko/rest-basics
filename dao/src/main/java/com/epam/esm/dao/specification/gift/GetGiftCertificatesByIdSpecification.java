@@ -1,7 +1,6 @@
 package com.epam.esm.dao.specification.gift;
 
 import com.epam.esm.dao.entity.GiftCertificate;
-import com.epam.esm.dao.entity.GiftCertificate_;
 import com.epam.esm.dao.specification.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;

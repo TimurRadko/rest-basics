@@ -38,7 +38,9 @@ public final class GetGiftCertificatesByDescriptionPartSpecification
     CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
     Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
     criteria.select(root);
-    criteria.where(builder.like(builder.lower(root.get("description")), "%" + description + "%"));
+    criteria.where(
+        builder.like(
+            builder.lower(root.get("description")), "%" + description.toLowerCase() + "%"));
     return criteria;
   }
 }

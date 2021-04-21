@@ -5,6 +5,7 @@ import com.epam.esm.dao.specification.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 public final class GetAllGiftCertificatesSpecification implements Specification<GiftCertificate> {
@@ -27,20 +28,22 @@ public final class GetAllGiftCertificatesSpecification implements Specification<
   public CriteriaQuery<GiftCertificate> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
     Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
-    if (sort == null) {
-      return criteria.orderBy(builder.asc(root.get("id")));
-    }
-    if (sort.equals("name-asc")) {
-      criteria.orderBy(builder.asc(root.get("name")));
-    } else if (sort.equals("name-desc")) {
-      criteria.orderBy(builder.desc(root.get("name")));
-    }
-
-    if (sort.equals("create-date-asc")) {
-      criteria.orderBy(builder.asc(root.get("create-date")));
-    } else if (sort.equals("create-date-desc")) {
-      criteria.orderBy(builder.desc(root.get("create-date")));
-    }
+    root.fetch("tags", JoinType.LEFT);
+    criteria.select(root).distinct(true);
+//    if (sort == null) {
+//      return criteria.orderBy(builder.asc(root.get("id")));
+//    }
+//    if (sort.equals("name-asc")) {
+//      criteria.orderBy(builder.asc(root.get("name")));
+//    } else if (sort.equals("name-desc")) {
+//      criteria.orderBy(builder.desc(root.get("name")));
+//    }
+//
+//    if (sort.equals("create-date-asc")) {
+//      criteria.orderBy(builder.asc(root.get("create-date")));
+//    } else if (sort.equals("create-date-desc")) {
+//      criteria.orderBy(builder.desc(root.get("create-date")));
+//    }
 
     return criteria;
   }

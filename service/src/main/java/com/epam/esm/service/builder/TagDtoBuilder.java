@@ -5,9 +5,9 @@ import com.epam.esm.service.dto.TagDto;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TagBuilder {
+public class TagDtoBuilder {
 
-  public Tag build(TagDto tagDto) {
-    return new Tag(tagDto.getId(), tagDto.getName());
+  public TagDto build(Tag tag) {
+    return new TagDto(tag.getId(), tag.getName());
   }
 }

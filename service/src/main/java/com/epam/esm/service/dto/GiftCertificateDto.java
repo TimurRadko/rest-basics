@@ -1,7 +1,5 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.dao.entity.GiftCertificate;
-import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.serialization.LocalDateDeserializer;
 import com.epam.esm.dao.serialization.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -27,41 +25,19 @@ public class GiftCertificateDto {
   @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime lastUpdateDate;
 
-  private Set<Tag> tags;
+  private Set<TagDto> tags;
 
   public GiftCertificateDto() {}
-
-  public GiftCertificateDto(GiftCertificate giftCertificate, Set<Tag> tags) {
-    this.id = giftCertificate.getId();
-    this.name = giftCertificate.getName();
-    this.description = giftCertificate.getDescription();
-    this.price = giftCertificate.getPrice();
-    this.duration = giftCertificate.getDuration();
-    this.createDate = giftCertificate.getCreateDate();
-    this.lastUpdateDate = giftCertificate.getLastUpdateDate();
-    this.tags = tags;
-  }
-
-  public GiftCertificateDto(GiftCertificate giftCertificate) {
-    this.id = giftCertificate.getId();
-    this.name = giftCertificate.getName();
-    this.description = giftCertificate.getDescription();
-    this.price = giftCertificate.getPrice();
-    this.duration = giftCertificate.getDuration();
-    this.createDate = giftCertificate.getCreateDate();
-    this.lastUpdateDate = giftCertificate.getLastUpdateDate();
-    this.tags = new HashSet<>(giftCertificate.getTags());
-  }
 
   public GiftCertificateDto(
       Long id,
       String name,
       String description,
       BigDecimal price,
-      int duration,
+      Integer duration,
       LocalDateTime createDate,
       LocalDateTime lastUpdateDate,
-      Set<Tag> tags) {
+      Set<TagDto> tags) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -128,11 +104,11 @@ public class GiftCertificateDto {
     this.lastUpdateDate = lastUpdateDate;
   }
 
-  public Set<Tag> getTags() {
-    return tags;
+  public Set<TagDto> getTags() {
+    return new HashSet<>(tags);
   }
 
-  public void setTags(Set<Tag> tags) {
+  public void setTags(Set<TagDto> tags) {
     this.tags = tags;
   }
 
@@ -176,7 +152,9 @@ public class GiftCertificateDto {
         : that.getLastUpdateDate() != null) {
       return false;
     }
-    return getTags() != null ? getTags().equals(that.getTags()) : that.getTags() == null;
+    return getTags() != null
+        ? getTags().equals(that.getTags())
+        : that.getTags() == null;
   }
 
   @Override
@@ -211,7 +189,7 @@ public class GiftCertificateDto {
         + createDate
         + ", lastUpdateDate="
         + lastUpdateDate
-        + ", tags="
+        + ", tagDtos="
         + tags
         + '}';
   }

@@ -5,22 +5,18 @@ import com.epam.esm.dao.serialization.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -44,21 +40,13 @@ public class GiftCertificate implements TableEntity {
   private Integer duration;
 
   @Column(name = "create_date")
-  @JsonSerialize(using = LocalDateSerializer.class)
-  @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime createDate;
 
   @Column(name = "last_update_date")
-  @JsonSerialize(using = LocalDateSerializer.class)
-  @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime lastUpdateDate;
 
-  //      @ManyToMany(fetch = FetchType.EAGER)
-  //      @JoinTable(
-  //          name = "gift_certificates_tags",
-  //          joinColumns = @JoinColumn(name = "gift_certificate_id"),
-  //          inverseJoinColumns = @JoinColumn(name = "tag_id"))
-  @ManyToMany
+  @ManyToMany(
+      cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
   @JoinTable(
       name = "gift_certificates_tags",
       joinColumns = @JoinColumn(name = "gift_certificate_id"),

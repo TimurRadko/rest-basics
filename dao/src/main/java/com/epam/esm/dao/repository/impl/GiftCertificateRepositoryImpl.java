@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import java.time.LocalDateTime;
@@ -33,7 +34,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     LocalDateTime now = LocalDateTime.now();
     giftCertificate.setCreateDate(now);
     giftCertificate.setLastUpdateDate(now);
-    return Optional.of(entityManager.merge(giftCertificate));
+    return Optional.ofNullable(entityManager.merge(giftCertificate));
   }
 
   @Override
@@ -47,17 +48,17 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   @Override
   public Optional<GiftCertificate> getEntityBySpecification(
       Specification<GiftCertificate> specification) {
-    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<GiftCertificate> criteriaQuery = specification.getCriteriaQuery(builder);
-    return entityManager.createQuery(criteriaQuery).getResultList().stream().findFirst();
+    try {
+      CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+      CriteriaQuery<GiftCertificate> criteriaQuery = specification.getCriteriaQuery(builder);
+      return Optional.of(entityManager.createQuery(criteriaQuery).getSingleResult());
+    } catch (NoResultException e) {
+      return Optional.empty();
+    }
   }
 
   @Override
   public int delete(long id) {
-    entityManager
-        .createQuery("DELETE FROM GiftCertificateTag t WHERE t.giftCertificateId = :id")
-        .setParameter("id", id)
-        .executeUpdate();
     return entityManager
         .createQuery("DELETE FROM GiftCertificate t WHERE t.id = :id")
         .setParameter("id", id)

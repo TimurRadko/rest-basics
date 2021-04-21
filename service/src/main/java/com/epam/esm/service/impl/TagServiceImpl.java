@@ -1,10 +1,9 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.entity.GiftCertificateTag;
 import com.epam.esm.dao.entity.Tag;
-import com.epam.esm.dao.repository.GiftCertificateTagRepository;
+import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.TagRepository;
-import com.epam.esm.dao.specification.gifttag.GetGiftCertificateTagByTagIdSpecification;
+import com.epam.esm.dao.specification.tag.GetAllTagsAssociatedWithGiftCertificates;
 import com.epam.esm.dao.specification.tag.GetAllTagsSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
@@ -27,18 +26,18 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
   private final TagRepository tagRepository;
   private final TagValidator tagValidator;
-  private final GiftCertificateTagRepository giftCertificateTagRepository;
+  private final GiftCertificateRepository giftCertificateRepository;
   private TagBuilder builder;
 
   @Autowired
   public TagServiceImpl(
       TagRepository tagRepository,
       TagValidator tagValidator,
-      GiftCertificateTagRepository giftCertificateTagRepository,
+      GiftCertificateRepository giftCertificateRepository,
       TagBuilder builder) {
     this.tagRepository = tagRepository;
     this.tagValidator = tagValidator;
-    this.giftCertificateTagRepository = giftCertificateTagRepository;
+    this.giftCertificateRepository = giftCertificateRepository;
     this.builder = builder;
   }
 
@@ -60,7 +59,7 @@ public class TagServiceImpl implements TagService {
     if (!tagValidator.isValid(tagDto)) {
       throw new EntityNotValidException(tagValidator.getErrorMessage());
     }
-    Tag tag = builder.buildFromDto(tagDto);
+    Tag tag = builder.build(tagDto);
     Optional<Tag> optionalExistingTag =
         tagRepository.getEntityBySpecification(new GetTagByNameSpecification(tag.getName()));
     if (optionalExistingTag.isEmpty()) {
@@ -78,10 +77,12 @@ public class TagServiceImpl implements TagService {
         .getEntityBySpecification(new GetTagByIdSpecification(id))
         .orElseThrow(
             () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
-    List<GiftCertificateTag> existingGiftCertificateTags =
-        giftCertificateTagRepository.getEntityListBySpecification(
-            new GetGiftCertificateTagByTagIdSpecification(id));
-    if (!existingGiftCertificateTags.isEmpty()) {
+
+    List<Tag> existingTags =
+        tagRepository.getEntityListBySpecification(
+            new GetAllTagsAssociatedWithGiftCertificates(id));
+
+    if (!existingTags.isEmpty()) {
       throw new DeletingTagException(
           "The tag with id = " + id + " attached to the Gift Certificate. Deletion denied.");
     }
