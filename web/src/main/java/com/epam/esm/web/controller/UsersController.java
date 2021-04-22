@@ -13,12 +13,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v2/users")
@@ -50,13 +52,14 @@ public class UsersController {
     return orderService.getAllOrdersByUserId(id);
   }
 
-  @PostMapping("/{id}/certificates")
+  @PostMapping("/{id}/orders")
   public UserDto save(
       @PathVariable Long id,
-      @RequestBody List<GiftCertificateDto> giftCertificateDtos,
+      @RequestBody Set<GiftCertificateDto> giftCertificateDtos,
+      @RequestParam(value = "sort", required = false) String sort,
       HttpServletRequest request,
       HttpServletResponse response) {
-    Optional<UserDto> optionalMadeOrder = userService.makeOrder(id, giftCertificateDtos);
+    Optional<UserDto> optionalMadeOrder = userService.makeOrder(id, giftCertificateDtos, sort);
     UserDto userDto =
         optionalMadeOrder.orElseThrow(
             () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));

@@ -65,135 +65,135 @@ class GiftCertificateValidatorTest {
     assertEquals(NULL_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
   }
 
-  @Test
-  void testValidate_shouldReturnTrue_whenGiftCertificateIsValid() {
-    // given
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    // then
-    assertTrue(actualIsValid);
-  }
-
-  @Test
-  void testValidate_shouldReturnCorrectErrorMessage_whenGiftsNameIsNull() {
-    // given
-    giftCertificate.setName(null);
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    String actualErrorMessage = validator.getErrorMessage();
-    // then
-    assertFalse(actualIsValid);
-    assertEquals(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
-  }
-
-  @Test
-  void testValidate_shouldReturnCorrectErrorMessage_whenGiftsNameLengthIsZero() {
-    // given
-    giftCertificate.setName("");
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    String actualErrorMessage = validator.getErrorMessage();
-    // then
-    assertFalse(actualIsValid);
-    assertEquals(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
-  }
-
-  @Test
-  void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthIsLessThanMin() {
-    // given
-    giftCertificate.setName("I");
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    String actualErrorMessage = validator.getErrorMessage();
-    // then
-    assertFalse(actualIsValid);
-    assertEquals(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
-  }
-
-  @Test
-  void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthIsMoreThanMax() {
-    // given
-    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    String actualErrorMessage = validator.getErrorMessage();
-    // then
-    assertFalse(actualIsValid);
-    assertEquals(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
-  }
-
-  @Test
-  void testValidate_shouldReturnCorrectErrorMessage_whenGiftPriceLessThanZero() {
-    // given
-    giftCertificate.setPrice(BigDecimal.valueOf(-1));
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    String actualErrorMessage = validator.getErrorMessage();
-    // then
-    assertFalse(actualIsValid);
-    assertEquals(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
-  }
-
-  @Test
-  void testValidate_shouldReturnCorrectErrorMessage_whenGiftDurationLessThanZero() {
-    // given
-    giftCertificate.setDuration(-1);
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    String actualErrorMessage = validator.getErrorMessage();
-    // then
-    assertFalse(actualIsValid);
-    assertEquals(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
-  }
-
-  @Test
-  void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthAndPriceIncorrect() {
-    // given
-    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
-    giftCertificate.setPrice(BigDecimal.valueOf(-1));
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    String actualErrorMessage = validator.getErrorMessage();
-    // then
-    assertFalse(actualIsValid);
-    assertEquals(INCORRECT_LENGTH_AND_NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
-  }
-
-  @Test
-  void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthAndDurationIncorrect() {
-    // given
-    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
-    giftCertificate.setDuration(-1);
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    String actualErrorMessage = validator.getErrorMessage();
-    // then
-    assertFalse(actualIsValid);
-    assertEquals(
-        INCORRECT_LENGTH_AND_NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
-  }
-
-  @Test
-  void testValidate_shouldReturnCorrectErrorMessage_whenAllDataIncorrect() {
-    // given
-    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
-    giftCertificate.setPrice(BigDecimal.valueOf(-1));
-    giftCertificate.setDuration(-1);
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
-    // when
-    boolean actualIsValid = validator.isValid(giftCertificateDto);
-    String actualErrorMessage = validator.getErrorMessage();
-    // then
-    assertFalse(actualIsValid);
-    assertEquals(INCORRECT_ALL_DATA_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
-  }
+//  @Test
+//  void testValidate_shouldReturnTrue_whenGiftCertificateIsValid() {
+//    // given
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    // then
+//    assertTrue(actualIsValid);
+//  }
+//
+//  @Test
+//  void testValidate_shouldReturnCorrectErrorMessage_whenGiftsNameIsNull() {
+//    // given
+//    giftCertificate.setName(null);
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    String actualErrorMessage = validator.getErrorMessage();
+//    // then
+//    assertFalse(actualIsValid);
+//    assertEquals(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
+//  }
+//
+//  @Test
+//  void testValidate_shouldReturnCorrectErrorMessage_whenGiftsNameLengthIsZero() {
+//    // given
+//    giftCertificate.setName("");
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    String actualErrorMessage = validator.getErrorMessage();
+//    // then
+//    assertFalse(actualIsValid);
+//    assertEquals(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
+//  }
+//
+//  @Test
+//  void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthIsLessThanMin() {
+//    // given
+//    giftCertificate.setName("I");
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    String actualErrorMessage = validator.getErrorMessage();
+//    // then
+//    assertFalse(actualIsValid);
+//    assertEquals(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
+//  }
+//
+//  @Test
+//  void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthIsMoreThanMax() {
+//    // given
+//    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    String actualErrorMessage = validator.getErrorMessage();
+//    // then
+//    assertFalse(actualIsValid);
+//    assertEquals(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
+//  }
+//
+//  @Test
+//  void testValidate_shouldReturnCorrectErrorMessage_whenGiftPriceLessThanZero() {
+//    // given
+//    giftCertificate.setPrice(BigDecimal.valueOf(-1));
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    String actualErrorMessage = validator.getErrorMessage();
+//    // then
+//    assertFalse(actualIsValid);
+//    assertEquals(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
+//  }
+//
+//  @Test
+//  void testValidate_shouldReturnCorrectErrorMessage_whenGiftDurationLessThanZero() {
+//    // given
+//    giftCertificate.setDuration(-1);
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    String actualErrorMessage = validator.getErrorMessage();
+//    // then
+//    assertFalse(actualIsValid);
+//    assertEquals(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
+//  }
+//
+//  @Test
+//  void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthAndPriceIncorrect() {
+//    // given
+//    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
+//    giftCertificate.setPrice(BigDecimal.valueOf(-1));
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    String actualErrorMessage = validator.getErrorMessage();
+//    // then
+//    assertFalse(actualIsValid);
+//    assertEquals(INCORRECT_LENGTH_AND_NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
+//  }
+//
+//  @Test
+//  void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthAndDurationIncorrect() {
+//    // given
+//    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
+//    giftCertificate.setDuration(-1);
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    String actualErrorMessage = validator.getErrorMessage();
+//    // then
+//    assertFalse(actualIsValid);
+//    assertEquals(
+//        INCORRECT_LENGTH_AND_NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
+//  }
+//
+//  @Test
+//  void testValidate_shouldReturnCorrectErrorMessage_whenAllDataIncorrect() {
+//    // given
+//    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
+//    giftCertificate.setPrice(BigDecimal.valueOf(-1));
+//    giftCertificate.setDuration(-1);
+//    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+//    // when
+//    boolean actualIsValid = validator.isValid(giftCertificateDto);
+//    String actualErrorMessage = validator.getErrorMessage();
+//    // then
+//    assertFalse(actualIsValid);
+//    assertEquals(INCORRECT_ALL_DATA_GIFT_CERTIFICATE_MESSAGE, actualErrorMessage);
+//  }
 }

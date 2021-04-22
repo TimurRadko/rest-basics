@@ -47,6 +47,13 @@ public class GiftCertificate implements TableEntity {
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private Set<Tag> tags;
 
+  @ManyToMany()
+  @JoinTable(
+      name = "orders_gift_certificates",
+      joinColumns = @JoinColumn(name = "gift_certificate_id"),
+      inverseJoinColumns = @JoinColumn(name = "order_id"))
+  private Set<Order> orders;
+
   public GiftCertificate() {}
 
   public GiftCertificate(
@@ -74,14 +81,6 @@ public class GiftCertificate implements TableEntity {
   @Override
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public Set<Tag> getTags() {
-    return (tags == null) ? null : new HashSet<>(tags);
-  }
-
-  public void setTags(Set<Tag> tags) {
-    this.tags = tags;
   }
 
   public String getName() {
@@ -130,6 +129,22 @@ public class GiftCertificate implements TableEntity {
 
   public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
     this.lastUpdateDate = lastUpdateDate;
+  }
+
+  public Set<Tag> getTags() {
+    return (tags == null) ? null : new HashSet<>(tags);
+  }
+
+  public void setTags(Set<Tag> tags) {
+    this.tags = tags;
+  }
+
+  public Set<Order> getOrders() {
+    return (orders == null) ? null : new HashSet<>(orders);
+  }
+
+  public void setOrders(Set<Order> orders) {
+    this.orders = orders;
   }
 
   @Override

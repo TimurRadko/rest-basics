@@ -22,9 +22,9 @@ public final class GetAllTagsByGiftCertificatesIdSpecification implements Specif
     CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
     Root<Tag> tagRoot = criteria.from(Tag.class);
     Join<Tag, GiftCertificate> tagsJoin = tagRoot.join("giftCertificates");
-    Path<String> giftCertificateNamePath = tagsJoin.get("id");
+    Path<String> giftCertificateIdPath = tagsJoin.get("id");
     criteria.select(tagRoot).distinct(true);
-    criteria.where(builder.equal(giftCertificateNamePath, id));
+    criteria.where(builder.equal(giftCertificateIdPath, id));
     return criteria;
   }
 }

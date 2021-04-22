@@ -1,14 +1,14 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.entity.Tag;
-import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.specification.tag.GetAllTagsAssociatedWithGiftCertificates;
 import com.epam.esm.dao.specification.tag.GetAllTagsSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.service.TagService;
-import com.epam.esm.service.builder.TagBuilder;
+import com.epam.esm.service.builder.tag.TagBuilder;
+import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DeletingTagException;
 import com.epam.esm.service.exception.EntityNotFoundException;
@@ -26,29 +26,32 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
   private final TagRepository tagRepository;
   private final TagValidator tagValidator;
-  private TagBuilder builder;
+  private final TagBuilder builder;
+  private final TagDtoBuilder tagDtoBuilder;
 
   @Autowired
   public TagServiceImpl(
       TagRepository tagRepository,
       TagValidator tagValidator,
-      TagBuilder builder) {
+      TagBuilder builder,
+      TagDtoBuilder tagDtoBuilder) {
     this.tagRepository = tagRepository;
     this.tagValidator = tagValidator;
     this.builder = builder;
+    this.tagDtoBuilder = tagDtoBuilder;
   }
 
   @Override
   public List<TagDto> getAll(String sort) {
     List<Tag> tags = tagRepository.getEntityListBySpecification(new GetAllTagsSpecification(sort));
-    return tags.stream().map((TagDto::new)).collect(Collectors.toList());
+    return tags.stream().map(tagDtoBuilder::build).collect(Collectors.toList());
   }
 
   @Override
   public Optional<TagDto> getById(long id) {
     Optional<Tag> optionalTag =
         tagRepository.getEntityBySpecification(new GetTagByIdSpecification(id));
-    return optionalTag.map(TagDto::new);
+    return optionalTag.map(tagDtoBuilder::build);
   }
 
   @Override
@@ -61,7 +64,7 @@ public class TagServiceImpl implements TagService {
         tagRepository.getEntityBySpecification(new GetTagByNameSpecification(tag.getName()));
     if (optionalExistingTag.isEmpty()) {
       Optional<Tag> optionalSavedTag = tagRepository.save(tag);
-      return optionalSavedTag.map(TagDto::new);
+      return optionalSavedTag.map(tagDtoBuilder::build);
     } else {
       throw new TagAlreadyExistsException(
           "The tag with this name (" + tagDto.getName() + ") is already in the database");

@@ -12,13 +12,7 @@ import java.util.Optional;
  * @param <T> - the interface is typed by T extends Entity
  */
 public interface Repository<T extends TableEntity> {
-  /**
-   * * This method describes a general save (create) operation for all Entities, located in the DB
-   *
-   * @param t - Entity (typed parameter), which transmitted in the method as a args
-   * @return Optional<T> - container that is contained Entity (a typed parameter)
-   */
-  Optional<T> save(T t);
+
 
   /**
    * This method describes a general getAll (getting a list of all entities) operation for all
@@ -37,14 +31,4 @@ public interface Repository<T extends TableEntity> {
    * @return Optional<T> - container that is contained Entity (typed parameter)
    */
   Optional<T> getEntityBySpecification(Specification<T> specification);
-
-  /**
-   * * his method describes a general delete operation for all Entities with the specified id,
-   * located in the DB
-   *
-   * @param id id - passed into the method id parameter that is contained in one of all tables in
-   *     the DB
-   * @return int - return value more than 0, when Tag was deleted
-   */
-  int delete(long id);
 }

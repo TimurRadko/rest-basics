@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -31,14 +32,6 @@ public class Tag implements TableEntity {
     this.name = name;
   }
 
-  public Set<GiftCertificate> getGiftCertificates() {
-    return giftCertificates;
-  }
-
-  public void setGiftCertificates(Set<GiftCertificate> giftCertificates) {
-    this.giftCertificates = giftCertificates;
-  }
-
   @Override
   public Long getId() {
     return id;
@@ -55,6 +48,14 @@ public class Tag implements TableEntity {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public Set<GiftCertificate> getGiftCertificates() {
+    return (giftCertificates == null) ? null : new HashSet<>(giftCertificates);
+  }
+
+  public void setGiftCertificates(Set<GiftCertificate> giftCertificates) {
+    this.giftCertificates = giftCertificates;
   }
 
   @Override

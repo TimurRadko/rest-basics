@@ -35,7 +35,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     giftCertificate.setCreateDate(now);
     giftCertificate.setLastUpdateDate(now);
     entityManager.persist(giftCertificate);
-    return Optional.ofNullable(giftCertificate);
+    return Optional.of(giftCertificate);
   }
 
   @Override

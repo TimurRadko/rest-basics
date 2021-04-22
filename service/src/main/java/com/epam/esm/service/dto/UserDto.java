@@ -1,30 +1,21 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.dao.entity.User;
-
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UserDto {
   private Long id;
   private String login;
   private BigDecimal account;
-  private List<OrderDto> orders;
+  private Set<OrderDto> orders;
 
   public UserDto() {}
 
-  public UserDto(Long id, String login, BigDecimal account, List<OrderDto> orders) {
+  public UserDto(Long id, String login, BigDecimal account, Set<OrderDto> orders) {
     this.id = id;
     this.login = login;
     this.account = account;
-    this.orders = orders;
-  }
-
-  public UserDto(User user, List<OrderDto> orders) {
-    this.id = user.getId();
-    this.login = user.getLogin();
-    this.account = user.getAccount();
     this.orders = orders;
   }
 
@@ -52,11 +43,11 @@ public class UserDto {
     this.account = account;
   }
 
-  public List<OrderDto> getOrders() {
-    return Collections.unmodifiableList(orders);
+  public Set<OrderDto> getOrders() {
+    return (orders == null) ? null : new HashSet<>(orders);
   }
 
-  public void setOrders(List<OrderDto> orders) {
+  public void setOrders(Set<OrderDto> orders) {
     this.orders = orders;
   }
 

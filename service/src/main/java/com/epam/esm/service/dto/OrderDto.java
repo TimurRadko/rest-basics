@@ -1,7 +1,5 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.dao.entity.GiftCertificate;
-import com.epam.esm.dao.entity.Order;
 import com.epam.esm.dao.serialization.LocalDateDeserializer;
 import com.epam.esm.dao.serialization.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -9,8 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 public class OrderDto {
   private Long id;
@@ -20,22 +17,22 @@ public class OrderDto {
   @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime orderDate;
 
-  private List<GiftCertificate> giftCertificates;
+  private Long userId;
+
+  private Set<GiftCertificateDto> giftCertificates;
 
   public OrderDto() {}
 
   public OrderDto(
-      Long id, BigDecimal cost, LocalDateTime orderDate, List<GiftCertificate> giftCertificates) {
+      Long id,
+      BigDecimal cost,
+      LocalDateTime orderDate,
+      Long userId,
+      Set<GiftCertificateDto> giftCertificates) {
     this.id = id;
     this.cost = cost;
     this.orderDate = orderDate;
-    this.giftCertificates = giftCertificates;
-  }
-
-  public OrderDto(Order order, List<GiftCertificate> giftCertificates) {
-    this.id = order.getId();
-    this.cost = order.getCost();
-    this.orderDate = order.getOrderDate();
+    this.userId = userId;
     this.giftCertificates = giftCertificates;
   }
 
@@ -63,11 +60,19 @@ public class OrderDto {
     this.orderDate = orderDate;
   }
 
-  public List<GiftCertificate> getGiftCertificates() {
-    return Collections.unmodifiableList(giftCertificates);
+  public Long getUserId() {
+    return userId;
   }
 
-  public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
+  public void setUserId(Long userId) {
+    this.userId = userId;
+  }
+
+  public Set<GiftCertificateDto> getGiftCertificates() {
+    return giftCertificates;
+  }
+
+  public void setGiftCertificates(Set<GiftCertificateDto> giftCertificates) {
     this.giftCertificates = giftCertificates;
   }
 
@@ -93,6 +98,11 @@ public class OrderDto {
         : orderDto.getOrderDate() != null) {
       return false;
     }
+    if (getUserId() != null
+        ? !getUserId().equals(orderDto.getUserId())
+        : orderDto.getUserId() != null) {
+      return false;
+    }
     return getGiftCertificates() != null
         ? getGiftCertificates().equals(orderDto.getGiftCertificates())
         : orderDto.getGiftCertificates() == null;
@@ -103,6 +113,7 @@ public class OrderDto {
     int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getCost() != null ? getCost().hashCode() : 0);
     result = 31 * result + (getOrderDate() != null ? getOrderDate().hashCode() : 0);
+    result = 31 * result + (getUserId() != null ? getUserId().hashCode() : 0);
     result = 31 * result + (getGiftCertificates() != null ? getGiftCertificates().hashCode() : 0);
     return result;
   }
@@ -116,6 +127,8 @@ public class OrderDto {
         + cost
         + ", orderDate="
         + orderDate
+        + ", userId="
+        + userId
         + ", giftCertificates="
         + giftCertificates
         + '}';

@@ -1,6 +1,7 @@
-package com.epam.esm.service.builder;
+package com.epam.esm.service.builder.certificate;
 
 import com.epam.esm.dao.entity.GiftCertificate;
+import com.epam.esm.service.builder.tag.TagBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import org.springframework.stereotype.Component;
 

@@ -1,16 +1,17 @@
 package com.epam.esm.dao.entity;
 
-import com.epam.esm.dao.serialization.LocalDateDeserializer;
-import com.epam.esm.dao.serialization.LocalDateSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "orders")
@@ -19,22 +20,27 @@ public class Order implements TableEntity {
   @Column(name = "id")
   protected Long id;
 
-  @Column(name = "user_id")
-  private Long userId;
-
   @Column(name = "cost")
   private BigDecimal cost;
 
   @Column(name = "order_date")
-  @JsonSerialize(using = LocalDateSerializer.class)
-  @JsonDeserialize(using = LocalDateDeserializer.class)
   private LocalDateTime orderDate;
+
+  @ManyToMany()
+  @JoinTable(
+      name = "orders_gift_certificates",
+      joinColumns = @JoinColumn(name = "order_id"),
+      inverseJoinColumns = @JoinColumn(name = "gift_certificate_id"))
+  private Set<GiftCertificate> giftCertificates;
+
+  @ManyToOne()
+  @JoinColumn(name = "user_id")
+  private User user;
 
   public Order() {}
 
-  public Order(Long id, Long userId, BigDecimal cost, LocalDateTime orderDate) {
+  public Order(Long id, BigDecimal cost, LocalDateTime orderDate) {
     this.id = id;
-    this.userId = userId;
     this.cost = cost;
     this.orderDate = orderDate;
   }
@@ -47,14 +53,6 @@ public class Order implements TableEntity {
   @Override
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(Long userId) {
-    this.userId = userId;
   }
 
   public BigDecimal getCost() {
@@ -73,6 +71,22 @@ public class Order implements TableEntity {
     this.orderDate = orderDate;
   }
 
+  public Set<GiftCertificate> getGiftCertificates() {
+    return (giftCertificates == null) ? null : new HashSet<>(giftCertificates);
+  }
+
+  public void setGiftCertificates(Set<GiftCertificate> giftCertificates) {
+    this.giftCertificates = giftCertificates;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -87,9 +101,6 @@ public class Order implements TableEntity {
     if (getId() != null ? !getId().equals(order.getId()) : order.getId() != null) {
       return false;
     }
-    if (getUserId() != null ? !getUserId().equals(order.getUserId()) : order.getUserId() != null) {
-      return false;
-    }
     if (getCost() != null ? !getCost().equals(order.getCost()) : order.getCost() != null) {
       return false;
     }
@@ -101,7 +112,6 @@ public class Order implements TableEntity {
   @Override
   public int hashCode() {
     int result = getId() != null ? getId().hashCode() : 0;
-    result = 31 * result + (getUserId() != null ? getUserId().hashCode() : 0);
     result = 31 * result + (getCost() != null ? getCost().hashCode() : 0);
     result = 31 * result + (getOrderDate() != null ? getOrderDate().hashCode() : 0);
     return result;
@@ -109,15 +119,6 @@ public class Order implements TableEntity {
 
   @Override
   public String toString() {
-    return "Order{"
-        + "id="
-        + id
-        + ", userId="
-        + userId
-        + ", cost="
-        + cost
-        + ", orderDate="
-        + orderDate
-        + '}';
+    return "Order{" + "id=" + id + ", cost=" + cost + ", orderDate=" + orderDate + '}';
   }
 }

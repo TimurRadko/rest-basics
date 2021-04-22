@@ -1,6 +1,7 @@
-package com.epam.esm.service.builder;
+package com.epam.esm.service.builder.certificate;
 
 import com.epam.esm.dao.entity.GiftCertificate;
+import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class GiftCertificateDtoBuilder {
-  private TagDtoBuilder tagDtoBuilder;
+  private final TagDtoBuilder tagDtoBuilder;
 
   @Autowired
   public GiftCertificateDtoBuilder(TagDtoBuilder tagDtoBuilder) {
@@ -22,7 +23,7 @@ public class GiftCertificateDtoBuilder {
     GiftCertificateDto giftCertificateDto = getGiftCertificateDto(giftCertificate);
     giftCertificateDto.setTags(
         giftCertificate.getTags().stream()
-            .map(tag -> tagDtoBuilder.build(tag))
+            .map(tagDtoBuilder::build)
             .collect(Collectors.toSet()));
     return giftCertificateDto;
   }

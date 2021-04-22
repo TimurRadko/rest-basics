@@ -3,8 +3,11 @@ package com.epam.esm.dao.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +24,9 @@ public class User implements TableEntity {
 
   @Column(name = "account")
   private BigDecimal account;
+
+  @OneToMany(mappedBy = "user")
+  private Set<Order> orders;
 
   public User() {}
 
@@ -63,6 +69,14 @@ public class User implements TableEntity {
 
   public void setAccount(BigDecimal account) {
     this.account = account;
+  }
+
+  public Set<Order> getOrders() {
+    return (orders == null) ? null : new HashSet<>(orders);
+  }
+
+  public void setOrders(Set<Order> orders) {
+    this.orders = orders;
   }
 
   @Override

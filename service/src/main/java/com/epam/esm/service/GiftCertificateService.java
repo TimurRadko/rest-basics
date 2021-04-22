@@ -9,6 +9,14 @@ import java.util.Optional;
 /** * This interface describes specific realization of CRUD operation on GiftCertificate Entities */
 public interface GiftCertificateService extends Service<GiftCertificateDto> {
   /**
+   * * This method describes a general save (create) operation for all GiftCertificateDtos, located
+   * in the DB
+   *
+   * @param giftCertificateDto - GiftCertificateDto, which transmitted in the method as a args
+   * @return Optional<GiftCertificateDto> - container that is contained GiftCertificateDto
+   */
+  Optional<GiftCertificateDto> save(GiftCertificateDto giftCertificateDto);
+  /**
    * * This method describes a general getting a list of all entities by parameters entity. This
    * operation for all Entities, from the persistence layer
    *
@@ -46,4 +54,14 @@ public interface GiftCertificateService extends Service<GiftCertificateDto> {
    */
   Optional<GiftCertificateDto> updatePrice(
       long id, GiftCertificatePriceDto giftCertificatePriceDto);
+
+  /**
+   * * This method describes a general delete (deleting a GitCertificate by parameter) operation for
+   * all GiftCertificates, from persistence layer
+   *
+   * @param id - passed into the method id GiftCertificate's parameter that required for work with
+   *     the DB
+   * @return int - return value more than 0, when Entity was deleted
+   */
+  int delete(long id);
 }

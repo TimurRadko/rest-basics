@@ -4,14 +4,10 @@ import com.epam.esm.dao.entity.GiftCertificateTag;
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.repository.GiftCertificateTagRepository;
 import com.epam.esm.dao.repository.TagRepository;
-import com.epam.esm.service.builder.TagBuilder;
+import com.epam.esm.service.builder.tag.TagBuilder;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.DeletingTagException;
-import com.epam.esm.service.exception.EntityNotValidException;
-import com.epam.esm.service.exception.TagAlreadyExistsException;
 import com.epam.esm.service.validator.TagValidator;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,13 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TagServiceImplTest {

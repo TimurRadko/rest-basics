@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,31 +20,14 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
   }
 
   @Override
-  public Optional<GiftCertificateTag> save(GiftCertificateTag giftCertificateTag) {
-    return Optional.of(entityManager.merge(giftCertificateTag));
-  }
-
-  @Override
   public List<GiftCertificateTag> getEntityListBySpecification(
       Specification<GiftCertificateTag> specification) {
-    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<GiftCertificateTag> criteriaQuery = specification.getCriteriaQuery(builder);
-    return entityManager.createQuery(criteriaQuery).getResultList();
+    return null;
   }
 
   @Override
   public Optional<GiftCertificateTag> getEntityBySpecification(
       Specification<GiftCertificateTag> specification) {
-    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<GiftCertificateTag> criteriaQuery = specification.getCriteriaQuery(builder);
-    return Optional.of(entityManager.createQuery(criteriaQuery).getSingleResult());
-  }
-
-  @Override
-  public int delete(long id) {
-    return entityManager
-        .createQuery("DELETE FROM GiftCertificateTag t WHERE t.id = :tagId")
-        .setParameter("tagId", id)
-        .executeUpdate();
+    return Optional.empty();
   }
 }

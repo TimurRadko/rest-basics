@@ -33,7 +33,8 @@ public class TagRepositoryImpl implements TagRepository {
   @Override
   @Transactional
   public Optional<Tag> save(Tag tag) {
-    return Optional.of(entityManager.merge(tag));
+    entityManager.persist(tag);
+    return Optional.of(tag);
   }
 
   @Override

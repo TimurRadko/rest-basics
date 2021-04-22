@@ -1,30 +1,40 @@
 package com.epam.esm.dao.specification.gift;
 
 import com.epam.esm.dao.entity.GiftCertificate;
+import com.epam.esm.dao.entity.Tag;
+import com.epam.esm.dao.sort.GiftCertificateSorter;
 import com.epam.esm.dao.specification.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
 
-public final class GetGiftCertificatesByTagNameSpecification implements Specification<GiftCertificate> {
+public final class GetGiftCertificatesByTagNameSpecification
+    implements Specification<GiftCertificate> {
   private final String tagName;
   private final String sort;
-
-  private static final String QUERY =
-      "SELECT gc.id, gc.name, gc.description, gc.price, gc.duration, "
-          + "gc.create_date, gc.last_update_date FROM gift_certificates gc "
-          + "INNER JOIN gift_certificates_tags gct ON gc.id = gct.gift_certificate_id "
-          + "INNER JOIN tags t ON t.id = gct.tag_id WHERE t.name=? ORDER BY "
-          + "CASE WHEN ? ='name-asc' THEN gc.name END ASC, "
-          + "CASE WHEN ? ='name-desc' THEN gc.name END DESC;";
+  private final GiftCertificateSorter giftCertificateSorter;
 
   public GetGiftCertificatesByTagNameSpecification(String tagName, String sort) {
     this.tagName = tagName;
     this.sort = sort;
+    this.giftCertificateSorter = new GiftCertificateSorter();
   }
 
   @Override
   public CriteriaQuery<GiftCertificate> getCriteriaQuery(CriteriaBuilder builder) {
-    return null;
+    CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
+    Root<GiftCertificate> giftCertificateRoot = criteria.from(GiftCertificate.class);
+    Join<GiftCertificate, Tag> giftCertificateTagJoin = giftCertificateRoot.join("tags");
+    Path<String> tagNamePath = giftCertificateTagJoin.get("name");
+    criteria.select(giftCertificateRoot).distinct(true);
+    criteria.where(builder.equal(tagNamePath, tagName));
+    if (sort == null) {
+      return criteria.orderBy(builder.asc(giftCertificateRoot.get("id")));
+    }
+    giftCertificateSorter.sort(criteria, builder, giftCertificateRoot, sort);
+    return criteria;
   }
 }

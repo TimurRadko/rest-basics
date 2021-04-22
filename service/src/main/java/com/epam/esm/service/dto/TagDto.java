@@ -1,7 +1,5 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.dao.entity.Tag;
-
 public class TagDto {
   private Long id;
   private String name;
@@ -11,11 +9,6 @@ public class TagDto {
   public TagDto(Long id, String name) {
     this.id = id;
     this.name = name;
-  }
-
-  public TagDto(Tag tag) {
-    this.id = tag.getId();
-    this.name = tag.getName();
   }
 
   public Long getId() {

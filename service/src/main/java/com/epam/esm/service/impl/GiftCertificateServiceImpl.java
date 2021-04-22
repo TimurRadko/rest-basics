@@ -4,8 +4,8 @@ import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.TagRepository;
-import com.epam.esm.dao.sort.GiftCertificateSorter;
 import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesByDescriptionPartSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByIdSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNamePartSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByTagNameSpecification;
@@ -13,16 +13,18 @@ import com.epam.esm.dao.specification.tag.GetAllTagsByGiftCertificatesIdSpecific
 import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.service.builder.GiftCertificateBuilder;
-import com.epam.esm.service.builder.GiftCertificateDtoBuilder;
-import com.epam.esm.service.builder.TagBuilder;
-import com.epam.esm.service.builder.TagDtoBuilder;
+import com.epam.esm.service.builder.certificate.GiftCertificateBuilder;
+import com.epam.esm.service.builder.certificate.GiftCertificateDtoBuilder;
+import com.epam.esm.service.builder.tag.TagBuilder;
+import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.GiftCertificatePriceDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.validator.GiftCertificatePriceValidator;
 import com.epam.esm.service.validator.GiftCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   private final GiftCertificateRepository giftCertificateRepository;
   private final TagRepository tagRepository;
   private final GiftCertificateValidator giftCertificateValidator;
+  private final GiftCertificatePriceValidator giftCertificatePriceValidator;
   private final GiftCertificateBuilder giftCertificateBuilder;
   private final GiftCertificateDtoBuilder giftCertificateDtoBuilder;
   private final TagBuilder tagBuilder;
@@ -50,6 +53,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       GiftCertificateRepository giftCertificateRepository,
       TagRepository tagRepository,
       GiftCertificateValidator giftCertificateValidator,
+      GiftCertificatePriceValidator giftCertificatePriceValidator,
       GiftCertificateBuilder giftCertificateBuilder,
       GiftCertificateDtoBuilder giftCertificateDtoBuilder,
       TagBuilder tagBuilder,
@@ -57,6 +61,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     this.giftCertificateRepository = giftCertificateRepository;
     this.tagRepository = tagRepository;
     this.giftCertificateValidator = giftCertificateValidator;
+    this.giftCertificatePriceValidator = giftCertificatePriceValidator;
     this.giftCertificateBuilder = giftCertificateBuilder;
     this.giftCertificateDtoBuilder = giftCertificateDtoBuilder;
     this.tagBuilder = tagBuilder;
@@ -118,7 +123,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
     List<GiftCertificate> giftCertificates = new ArrayList<>();
     if (name != null && name.trim().length() != 0) {
-      giftCertificates = getGiftCertificatesByNamePart(name, sort);
+      giftCertificates =
+          giftCertificateRepository.getEntityListBySpecification(
+              new GetGiftCertificatesByNamePartSpecification(name, sort));
     }
     if (description != null && description.trim().length() != 0) {
       giftCertificates = getGiftCertificatesByDescriptionPart(giftCertificates, description, sort);
@@ -138,19 +145,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         .collect(Collectors.toList());
   }
 
-  private List<GiftCertificate> getGiftCertificatesByNamePart(String name, String sort) {
-    return giftCertificateRepository.getEntityListBySpecification(
-        new GetGiftCertificatesByNamePartSpecification(name, sort));
-  }
-
   private List<GiftCertificate> getGiftCertificatesByDescriptionPart(
       List<GiftCertificate> gitCertificates, String description, String sort) {
-    return giftCertificateRepository
-        .getEntityListBySpecification(
-            new GetGiftCertificatesByNamePartSpecification(description, sort))
-        .stream()
-        .filter((gitCertificates::contains))
-        .collect(Collectors.toList());
+    List<GiftCertificate> findingGiftCertificates =
+        giftCertificateRepository.getEntityListBySpecification(
+            new GetGiftCertificatesByDescriptionPartSpecification(description, sort));
+    if (gitCertificates.size() == 0) {
+      return findingGiftCertificates;
+    } else {
+      return findingGiftCertificates.stream()
+          .filter((gitCertificates::contains))
+          .collect(Collectors.toList());
+    }
   }
 
   private List<GiftCertificate> getGiftCertificatesByTagName(
@@ -197,19 +203,39 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificateRepository
                 .update(giftCertificate)
                 .orElseThrow(
-                    () -> new ServiceException("The Gift Certificate not exists in the DB"))));
+                    () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"))));
   }
 
   private GiftCertificate getExistingGiftCertificate(long id) {
     return giftCertificateRepository
         .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(id))
-        .orElseThrow(() -> new ServiceException("The Gift Certificate not exists in the DB"));
+        .orElseThrow(() -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
   }
 
   @Override
   public Optional<GiftCertificateDto> updatePrice(
       long id, GiftCertificatePriceDto giftCertificatePriceDto) {
-    return Optional.empty();
+    if (!giftCertificatePriceValidator.isValid(giftCertificatePriceDto)) {
+      throw new EntityNotValidException(giftCertificatePriceValidator.getErrorMessage());
+    }
+    GiftCertificate giftCertificate = getGiftCertificateById(id);
+    giftCertificate.setPrice(giftCertificatePriceDto.getPrice());
+    giftCertificate = updateGiftCertificate(giftCertificate);
+    return Optional.of(giftCertificateDtoBuilder.build(giftCertificate));
+  }
+
+  private GiftCertificate getGiftCertificateById(Long id) {
+    return giftCertificateRepository
+        .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(id))
+        .orElseThrow(
+            () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
+  }
+
+  private GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate) {
+    return giftCertificateRepository
+        .update(giftCertificate)
+        .orElseThrow(
+            () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
   }
 
   private void deletingNonTransmittedTags(long id, Set<TagDto> tagDtos) {

@@ -221,7 +221,23 @@ from tags tag0_
 where tag0_.id = 4
   and (giftcertif2_.id = 5);
 
-SELECT * FROM gift_certificates_tags;
+SELECT *
+FROM gift_certificates_tags;
+
+
+---------------Get Gift-Certificates By Order id----------------
+
+SELECT gc.id,
+       gc.name,
+       gc.description,
+       gc.price,
+       gc.duration,
+       gc.create_date,
+       gc.last_update_date
+FROM gift_certificates gc
+         JOIN orders_gift_certificates ogc
+              ON gc.id = ogc.gift_certificate_id
+WHERE ogc.order_id =1;
 
 
 

@@ -1,4 +1,4 @@
-package com.epam.esm.service.builder;
+package com.epam.esm.service.builder.tag;
 
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.service.dto.TagDto;

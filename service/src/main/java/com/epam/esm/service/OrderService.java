@@ -1,13 +1,12 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dao.entity.Order;
 import com.epam.esm.service.dto.OrderDto;
 
 import java.util.List;
 import java.util.Optional;
 
 /** * This interface describes specific realization of CRUD operation on Order Entities */
-public interface OrderService {
+public interface OrderService extends Service<OrderDto> {
   /**
    * * This method describes a general getAll (getting a list of all OrderDto) operation for all
    * OrderDtos, from persistence layer
@@ -17,5 +16,5 @@ public interface OrderService {
    */
   List<OrderDto> getAllOrdersByUserId(long id);
 
-  Optional<Order> getById(long id);
+  Optional<OrderDto> getById(long id);
 }

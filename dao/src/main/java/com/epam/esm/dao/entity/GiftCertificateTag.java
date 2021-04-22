@@ -1,10 +1,5 @@
 package com.epam.esm.dao.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 public class GiftCertificateTag implements TableEntity {
   private Long id;
 
