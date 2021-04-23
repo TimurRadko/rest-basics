@@ -1,6 +1,8 @@
 package com.epam.esm.service.builder.order;
 
 import com.epam.esm.dao.entity.Order;
+import com.epam.esm.dao.entity.User;
+import com.epam.esm.dao.repository.UserRepository;
 import com.epam.esm.service.builder.certificate.GiftCertificateBuilder;
 import com.epam.esm.service.dto.OrderDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +19,10 @@ public class OrderBuilder {
     this.giftCertificateBuilder = giftCertificateBuilder;
   }
 
-  public Order build(OrderDto orderDto) {
+  public Order build(OrderDto orderDto, User user) {
     Order order = new Order();
     order.setId(orderDto.getId());
+    order.setUser(user);
     order.setCost(orderDto.getCost());
     order.setOrderDate(orderDto.getOrderDate());
     order.setGiftCertificates(

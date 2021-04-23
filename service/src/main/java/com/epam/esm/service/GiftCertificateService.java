@@ -30,7 +30,7 @@ public interface GiftCertificateService extends Service<GiftCertificateDto> {
    *     data-transfer object for working with representation entities necessary for public API)
    */
   List<GiftCertificateDto> getAllByParams(
-      String name, String description, String tagName, String sort);
+      String name, String description, String tagName, List<String> sort);
   /**
    * * This method describes update operation with the parameters passed in the GiftCertificateDto
    *

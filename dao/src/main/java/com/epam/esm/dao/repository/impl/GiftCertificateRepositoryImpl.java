@@ -5,6 +5,7 @@ import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -24,12 +25,14 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   }
 
   @Override
+  @Transactional
   public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
     giftCertificate.setLastUpdateDate(LocalDateTime.now());
     return Optional.of(entityManager.merge(giftCertificate));
   }
 
   @Override
+  @Transactional
   public Optional<GiftCertificate> save(GiftCertificate giftCertificate) {
     LocalDateTime now = LocalDateTime.now();
     giftCertificate.setCreateDate(now);
@@ -59,6 +62,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   }
 
   @Override
+  @Transactional
   public int delete(long id) {
     return entityManager
         .createQuery("DELETE FROM GiftCertificate t WHERE t.id = :id")

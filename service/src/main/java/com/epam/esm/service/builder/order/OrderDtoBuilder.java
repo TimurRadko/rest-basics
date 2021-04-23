@@ -20,6 +20,7 @@ public class OrderDtoBuilder {
   public OrderDto build(Order order) {
     OrderDto orderDto = new OrderDto();
     orderDto.setId(order.getId());
+    orderDto.setUserId(order.getUser().getId());
     orderDto.setCost(order.getCost());
     orderDto.setOrderDate(order.getOrderDate());
     orderDto.setGiftCertificates(

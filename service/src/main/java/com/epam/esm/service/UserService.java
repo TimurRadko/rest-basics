@@ -1,11 +1,10 @@
 package com.epam.esm.service;
 
-import com.epam.esm.service.dto.GiftCertificateDto;
+import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.dto.UserDto;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 /** * This interface describes specific realization of CRUD operation on User Entities */
 public interface UserService extends Service<UserDto> {
@@ -17,13 +16,13 @@ public interface UserService extends Service<UserDto> {
    */
   List<UserDto> getAll();
 
-  /**
-   * * This method describes a execute order by User
-   *
-   * @param id - passed into the method id User's parameter that required for work with the DB
-   * @param giftCertificateDtos - passed into the method Set<GiftCertificateDto> for execute order
-   * @param sort - the parameter, which describes rules of sorting getting data
-   * @return Optional<UserDto> - container that is contained UserDto (a typed parameter)
-   */
-  Optional<UserDto> makeOrder(Long id, Set<GiftCertificateDto> giftCertificateDtos, String sort);
+  //  /**
+  //   * * This method describes a execute order by User
+  //   *
+  //   * @param id - passed into the method id User's parameter that required for work with the DB
+  //   * @param orderEntityDto - passed into the method OrderEntityDto which represents List<Long>
+  //   *     giftCertificateDtoIds
+  //   * @return Optional<UserDto> - container that is contained UserDto (a typed parameter)
+  //   */
+  Optional<OrderDto> makeOrder(Long id, List<Long> giftCertificateDtoIds);
 }

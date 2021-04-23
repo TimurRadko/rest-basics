@@ -117,28 +117,28 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   @Override
   public List<GiftCertificateDto> getAllByParams(
-      String name, String description, String tagName, String sort) {
+      String name, String description, String tagName, List<String> sorts) {
     if (name == null && description == null && tagName == null) {
-      return getAll(sort);
+      return getAll(sorts);
     }
     List<GiftCertificate> giftCertificates = new ArrayList<>();
     if (name != null && name.trim().length() != 0) {
       giftCertificates =
           giftCertificateRepository.getEntityListBySpecification(
-              new GetGiftCertificatesByNamePartSpecification(name, sort));
+              new GetGiftCertificatesByNamePartSpecification(name, sorts));
     }
     if (description != null && description.trim().length() != 0) {
-      giftCertificates = getGiftCertificatesByDescriptionPart(giftCertificates, description, sort);
+      giftCertificates = getGiftCertificatesByDescriptionPart(giftCertificates, description, sorts);
     }
     if (tagName != null) {
-      giftCertificates = getGiftCertificatesByTagName(giftCertificates, tagName, sort);
+      giftCertificates = getGiftCertificatesByTagName(giftCertificates, tagName, sorts);
     }
     return giftCertificates.stream()
         .map(giftCertificateDtoBuilder::build)
         .collect(Collectors.toList());
   }
 
-  private List<GiftCertificateDto> getAll(String sort) {
+  private List<GiftCertificateDto> getAll(List<String> sort) {
     return giftCertificateRepository
         .getEntityListBySpecification(new GetAllGiftCertificatesSpecification(sort)).stream()
         .map((giftCertificateDtoBuilder::build))
@@ -146,10 +146,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   private List<GiftCertificate> getGiftCertificatesByDescriptionPart(
-      List<GiftCertificate> gitCertificates, String description, String sort) {
+      List<GiftCertificate> gitCertificates, String description, List<String> sorts) {
     List<GiftCertificate> findingGiftCertificates =
         giftCertificateRepository.getEntityListBySpecification(
-            new GetGiftCertificatesByDescriptionPartSpecification(description, sort));
+            new GetGiftCertificatesByDescriptionPartSpecification(description, sorts));
     if (gitCertificates.size() == 0) {
       return findingGiftCertificates;
     } else {
@@ -160,10 +160,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   private List<GiftCertificate> getGiftCertificatesByTagName(
-      List<GiftCertificate> giftCertificates, String tagName, String sort) {
+      List<GiftCertificate> giftCertificates, String tagName, List<String> sorts) {
     if (giftCertificates.size() == 0) {
       return giftCertificateRepository.getEntityListBySpecification(
-          new GetGiftCertificatesByTagNameSpecification(tagName, sort));
+          new GetGiftCertificatesByTagNameSpecification(tagName, sorts));
     }
     return giftCertificates.stream()
         .filter(
@@ -203,13 +203,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificateRepository
                 .update(giftCertificate)
                 .orElseThrow(
-                    () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"))));
+                    () ->
+                        new EntityNotFoundException("The Gift Certificate not exists in the DB"))));
   }
 
   private GiftCertificate getExistingGiftCertificate(long id) {
     return giftCertificateRepository
         .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(id))
-        .orElseThrow(() -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
+        .orElseThrow(
+            () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
   }
 
   @Override

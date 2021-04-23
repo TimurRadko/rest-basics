@@ -7,16 +7,17 @@ import com.epam.esm.dao.specification.Specification;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 public final class GetGiftCertificatesByDescriptionPartSpecification
     implements Specification<GiftCertificate> {
   private final String description;
-  private final String sort;
+  private final List<String> sorts;
   private final GiftCertificateSorter giftCertificateSorter;
 
-  public GetGiftCertificatesByDescriptionPartSpecification(String description, String sort) {
+  public GetGiftCertificatesByDescriptionPartSpecification(String description, List<String> sorts) {
     this.description = description;
-    this.sort = sort;
+    this.sorts = sorts;
     this.giftCertificateSorter = new GiftCertificateSorter();
   }
 
@@ -29,10 +30,10 @@ public final class GetGiftCertificatesByDescriptionPartSpecification
         builder.like(
             builder.lower(giftCertificateRoot.get("description")),
             "%" + description.toLowerCase() + "%"));
-    if (sort == null) {
+    if (sorts == null) {
       return criteria.orderBy(builder.asc(giftCertificateRoot.get("id")));
     }
-    giftCertificateSorter.sort(criteria, builder, giftCertificateRoot, sort);
+    giftCertificateSorter.sort(criteria, builder, giftCertificateRoot, sorts);
     return criteria;
   }
 }

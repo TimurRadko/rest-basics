@@ -10,16 +10,17 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 public final class GetGiftCertificatesByTagNameSpecification
     implements Specification<GiftCertificate> {
   private final String tagName;
-  private final String sort;
+  private final List<String> sorts;
   private final GiftCertificateSorter giftCertificateSorter;
 
-  public GetGiftCertificatesByTagNameSpecification(String tagName, String sort) {
+  public GetGiftCertificatesByTagNameSpecification(String tagName, List<String> sorts) {
     this.tagName = tagName;
-    this.sort = sort;
+    this.sorts = sorts;
     this.giftCertificateSorter = new GiftCertificateSorter();
   }
 
@@ -31,10 +32,10 @@ public final class GetGiftCertificatesByTagNameSpecification
     Path<String> tagNamePath = giftCertificateTagJoin.get("name");
     criteria.select(giftCertificateRoot).distinct(true);
     criteria.where(builder.equal(tagNamePath, tagName));
-    if (sort == null) {
+    if (sorts == null) {
       return criteria.orderBy(builder.asc(giftCertificateRoot.get("id")));
     }
-    giftCertificateSorter.sort(criteria, builder, giftCertificateRoot, sort);
+    giftCertificateSorter.sort(criteria, builder, giftCertificateRoot, sorts);
     return criteria;
   }
 }

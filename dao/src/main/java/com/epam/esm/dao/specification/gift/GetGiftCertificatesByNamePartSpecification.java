@@ -7,14 +7,15 @@ import com.epam.esm.dao.specification.Specification;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 public final class GetGiftCertificatesByNamePartSpecification
     implements Specification<GiftCertificate> {
   private final String name;
-  private final String sort;
+  private final List<String> sort;
   private final GiftCertificateSorter giftCertificateSorter;
 
-  public GetGiftCertificatesByNamePartSpecification(String name, String sort) {
+  public GetGiftCertificatesByNamePartSpecification(String name, List<String> sort) {
     this.name = name;
     this.sort = sort;
     this.giftCertificateSorter = new GiftCertificateSorter();

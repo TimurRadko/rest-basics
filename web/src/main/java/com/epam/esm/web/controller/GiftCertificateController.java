@@ -39,8 +39,8 @@ public class GiftCertificateController {
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "description", required = false) String description,
       @RequestParam(value = "tag", required = false) String tagName,
-      @RequestParam(value = "sort", required = false) String sort) {
-    return giftCertificateService.getAllByParams(name, description, tagName, sort);
+      @RequestParam(value = "sort", required = false) List<String> sorts) {
+    return giftCertificateService.getAllByParams(name, description, tagName, sorts);
   }
 
   @GetMapping("/{id}")

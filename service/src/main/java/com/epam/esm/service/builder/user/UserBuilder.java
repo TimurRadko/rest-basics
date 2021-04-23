@@ -20,8 +20,6 @@ public class UserBuilder {
     user.setId(userDto.getId());
     user.setLogin(userDto.getLogin());
     user.setAccount(userDto.getAccount());
-    user.setOrders(
-        userDto.getOrders().stream().map(orderBuilder::build).collect(Collectors.toSet()));
     return user;
   }
 }

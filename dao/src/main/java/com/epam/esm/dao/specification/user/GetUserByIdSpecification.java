@@ -18,7 +18,6 @@ public final class GetUserByIdSpecification implements Specification<User> {
   public CriteriaQuery<User> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<User> criteria = builder.createQuery(User.class);
     Root<User> root = criteria.from(User.class);
-    root.fetch("orders");
     criteria.select(root).distinct(true);
     criteria.where(builder.equal(root.get("id"), id));
     return criteria;

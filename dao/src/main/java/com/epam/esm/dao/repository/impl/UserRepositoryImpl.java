@@ -5,6 +5,7 @@ import com.epam.esm.dao.repository.UserRepository;
 import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -41,7 +42,8 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
+  @Transactional
   public Optional<User> update(User user) {
-    return Optional.empty();
+    return Optional.of(entityManager.merge(user));
   }
 }

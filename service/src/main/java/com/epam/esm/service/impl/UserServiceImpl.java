@@ -1,20 +1,22 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.entity.GiftCertificate;
+import com.epam.esm.dao.entity.Order;
 import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.OrderRepository;
 import com.epam.esm.dao.repository.UserRepository;
-import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesBySeveralIdsSpecification;
 import com.epam.esm.dao.specification.user.GetAllUsersSpecification;
 import com.epam.esm.dao.specification.user.GetUserByIdSpecification;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.builder.certificate.GiftCertificateDtoBuilder;
 import com.epam.esm.service.builder.order.OrderBuilder;
+import com.epam.esm.service.builder.order.OrderDtoBuilder;
 import com.epam.esm.service.builder.user.UserDtoBuilder;
-import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.InsufficientFundInAccount;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ public class UserServiceImpl implements UserService {
   private final UserDtoBuilder userDtoBuilder;
   private final OrderBuilder orderBuilder;
   private final GiftCertificateDtoBuilder giftCertificateDtoBuilder;
+  private final OrderDtoBuilder orderDtoBuilder;
 
   @Autowired
   public UserServiceImpl(
@@ -43,13 +46,15 @@ public class UserServiceImpl implements UserService {
       GiftCertificateRepository giftCertificateRepository,
       UserDtoBuilder userDtoBuilder,
       OrderBuilder orderBuilder,
-      GiftCertificateDtoBuilder giftCertificateDtoBuilder) {
+      GiftCertificateDtoBuilder giftCertificateDtoBuilder,
+      OrderDtoBuilder orderDtoBuilder) {
     this.userRepository = userRepository;
     this.orderRepository = orderRepository;
     this.giftCertificateRepository = giftCertificateRepository;
     this.userDtoBuilder = userDtoBuilder;
     this.orderBuilder = orderBuilder;
     this.giftCertificateDtoBuilder = giftCertificateDtoBuilder;
+    this.orderDtoBuilder = orderDtoBuilder;
   }
 
   @Override
@@ -61,17 +66,22 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public Optional<UserDto> makeOrder(
-      Long id, Set<GiftCertificateDto> giftCertificateDtos, String sort) {
+  public Optional<OrderDto> makeOrder(Long id, List<Long> giftCertificateDtoIds) {
     User user =
         userRepository
             .getEntityBySpecification(new GetUserByIdSpecification(id))
             .orElseThrow(
                 () ->
                     new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+
+    if (giftCertificateDtoIds == null || giftCertificateDtoIds.isEmpty()) {
+      throw new EmptyOrderException("You can't make empty order");
+    }
+
     List<GiftCertificate> giftCertificates =
         giftCertificateRepository.getEntityListBySpecification(
-            new GetAllGiftCertificatesSpecification(sort));
+            new GetGiftCertificatesBySeveralIdsSpecification(giftCertificateDtoIds));
+
     BigDecimal cost =
         giftCertificates.stream()
             .map(GiftCertificate::getPrice)
@@ -81,14 +91,15 @@ public class UserServiceImpl implements UserService {
       throw new InsufficientFundInAccount("The user doesn't have enough funds in the account");
     }
     user.setAccount(account.subtract(cost));
-    OrderDto orderDto = createOrderDto(user.getId(), cost, Set.copyOf(giftCertificates));
-    orderRepository.save(orderBuilder.build(orderDto));
-
-    return Optional.of(
+    UserDto updatedUser =
         userDtoBuilder.build(
             userRepository
                 .update(user)
-                .orElseThrow(() -> new EntityNotFoundException("The User not exists in the DB"))));
+                .orElseThrow(() -> new EntityNotFoundException("The User not exists in the DB")));
+    OrderDto orderDto = createOrderDto(user.getId(), cost, Set.copyOf(giftCertificates));
+    Order order = orderRepository.save(orderBuilder.build(orderDto, user)).orElseThrow();
+
+    return Optional.of(orderDtoBuilder.build(order));
   }
 
   private OrderDto createOrderDto(

@@ -1,6 +1,7 @@
 package com.epam.esm.web.exception.handler;
 
 import com.epam.esm.service.exception.DeletingTagException;
+import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
@@ -31,6 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   private static final int ENTITY_NOT_VALID_MULTIPLE_FIELDS_CODE = 40003;
   private static final int ENTITY_NOT_VALID_SINGLE_FIELD_CODE = 40004;
   private static final int INSUFFICIENT_FUND_IN_ACCOUNT_CODE = 40005;
+  private static final int EMPTY_ORDER_CODE = 40006;
 
   @ExceptionHandler
   public ResponseEntity<SingleExceptionResponse> handleException(
@@ -115,6 +117,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     SingleExceptionResponse response = new SingleExceptionResponse();
     response.setErrorMessage(exception.getMessage());
     response.setErrorCode(INSUFFICIENT_FUND_IN_ACCOUNT_CODE);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<SingleExceptionResponse> handleException(EmptyOrderException exception) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(EMPTY_ORDER_CODE);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 }

@@ -3,6 +3,7 @@ package com.epam.esm.service.builder.certificate;
 import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.service.builder.tag.TagBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -10,6 +11,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class GiftCertificateBuilder {
+  private final TagBuilder tagBuilder;
+
+  @Autowired
+  public GiftCertificateBuilder(TagBuilder tagBuilder) {
+    this.tagBuilder = tagBuilder;
+  }
 
   public GiftCertificate buildNewParameterGiftCertificate(
       GiftCertificate existingGiftCertificate, GiftCertificateDto giftCertificateDto) {
@@ -43,7 +50,7 @@ public class GiftCertificateBuilder {
       GiftCertificate giftCertificate, GiftCertificateDto giftCertificateDto) {
     giftCertificate.setTags(
         giftCertificateDto.getTags().stream()
-            .map(tagDto -> new TagBuilder().build(tagDto))
+            .map(tagBuilder::build)
             .collect(Collectors.toSet()));
   }
 
