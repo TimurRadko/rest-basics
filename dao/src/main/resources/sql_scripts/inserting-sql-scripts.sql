@@ -37,3 +37,10 @@ INSERT INTO orders_gift_certificates(order_id, gift_certificate_id)
 VALUES (1,1),
        (2, 2),
        (2, 4);
+
+INSERT INTO orders(user_id, cost, order_date)
+VALUES (2, 77, '2021-03-28 00:00:00.084745');
+
+INSERT INTO orders_gift_certificates(order_id, gift_certificate_id)
+VALUES (12,2),
+       (12,4);

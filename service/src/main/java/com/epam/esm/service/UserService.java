@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
 
 import java.util.List;
@@ -16,13 +17,14 @@ public interface UserService extends Service<UserDto> {
    */
   List<UserDto> getAll();
 
-  //  /**
-  //   * * This method describes a execute order by User
-  //   *
-  //   * @param id - passed into the method id User's parameter that required for work with the DB
-  //   * @param orderEntityDto - passed into the method OrderEntityDto which represents List<Long>
-  //   *     giftCertificateDtoIds
-  //   * @return Optional<UserDto> - container that is contained UserDto (a typed parameter)
-  //   */
+  /**
+   * * This method describes a execute order by User
+   *
+   * @param id - passed into the method id User's parameter that required for work with the DB
+   * @param giftCertificateDtoIds - passed into the method List<Long> giftCertificateDtoIds
+   * @return Optional<UserDto> - container that is contained UserDto (a typed parameter)
+   */
   Optional<OrderDto> makeOrder(Long id, List<Long> giftCertificateDtoIds);
+
+  Optional<TagDto> getMostWidelyUsedTagByUserId(Long id);
 }

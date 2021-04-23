@@ -3,6 +3,7 @@ package com.epam.esm.dao.specification.tag;
 import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.entity.Order;
 import com.epam.esm.dao.entity.Tag;
+import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.specification.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -10,6 +11,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetMostWidelyUsedTagSpecification implements Specification<Tag> {
   private final long id;
@@ -23,12 +26,16 @@ public class GetMostWidelyUsedTagSpecification implements Specification<Tag> {
     CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
     Root<Tag> tagRoot = criteria.from(Tag.class);
     Join<Tag, GiftCertificate> tagGiftCertificateJoin = tagRoot.join("giftCertificates");
-    Join<GiftCertificate, Order> giftCertificateOrderJoin = tagRoot.join("orders");
-    Path<String> userIdPath = giftCertificateOrderJoin.get("userId");
-    criteria.where(builder.equal(userIdPath.get("id")));
-//
-//      Path<String> giftCertificateNamePath = tagsJoin.get("id");
-//      Join<Tag, Order>
-    return null;
+    Join<Tag, Order> giftCertificateOrderJoin = tagGiftCertificateJoin.join("orders");
+    Join<Order, User> userJoin = giftCertificateOrderJoin.join("user");
+    criteria.select(tagRoot);
+    Path<String> userIdPath = userJoin.get("id");
+    Path<String> orderCostPath = giftCertificateOrderJoin.get("cost");
+    criteria.where(builder.equal(userIdPath, id));
+    List<javax.persistence.criteria.Order> orders = new ArrayList<>();
+    orders.add(builder.desc(orderCostPath));
+    orders.add(builder.desc(builder.count(tagRoot.get("id"))));
+    criteria.groupBy(tagRoot.get("id"), orderCostPath).orderBy(orders);
+    return criteria;
   }
 }

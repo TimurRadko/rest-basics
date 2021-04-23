@@ -276,7 +276,7 @@ select distinct giftcertif0_.id               as id1_0_0_,
                 tags1_.tag_id                 as tag_id2_1_0__
 from gift_certificates giftcertif0_
          inner join gift_certificates_tags tags1_ on giftcertif0_.id = tags1_.gift_certificate_id
-         inner join tags tag2_ on tags1_.tag_id = tag2_.id
+         inner join tags tag2_ on tags1_.tag_id = tag2_.id;
 
 select distinct tag0_.id as id1_4_, tag0_.name as name2_4_
 from tags tag0_
@@ -290,6 +290,42 @@ from tags tag0_
          inner join gift_certificates giftcertif2_ on giftcertif1_.gift_certificate_id = giftcertif2_.id
 where tag0_.id = 3
   and (giftcertif2_.id is not null);
+
+
+select tag0_.id as id1_4_, tag0_.name as name2_4_
+from tags tag0_
+         inner join gift_certificates_tags giftcertif1_ on tag0_.id = giftcertif1_.tag_id
+         inner join gift_certificates giftcertif2_ on giftcertif1_.gift_certificate_id = giftcertif2_.id
+         inner join orders_gift_certificates orders3_ on giftcertif2_.id = orders3_.gift_certificate_id
+         inner join orders order4_ on orders3_.order_id = order4_.id
+         inner join users user5_ on order4_.user_id = user5_.id
+where user5_.id in (2)
+order by order4_.cost asc;
+
+select tag0_.id as id1_4_, tag0_.name as name2_4_
+from tags tag0_
+         inner join gift_certificates_tags giftcertif1_ on tag0_.id = giftcertif1_.tag_id
+         inner join gift_certificates giftcertif2_ on giftcertif1_.gift_certificate_id = giftcertif2_.id
+         inner join orders_gift_certificates orders3_ on giftcertif2_.id = orders3_.gift_certificate_id
+         inner join orders order4_ on orders3_.order_id = order4_.id
+         inner join users user5_ on order4_.user_id = user5_.id
+where user5_.id = 2
+group by tag0_.id, order4_.cost
+order by order4_.cost asc;
+
+select distinct tag0_.id as id1_4_, tag0_.name as name2_4_, order4_.cost, count(tag0_.id)
+from tags tag0_
+         inner join gift_certificates_tags giftcertif1_ on tag0_.id = giftcertif1_.tag_id
+         inner join gift_certificates giftcertif2_ on giftcertif1_.gift_certificate_id = giftcertif2_.id
+         inner join orders_gift_certificates orders3_ on giftcertif2_.id = orders3_.gift_certificate_id
+         inner join orders order4_ on orders3_.order_id = order4_.id
+where order4_.user_id = 2
+group by tag0_.id, order4_.cost
+
+order by order4_.cost, count(tag0_.id) desc;
+
+
+
 
 
 

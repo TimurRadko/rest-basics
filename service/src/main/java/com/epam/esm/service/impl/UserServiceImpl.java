@@ -5,16 +5,20 @@ import com.epam.esm.dao.entity.Order;
 import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.OrderRepository;
+import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.repository.UserRepository;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesBySeveralIdsSpecification;
+import com.epam.esm.dao.specification.tag.GetMostWidelyUsedTagSpecification;
 import com.epam.esm.dao.specification.user.GetAllUsersSpecification;
 import com.epam.esm.dao.specification.user.GetUserByIdSpecification;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.builder.certificate.GiftCertificateDtoBuilder;
 import com.epam.esm.service.builder.order.OrderBuilder;
 import com.epam.esm.service.builder.order.OrderDtoBuilder;
+import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.builder.user.UserDtoBuilder;
 import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
@@ -38,6 +42,8 @@ public class UserServiceImpl implements UserService {
   private final OrderBuilder orderBuilder;
   private final GiftCertificateDtoBuilder giftCertificateDtoBuilder;
   private final OrderDtoBuilder orderDtoBuilder;
+  private final TagDtoBuilder tagDtoBuilder;
+  private final TagRepository tagRepository;
 
   @Autowired
   public UserServiceImpl(
@@ -47,7 +53,9 @@ public class UserServiceImpl implements UserService {
       UserDtoBuilder userDtoBuilder,
       OrderBuilder orderBuilder,
       GiftCertificateDtoBuilder giftCertificateDtoBuilder,
-      OrderDtoBuilder orderDtoBuilder) {
+      OrderDtoBuilder orderDtoBuilder,
+      TagDtoBuilder tagDtoBuilder,
+      TagRepository tagRepository) {
     this.userRepository = userRepository;
     this.orderRepository = orderRepository;
     this.giftCertificateRepository = giftCertificateRepository;
@@ -55,6 +63,8 @@ public class UserServiceImpl implements UserService {
     this.orderBuilder = orderBuilder;
     this.giftCertificateDtoBuilder = giftCertificateDtoBuilder;
     this.orderDtoBuilder = orderDtoBuilder;
+    this.tagDtoBuilder = tagDtoBuilder;
+    this.tagRepository = tagRepository;
   }
 
   @Override
@@ -91,11 +101,10 @@ public class UserServiceImpl implements UserService {
       throw new InsufficientFundInAccount("The user doesn't have enough funds in the account");
     }
     user.setAccount(account.subtract(cost));
-    UserDto updatedUser =
-        userDtoBuilder.build(
-            userRepository
-                .update(user)
-                .orElseThrow(() -> new EntityNotFoundException("The User not exists in the DB")));
+    userDtoBuilder.build(
+        userRepository
+            .update(user)
+            .orElseThrow(() -> new EntityNotFoundException("The User not exists in the DB")));
     OrderDto orderDto = createOrderDto(user.getId(), cost, Set.copyOf(giftCertificates));
     Order order = orderRepository.save(orderBuilder.build(orderDto, user)).orElseThrow();
 
@@ -119,5 +128,23 @@ public class UserServiceImpl implements UserService {
     return userRepository
         .getEntityBySpecification(new GetUserByIdSpecification(id))
         .map(userDtoBuilder::build);
+  }
+
+  @Override
+  public Optional<TagDto> getMostWidelyUsedTagByUserId(Long id) {
+    List<TagDto> tagDto =
+        tagRepository.getEntityListBySpecification(new GetMostWidelyUsedTagSpecification(id))
+            .stream()
+            .map(tagDtoBuilder::build)
+            .collect(Collectors.toList());
+    return getMostWidelyTagFromList(tagDto);
+  }
+
+  private Optional<TagDto> getMostWidelyTagFromList(List<TagDto> tagDtos) {
+    if (!tagDtos.isEmpty()) {
+      return Optional.of(tagDtos.get(0));
+    } else {
+      return Optional.empty();
+    }
   }
 }

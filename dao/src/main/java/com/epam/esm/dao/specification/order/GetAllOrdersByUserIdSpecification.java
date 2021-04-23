@@ -1,8 +1,6 @@
 package com.epam.esm.dao.specification.order;
 
-import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.entity.Order;
-import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.specification.Specification;
 

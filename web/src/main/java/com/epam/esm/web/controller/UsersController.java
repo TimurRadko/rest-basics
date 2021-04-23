@@ -3,6 +3,7 @@ package com.epam.esm.web.controller;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,5 +65,13 @@ public class UsersController {
 
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
     return orderDto;
+  }
+
+  @GetMapping("/{id}/tags")
+  public TagDto getMostWidelyUsedTag(@PathVariable Long id) {
+    return userService
+        .getMostWidelyUsedTagByUserId(id)
+        .orElseThrow(
+            () -> new EntityNotFoundException("The most widely tag wasn't searched"));
   }
 }
