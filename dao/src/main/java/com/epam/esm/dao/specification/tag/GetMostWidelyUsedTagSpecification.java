@@ -14,7 +14,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetMostWidelyUsedTagSpecification implements Specification<Tag> {
+public final class GetMostWidelyUsedTagSpecification implements Specification<Tag> {
   private final long id;
 
   public GetMostWidelyUsedTagSpecification(long id) {

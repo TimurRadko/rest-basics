@@ -8,7 +8,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
-public class GetGiftCertificatesBySeveralIdsSpecification
+public final class GetGiftCertificatesBySeveralIdsSpecification
     implements Specification<GiftCertificate> {
   private final List<Long> ids;
 

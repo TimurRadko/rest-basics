@@ -31,6 +31,12 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
+  public List<User> getEntityListWithPaginationBySpecification(
+      Specification<User> specification, int page, int size) {
+    return null;
+  }
+
+  @Override
   public Optional<User> getEntityBySpecification(Specification<User> specification) {
     try {
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();

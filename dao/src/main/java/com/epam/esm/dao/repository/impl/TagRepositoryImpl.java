@@ -31,6 +31,12 @@ public class TagRepositoryImpl implements TagRepository {
   }
 
   @Override
+  public List<Tag> getEntityListWithPaginationBySpecification(
+      Specification<Tag> specification, int page, int size) {
+    return null;
+  }
+
+  @Override
   @Transactional
   public Optional<Tag> save(Tag tag) {
     entityManager.persist(tag);

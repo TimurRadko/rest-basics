@@ -50,6 +50,18 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   }
 
   @Override
+  public List<GiftCertificate> getEntityListWithPaginationBySpecification(
+      Specification<GiftCertificate> specification, int page, int size) {
+    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+    CriteriaQuery<GiftCertificate> criteriaQuery = specification.getCriteriaQuery(builder);
+    return entityManager
+        .createQuery(criteriaQuery)
+        .setFirstResult(page)
+        .setMaxResults(size)
+        .getResultList();
+  }
+
+  @Override
   public Optional<GiftCertificate> getEntityBySpecification(
       Specification<GiftCertificate> specification) {
     try {

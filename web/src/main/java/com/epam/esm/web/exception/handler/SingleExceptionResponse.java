@@ -9,7 +9,7 @@ class SingleExceptionResponse extends AbstractExceptionResponse {
     return errorMessage;
   }
 
-  public void setErrorMessage(String errorMessage) {
+  void setErrorMessage(String errorMessage) {
     this.errorMessage = errorMessage;
   }
 }

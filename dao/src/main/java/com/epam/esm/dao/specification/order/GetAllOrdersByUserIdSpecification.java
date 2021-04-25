@@ -10,7 +10,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
-public class GetAllOrdersByUserIdSpecification implements Specification<Order> {
+public final class GetAllOrdersByUserIdSpecification implements Specification<Order> {
   private final long userId;
 
   public GetAllOrdersByUserIdSpecification(long userId) {

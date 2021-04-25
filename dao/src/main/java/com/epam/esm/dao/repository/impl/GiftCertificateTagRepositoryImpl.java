@@ -20,8 +20,12 @@ public class GiftCertificateTagRepositoryImpl implements GiftCertificateTagRepos
   }
 
   @Override
-  public List<GiftCertificateTag> getEntityListBySpecification(
-      Specification<GiftCertificateTag> specification) {
+  public List<GiftCertificateTag> getEntityListBySpecification(Specification<GiftCertificateTag> specification) {
+    return null;
+  }
+
+  @Override
+  public List<GiftCertificateTag> getEntityListWithPaginationBySpecification(Specification<GiftCertificateTag> specification, int page, int size) {
     return null;
   }
 

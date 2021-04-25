@@ -1,10 +1,12 @@
 package com.epam.esm.service.dto;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserDto {
+public class UserDto extends RepresentationModel<UserDto> {
   private Long id;
   private String login;
   private BigDecimal account;

@@ -7,7 +7,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public class GetOrderByIdSpecification implements Specification<Order> {
+public final class GetOrderByIdSpecification implements Specification<Order> {
   private final long id;
 
   public GetOrderByIdSpecification(long id) {

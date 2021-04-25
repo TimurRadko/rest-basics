@@ -5,10 +5,8 @@ import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByDescriptionPartSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByIdSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNamePartSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByTagNameSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNameAndDescriptionPartAndTagsNameSpecification;
 import com.epam.esm.dao.specification.tag.GetAllTagsByGiftCertificatesIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
@@ -30,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -117,59 +114,29 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   @Override
   public List<GiftCertificateDto> getAllByParams(
-      String name, String description, String tagName, List<String> sorts) {
-    if (name == null && description == null && tagName == null) {
-      return getAll(sorts);
+      int page,
+      int size,
+      String name,
+      String description,
+      List<String> tagNames,
+      List<String> sorts) {
+    if (name == null && description == null && tagNames == null) {
+      return getAll(sorts, page, size);
     }
-    List<GiftCertificate> giftCertificates = new ArrayList<>();
-    if (name != null && name.trim().length() != 0) {
-      giftCertificates =
-          giftCertificateRepository.getEntityListBySpecification(
-              new GetGiftCertificatesByNamePartSpecification(name, sorts));
-    }
-    if (description != null && description.trim().length() != 0) {
-      giftCertificates = getGiftCertificatesByDescriptionPart(giftCertificates, description, sorts);
-    }
-    if (tagName != null) {
-      giftCertificates = getGiftCertificatesByTagName(giftCertificates, tagName, sorts);
-    }
-    return giftCertificates.stream()
+    return giftCertificateRepository
+        .getEntityListBySpecification(
+            new GetGiftCertificatesByNameAndDescriptionPartAndTagsNameSpecification(
+                name, description, tagNames, sorts))
+        .stream()
         .map(giftCertificateDtoBuilder::build)
         .collect(Collectors.toList());
   }
 
-  private List<GiftCertificateDto> getAll(List<String> sort) {
+  private List<GiftCertificateDto> getAll(List<String> sort, int page, int size) {
     return giftCertificateRepository
-        .getEntityListBySpecification(new GetAllGiftCertificatesSpecification(sort)).stream()
+        .getEntityListWithPaginationBySpecification(new GetAllGiftCertificatesSpecification(sort), page, size)
+        .stream()
         .map((giftCertificateDtoBuilder::build))
-        .collect(Collectors.toList());
-  }
-
-  private List<GiftCertificate> getGiftCertificatesByDescriptionPart(
-      List<GiftCertificate> gitCertificates, String description, List<String> sorts) {
-    List<GiftCertificate> findingGiftCertificates =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetGiftCertificatesByDescriptionPartSpecification(description, sorts));
-    if (gitCertificates.size() == 0) {
-      return findingGiftCertificates;
-    } else {
-      return findingGiftCertificates.stream()
-          .filter((gitCertificates::contains))
-          .collect(Collectors.toList());
-    }
-  }
-
-  private List<GiftCertificate> getGiftCertificatesByTagName(
-      List<GiftCertificate> giftCertificates, String tagName, List<String> sorts) {
-    if (giftCertificates.size() == 0) {
-      return giftCertificateRepository.getEntityListBySpecification(
-          new GetGiftCertificatesByTagNameSpecification(tagName, sorts));
-    }
-    return giftCertificates.stream()
-        .filter(
-            (giftCertificateDto ->
-                giftCertificateDto.getTags().stream()
-                    .anyMatch(tag -> tag.getName().equalsIgnoreCase(tagName))))
         .collect(Collectors.toList());
   }
 
@@ -183,7 +150,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   @Override
   @Transactional
-  public Optional<GiftCertificateDto> update(long id, GiftCertificateDto giftCertificateDto) {
+  public Optional<GiftCertificateDto> update(
+      long id, GiftCertificateDto giftCertificateDto) {
     if (!giftCertificateValidator.isValid(giftCertificateDto)) {
       throw new EntityNotValidMultipleException(giftCertificateValidator.getErrorMessage());
     }

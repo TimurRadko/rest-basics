@@ -4,6 +4,7 @@ import com.epam.esm.service.TagService;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.web.link.builder.LinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,28 +22,33 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v2/tags")
 public class TagsController {
-  private TagService tagService;
+  private final TagService tagService;
+  private final LinkBuilder<TagDto> tagLinkBuilder;
 
   @Autowired
-  public TagsController(TagService tagService) {
+  public TagsController(TagService tagService, LinkBuilder<TagDto> tagLinkBuilder) {
     this.tagService = tagService;
+    this.tagLinkBuilder = tagLinkBuilder;
   }
 
   @GetMapping()
   public List<TagDto> getAll(@RequestParam(value = "sort", required = false) String sort) {
-    return tagService.getAll(sort);
+    return tagService.getAll(sort).stream().map(tagLinkBuilder::build).collect(Collectors.toList());
   }
 
   @GetMapping("/{id}")
   public TagDto get(@PathVariable Long id) throws ServiceException {
-    return tagService
-        .getById(id)
-        .orElseThrow(
-            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+    return tagLinkBuilder.build(
+        tagService
+            .getById(id)
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException("Requested resource not found (id = " + id + ")")));
   }
 
   @PostMapping()
@@ -55,9 +61,9 @@ public class TagsController {
 
     Long id = savedTagDto.getId();
     String url = request.getRequestURL().toString();
-
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
-    return savedTagDto;
+
+    return tagLinkBuilder.build(savedTagDto);
   }
 
   @DeleteMapping(value = "/{id}")

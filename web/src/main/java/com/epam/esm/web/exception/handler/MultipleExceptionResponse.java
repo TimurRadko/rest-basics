@@ -12,7 +12,7 @@ class MultipleExceptionResponse extends AbstractExceptionResponse {
     return Collections.unmodifiableList(errorMessages);
   }
 
-  public void setErrorMessages(List<String> errorMessages) {
+  void setErrorMessages(List<String> errorMessages) {
     this.errorMessages = errorMessages;
   }
 }

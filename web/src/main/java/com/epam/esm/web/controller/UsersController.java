@@ -6,6 +6,7 @@ import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.web.link.builder.UserDtoLinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,35 +20,45 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v2/users")
 public class UsersController {
-  private UserService userService;
-  private OrderService orderService;
+  private final UserService userService;
+  private final OrderService orderService;
+  private final UserDtoLinkBuilder userDtoLinkBuilder;
 
   @Autowired
-  public UsersController(UserService userService, OrderService orderService) {
+  public UsersController(
+      UserService userService, OrderService orderService, UserDtoLinkBuilder userDtoLinkBuilder) {
     this.userService = userService;
     this.orderService = orderService;
+    this.userDtoLinkBuilder = userDtoLinkBuilder;
   }
 
   @GetMapping()
   public List<UserDto> getAll() {
-    return userService.getAll();
+    return userService.getAll().stream()
+        .map(userDtoLinkBuilder::build)
+        .collect(Collectors.toList());
   }
 
   @GetMapping("/{id}")
-  public UserDto getById(@PathVariable Long id) {
-    return userService
-        .getById(id)
-        .orElseThrow(
-            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+  public UserDto get(@PathVariable Long id) {
+    return userDtoLinkBuilder.build(
+        userService
+            .getById(id)
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException("Requested resource not found (id = " + id + ")")));
   }
 
   @GetMapping("/{id}/orders")
   public List<OrderDto> getOrdersByUserId(@PathVariable Long id) {
-    return orderService.getAllOrdersByUserId(id);
+    return orderService.getAllOrdersByUserId(id).stream()
+        .map(userDtoLinkBuilder::addLinkToGiftCertificateDtos)
+        .collect(Collectors.toList());
   }
 
   @PostMapping("/{id}/orders")
@@ -64,14 +75,14 @@ public class UsersController {
     String url = request.getRequestURL().toString();
 
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
-    return orderDto;
+    return userDtoLinkBuilder.addLinkToGiftCertificateDtos(orderDto);
   }
 
   @GetMapping("/{id}/tags")
   public TagDto getMostWidelyUsedTag(@PathVariable Long id) {
-    return userService
-        .getMostWidelyUsedTagByUserId(id)
-        .orElseThrow(
-            () -> new EntityNotFoundException("The most widely tag wasn't searched"));
+    return userDtoLinkBuilder.addLinkMostWidelyUsedTag(
+        userService
+            .getMostWidelyUsedTagByUserId(id)
+            .orElseThrow(() -> new EntityNotFoundException("The most widely tag wasn't searched")));
   }
 }

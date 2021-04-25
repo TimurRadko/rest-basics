@@ -324,6 +324,66 @@ group by tag0_.id, order4_.cost
 
 order by order4_.cost, count(tag0_.id) desc;
 
+select giftcertif0_.id               as id1_0_,
+       giftcertif0_.create_date      as create_d2_0_,
+       giftcertif0_.description      as descript3_0_,
+       giftcertif0_.duration         as duration4_0_,
+       giftcertif0_.last_update_date as last_upd5_0_,
+       giftcertif0_.name             as name6_0_,
+       giftcertif0_.price            as price7_0_
+from gift_certificates giftcertif0_
+where (giftcertif0_.id in (select distinct giftcertif1_.id
+                           from gift_certificates giftcertif1_
+                                    inner join gift_certificates_tags tags2_
+                                               on giftcertif1_.id = tags2_.gift_certificate_id
+                                    inner join tags tag3_ on tags2_.tag_id = tag3_.id
+                           where tag3_.name=?))
+  and (giftcertif0_.id in (select distinct giftcertif4_.id
+                           from gift_certificates giftcertif4_
+                                    inner join gift_certificates_tags tags5_
+                                               on giftcertif4_.id = tags5_.gift_certificate_id
+                                    inner join tags tag6_ on tags5_.tag_id = tag6_.id
+                           where tag6_.name=?));
+
+select tags0_.gift_certificate_id as gift_cer1_1_0_,
+       tags0_.tag_id              as tag_id2_1_0_,
+       tag1_.id                   as id1_4_1_,
+       tag1_.name                 as name2_4_1_
+from gift_certificates_tags tags0_
+         inner join tags tag1_ on tags0_.tag_id = tag1_.id
+where tags0_.gift_certificate_id=?;
+
+
+
+select giftcertif0_.id               as id1_0_,
+       giftcertif0_.create_date      as create_d2_0_,
+       giftcertif0_.description      as descript3_0_,
+       giftcertif0_.duration         as duration4_0_,
+       giftcertif0_.last_update_date as last_upd5_0_,
+       giftcertif0_.name             as name6_0_,
+       giftcertif0_.price            as price7_0_
+from gift_certificates giftcertif0_
+where 1 = 1;
+
+select giftcertif0_.id               as id1_0_,
+       giftcertif0_.create_date      as create_d2_0_,
+       giftcertif0_.description      as descript3_0_,
+       giftcertif0_.duration         as duration4_0_,
+       giftcertif0_.last_update_date as last_upd5_0_,
+       giftcertif0_.name             as name6_0_,
+       giftcertif0_.price            as price7_0_
+from gift_certificates giftcertif0_
+where (lower(giftcertif0_.name) like ?)
+  and (lower(giftcertif0_.description) like ?)
+  and (giftcertif0_.id in (select distinct giftcertif1_.id
+                           from gift_certificates giftcertif1_
+                                    inner join gift_certificates_tags tags2_
+                                               on giftcertif1_.id = tags2_.gift_certificate_id
+                                    inner join tags tag3_ on tags2_.tag_id = tag3_.id
+                           where tag3_.name=?))
+order by giftcertif0_.id asc;
+
+
 
 
 

@@ -4,12 +4,13 @@ import com.epam.esm.dao.serialization.LocalDateDeserializer;
 import com.epam.esm.dao.serialization.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-public class OrderDto {
+public class OrderDto extends RepresentationModel<OrderDto> {
   private Long id;
   private BigDecimal cost;
 

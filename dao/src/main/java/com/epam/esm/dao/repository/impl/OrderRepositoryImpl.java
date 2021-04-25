@@ -32,6 +32,12 @@ public class OrderRepositoryImpl implements OrderRepository {
   }
 
   @Override
+  public List<Order> getEntityListWithPaginationBySpecification(
+      Specification<Order> specification, int page, int size) {
+    return null;
+  }
+
+  @Override
   public Optional<Order> getEntityBySpecification(Specification<Order> specification) {
     try {
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();

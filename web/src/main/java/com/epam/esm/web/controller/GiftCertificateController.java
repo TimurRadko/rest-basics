@@ -4,6 +4,7 @@ import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.GiftCertificatePriceDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.web.link.builder.LinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,32 +24,44 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v2/certificates")
 public class GiftCertificateController {
-  private GiftCertificateService giftCertificateService;
+  private final GiftCertificateService giftCertificateService;
+  private final LinkBuilder<GiftCertificateDto> giftCertificateDtoLinkBuilder;
 
   @Autowired
-  public GiftCertificateController(GiftCertificateService giftCertificateService) {
+  public GiftCertificateController(
+      GiftCertificateService giftCertificateService,
+      LinkBuilder<GiftCertificateDto> giftCertificateDtoLinkBuilder) {
     this.giftCertificateService = giftCertificateService;
+    this.giftCertificateDtoLinkBuilder = giftCertificateDtoLinkBuilder;
   }
 
   @GetMapping()
   public List<GiftCertificateDto> getAll(
+      @RequestParam(value = "page") int page,
+      @RequestParam(value = "size") int size,
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "description", required = false) String description,
-      @RequestParam(value = "tag", required = false) String tagName,
+      @RequestParam(value = "tag", required = false) List<String> tagNames,
       @RequestParam(value = "sort", required = false) List<String> sorts) {
-    return giftCertificateService.getAllByParams(name, description, tagName, sorts);
+
+    return giftCertificateService.getAllByParams(page, size, name, description, tagNames, sorts).stream()
+        .map(giftCertificateDtoLinkBuilder::build)
+        .collect(Collectors.toList());
   }
 
   @GetMapping("/{id}")
   public GiftCertificateDto get(@PathVariable Long id) {
-    return giftCertificateService
-        .getById(id)
-        .orElseThrow(
-            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+    return giftCertificateDtoLinkBuilder.build(
+        giftCertificateService
+            .getById(id)
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException("Requested resource not found (id = " + id + ")")));
   }
 
   @PostMapping()
@@ -67,19 +80,22 @@ public class GiftCertificateController {
 
     Long id = savedGiftCertificateDto.getId();
     String url = request.getRequestURL().toString();
-
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
-    return savedGiftCertificateDto;
+    return giftCertificateDtoLinkBuilder.build(savedGiftCertificateDto);
   }
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public GiftCertificateDto update(
       @PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
-    return giftCertificateService
-        .update(id, giftCertificateDto)
-        .orElseThrow(
-            () -> new EntityNotFoundException("Gift certificate with id=" + id + " didn't update"));
+    GiftCertificateDto updatedGiftCertificateDto =
+        giftCertificateService
+            .update(id, giftCertificateDto)
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        "Gift certificate with id=" + id + " didn't update"));
+    return giftCertificateDtoLinkBuilder.build(updatedGiftCertificateDto);
   }
 
   @DeleteMapping("/{id}")
@@ -92,11 +108,13 @@ public class GiftCertificateController {
   @ResponseStatus(HttpStatus.OK)
   public GiftCertificateDto updatePrice(
       @PathVariable long id, @RequestBody GiftCertificatePriceDto giftCertificatePriceDto) {
-    return giftCertificateService
-        .updatePrice(id, giftCertificatePriceDto)
-        .orElseThrow(
-            () ->
-                new EntityNotFoundException(
-                    "The price of the Gift certificate with id=" + id + " didn't update"));
+    GiftCertificateDto patchingGiftCertificateDto =
+        giftCertificateService
+            .updatePrice(id, giftCertificatePriceDto)
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        "The price of the Gift certificate with id=" + id + " didn't update"));
+    return giftCertificateDtoLinkBuilder.build(patchingGiftCertificateDto);
   }
 }
