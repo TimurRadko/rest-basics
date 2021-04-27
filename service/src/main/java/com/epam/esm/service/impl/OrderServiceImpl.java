@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public List<OrdersDto> getAllOrdersByUserId(int page, int size, long id) {
+  public List<OrdersDto> getAllOrdersByUserId(Integer page, Integer size, long id) {
     if (!pageValidator.isValid(new PageDto(page, size))) {
       throw new PageNotValidException(pageValidator.getErrorMessage());
     }

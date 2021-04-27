@@ -16,7 +16,7 @@ public interface OrderService extends Service<OrdersDto> {
    * @param id - passed into the method id Entity's parameter that required for work with the DB
    * @return List<OrderDto> - List of OrderDto contained in one of all tables in the DB
    */
-  List<OrdersDto> getAllOrdersByUserId(int page, int size, long id);
+  List<OrdersDto> getAllOrdersByUserId(Integer page, Integer size, long id);
 
   /**
    * * This method describes a general get operation for all Orders, from persistence layer

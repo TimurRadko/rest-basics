@@ -82,7 +82,6 @@ CREATE TABLE orders_gift_certificates
     id                  SERIAL,
     order_id            BIGINT NOT NULL REFERENCES orders (id),
     gift_certificate_id BIGINT NOT NULL REFERENCES gift_certificates (id),
-    amount              BIGINT,
     PRIMARY KEY (id)
 );
 ------------------------------------------------------------

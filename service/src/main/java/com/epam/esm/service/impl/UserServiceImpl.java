@@ -2,10 +2,8 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.entity.Orders;
-import com.epam.esm.dao.entity.OrdersGiftCertificate;
 import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
-import com.epam.esm.dao.repository.OrdersGiftCertificateRepository;
 import com.epam.esm.dao.repository.OrdersRepository;
 import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.repository.UserRepository;
@@ -35,13 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,7 +49,6 @@ public class UserServiceImpl implements UserService {
   private final TagDtoBuilder tagDtoBuilder;
   private final TagRepository tagRepository;
   private final PageValidator pageValidator;
-  private final OrdersGiftCertificateRepository ordersGiftCertificateRepository;
   private static final int FIST_ELEMENT = 0;
 
   @Autowired
@@ -70,8 +62,7 @@ public class UserServiceImpl implements UserService {
       OrdersDtoBuilder ordersDtoBuilder,
       TagDtoBuilder tagDtoBuilder,
       TagRepository tagRepository,
-      PageValidator pageValidator,
-      OrdersGiftCertificateRepository ordersGiftCertificateRepository) {
+      PageValidator pageValidator) {
     this.userRepository = userRepository;
     this.ordersRepository = ordersRepository;
     this.giftCertificateRepository = giftCertificateRepository;
@@ -82,7 +73,6 @@ public class UserServiceImpl implements UserService {
     this.tagDtoBuilder = tagDtoBuilder;
     this.tagRepository = tagRepository;
     this.pageValidator = pageValidator;
-    this.ordersGiftCertificateRepository = ordersGiftCertificateRepository;
   }
 
   @Override
@@ -117,18 +107,11 @@ public class UserServiceImpl implements UserService {
             .update(user)
             .orElseThrow(() -> new EntityNotFoundException("The User not exists in the DB")));
 
-    Set<GiftCertificate> giftCertificateSet = new HashSet<>(giftCertificates);
     OrdersDto ordersDto = createOrderDto(user.getId(), cost, giftCertificates);
     Orders orders =
-            ordersRepository
-                    .save(ordersBuilder.build(ordersDto, user))
-                    .orElseThrow(() -> new ServiceException("The Orders wasn't saved"));
-    for (GiftCertificate giftCertificate : giftCertificateSet) {
-      int amount = Collections.frequency(giftCertificates, giftCertificate);
-      ordersDto.setId(orders.getId());
-      ordersGiftCertificateRepository.save(
-              new OrdersGiftCertificate(ordersBuilder.build(ordersDto, user), giftCertificate, amount));
-    }
+        ordersRepository
+            .save(ordersBuilder.build(ordersDto, user))
+            .orElseThrow(() -> new ServiceException("The Orders wasn't saved"));
     return Optional.of(ordersDtoBuilder.build(orders));
   }
 

@@ -56,4 +56,10 @@ public class UserDtoLinkBuilder implements LinkBuilder<UserDto> {
   public TagDto addLinkMostWidelyUsedTag(TagDto tagDto) {
     return tagDtoLinkBuilder.build(tagDto);
   }
+
+  public OrdersDto addLinkToOrderDtoUsingUserId(OrdersDto ordersDto, long userId) {
+    addLinkToGiftCertificateDtos(ordersDto);
+    return ordersDto.add(
+            linkTo(methodOn(UsersController.class).get(userId)).withSelfRel());
+  }
 }

@@ -229,9 +229,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   @Override
+  @Transactional
   public int delete(long id) {
-    getById(id)
-        .orElseThrow(() -> new ServiceException("Requested resource not found (id = " + id + ")"));
+    giftCertificateRepository
+        .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(id))
+        .orElseThrow(
+            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
     return giftCertificateRepository.delete(id);
   }
 }

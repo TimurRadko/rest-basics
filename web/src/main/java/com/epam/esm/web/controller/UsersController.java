@@ -63,7 +63,7 @@ public class UsersController {
       @RequestParam(value = "size", required = false) Integer size,
       @PathVariable Long id) {
     return orderService.getAllOrdersByUserId(page, size, id).stream()
-        .map(userDtoLinkBuilder::addLinkToGiftCertificateDtos)
+        .map(ordersDto -> userDtoLinkBuilder.addLinkToOrderDtoUsingUserId(ordersDto, id))
         .collect(Collectors.toList());
   }
 
@@ -81,8 +81,7 @@ public class UsersController {
     String url = request.getRequestURL().toString();
 
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
-    return ordersDto;
-//    return userDtoLinkBuilder.addLinkToGiftCertificateDtos(ordersDto);
+    return userDtoLinkBuilder.addLinkToGiftCertificateDtos(ordersDto);
   }
 
   @GetMapping("/{id}/tags")
