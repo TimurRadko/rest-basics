@@ -8,9 +8,11 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
-public class OrderDto extends RepresentationModel<OrderDto> {
+public class OrdersDto extends RepresentationModel<OrdersDto> {
   private Long id;
   private BigDecimal cost;
 
@@ -20,16 +22,16 @@ public class OrderDto extends RepresentationModel<OrderDto> {
 
   private Long userId;
 
-  private Set<GiftCertificateDto> giftCertificates;
+  private List<GiftCertificateDto> giftCertificates;
 
-  public OrderDto() {}
+  public OrdersDto() {}
 
-  public OrderDto(
+  public OrdersDto(
       Long id,
       BigDecimal cost,
       LocalDateTime orderDate,
       Long userId,
-      Set<GiftCertificateDto> giftCertificates) {
+      List<GiftCertificateDto> giftCertificates) {
     this.id = id;
     this.cost = cost;
     this.orderDate = orderDate;
@@ -69,11 +71,11 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     this.userId = userId;
   }
 
-  public Set<GiftCertificateDto> getGiftCertificates() {
-    return giftCertificates;
+  public List<GiftCertificateDto> getGiftCertificates() {
+    return (giftCertificates == null) ? null : new ArrayList<>(giftCertificates);
   }
 
-  public void setGiftCertificates(Set<GiftCertificateDto> giftCertificates) {
+  public void setGiftCertificates(List<GiftCertificateDto> giftCertificates) {
     this.giftCertificates = giftCertificates;
   }
 
@@ -82,31 +84,31 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof OrderDto)) {
+    if (!(o instanceof OrdersDto)) {
       return false;
     }
 
-    OrderDto orderDto = (OrderDto) o;
+    OrdersDto ordersDto = (OrdersDto) o;
 
-    if (getId() != null ? !getId().equals(orderDto.getId()) : orderDto.getId() != null) {
+    if (getId() != null ? !getId().equals(ordersDto.getId()) : ordersDto.getId() != null) {
       return false;
     }
-    if (getCost() != null ? !getCost().equals(orderDto.getCost()) : orderDto.getCost() != null) {
+    if (getCost() != null ? !getCost().equals(ordersDto.getCost()) : ordersDto.getCost() != null) {
       return false;
     }
     if (getOrderDate() != null
-        ? !getOrderDate().equals(orderDto.getOrderDate())
-        : orderDto.getOrderDate() != null) {
+        ? !getOrderDate().equals(ordersDto.getOrderDate())
+        : ordersDto.getOrderDate() != null) {
       return false;
     }
     if (getUserId() != null
-        ? !getUserId().equals(orderDto.getUserId())
-        : orderDto.getUserId() != null) {
+        ? !getUserId().equals(ordersDto.getUserId())
+        : ordersDto.getUserId() != null) {
       return false;
     }
     return getGiftCertificates() != null
-        ? getGiftCertificates().equals(orderDto.getGiftCertificates())
-        : orderDto.getGiftCertificates() == null;
+        ? getGiftCertificates().equals(ordersDto.getGiftCertificates())
+        : ordersDto.getGiftCertificates() == null;
   }
 
   @Override

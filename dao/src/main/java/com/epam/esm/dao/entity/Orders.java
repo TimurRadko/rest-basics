@@ -1,10 +1,11 @@
 package com.epam.esm.dao.entity;
 
-import com.epam.esm.dao.audit.AuditListener;
+import com.epam.esm.dao.entity.audit.AuditListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,16 +13,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "orders")
 @EntityListeners(value = AuditListener.class)
-public class Order implements TableEntity {
+public class Orders implements TableEntity {
   @Id
   @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,20 +37,20 @@ public class Order implements TableEntity {
   @Column(name = "order_date")
   private LocalDateTime orderDate;
 
-  @ManyToMany()
+  @OneToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "orders_gift_certificates",
       joinColumns = @JoinColumn(name = "order_id"),
       inverseJoinColumns = @JoinColumn(name = "gift_certificate_id"))
-  private Set<GiftCertificate> giftCertificates;
+  private List<GiftCertificate> giftCertificates;
 
   @ManyToOne()
   @JoinColumn(name = "user_id")
   private User user;
 
-  public Order() {}
+  public Orders() {}
 
-  public Order(Long id, BigDecimal cost, LocalDateTime orderDate) {
+  public Orders(Long id, BigDecimal cost, LocalDateTime orderDate) {
     this.id = id;
     this.cost = cost;
     this.orderDate = orderDate;
@@ -78,11 +82,11 @@ public class Order implements TableEntity {
     this.orderDate = orderDate;
   }
 
-  public Set<GiftCertificate> getGiftCertificates() {
-    return (giftCertificates == null) ? null : new HashSet<>(giftCertificates);
+  public List<GiftCertificate> getGiftCertificates() {
+    return (giftCertificates == null) ? null : new ArrayList<>(giftCertificates);
   }
 
-  public void setGiftCertificates(Set<GiftCertificate> giftCertificates) {
+  public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
     this.giftCertificates = giftCertificates;
   }
 
@@ -99,21 +103,21 @@ public class Order implements TableEntity {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof Order)) {
+    if (!(o instanceof Orders)) {
       return false;
     }
 
-    Order order = (Order) o;
+    Orders orders = (Orders) o;
 
-    if (getId() != null ? !getId().equals(order.getId()) : order.getId() != null) {
+    if (getId() != null ? !getId().equals(orders.getId()) : orders.getId() != null) {
       return false;
     }
-    if (getCost() != null ? !getCost().equals(order.getCost()) : order.getCost() != null) {
+    if (getCost() != null ? !getCost().equals(orders.getCost()) : orders.getCost() != null) {
       return false;
     }
     return getOrderDate() != null
-        ? getOrderDate().equals(order.getOrderDate())
-        : order.getOrderDate() == null;
+        ? getOrderDate().equals(orders.getOrderDate())
+        : orders.getOrderDate() == null;
   }
 
   @Override

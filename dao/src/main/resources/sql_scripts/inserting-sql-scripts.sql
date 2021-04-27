@@ -33,17 +33,14 @@ INSERT INTO orders(user_id, cost, order_date)
 VALUES (1, 55.0, '2021-03-25 00:00:00.084745'),
        (2, 67, '2021-03-25 00:00:00.084745');
 
-INSERT INTO orders_gift_certificates(order_id, gift_certificate_id)
-VALUES (1,1),
-       (2, 2),
-       (2, 4);
+INSERT INTO orders_gift_certificates(order_id, gift_certificate_id, amount)
+VALUES (1,1, 1),
+       (2, 2, 1),
+       (2, 4, 1);
 
 INSERT INTO orders(user_id, cost, order_date)
 VALUES (2, 77, '2021-03-28 00:00:00.084745');
 
-INSERT INTO orders_gift_certificates(order_id, gift_certificate_id)
-VALUES (12,2),
-       (12,4);
-
-INSERT INTO audit_history_operations(user_id, operation, entity_id, entity_type, modified_field, old_value_modified_field, new_value_modified_field, operation_date)
-VALUES (2, 'update', 2, 'GiftCertificate','price', '43', '10','2021-03-25 00:00:00.084745');
+INSERT INTO orders_gift_certificates(order_id, gift_certificate_id, amount)
+VALUES (12,2, 1),
+       (12,4, 1);

@@ -1,4 +1,4 @@
-package com.epam.esm.dao.audit;
+package com.epam.esm.dao.entity.audit;
 
 public enum Action {
   INSERTED("INSERTED"),
@@ -7,7 +7,7 @@ public enum Action {
 
   private final String name;
 
-  private Action(String value) {
+  Action(String value) {
     this.name = value;
   }
 

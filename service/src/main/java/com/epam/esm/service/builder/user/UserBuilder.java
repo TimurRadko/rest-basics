@@ -1,18 +1,16 @@
 package com.epam.esm.service.builder.user;
 
 import com.epam.esm.dao.entity.User;
-import com.epam.esm.service.builder.order.OrderBuilder;
+import com.epam.esm.service.builder.order.OrdersBuilder;
 import com.epam.esm.service.dto.UserDto;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
 public class UserBuilder {
-  private final OrderBuilder orderBuilder;
+  private final OrdersBuilder ordersBuilder;
 
-  public UserBuilder(OrderBuilder orderBuilder) {
-    this.orderBuilder = orderBuilder;
+  public UserBuilder(OrdersBuilder ordersBuilder) {
+    this.ordersBuilder = ordersBuilder;
   }
 
   public User build(UserDto userDto) {

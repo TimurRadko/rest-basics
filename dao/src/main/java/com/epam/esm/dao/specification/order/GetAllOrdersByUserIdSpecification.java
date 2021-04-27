@@ -1,6 +1,6 @@
 package com.epam.esm.dao.specification.order;
 
-import com.epam.esm.dao.entity.Order;
+import com.epam.esm.dao.entity.Orders;
 import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.specification.Specification;
 
@@ -10,7 +10,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
-public final class GetAllOrdersByUserIdSpecification implements Specification<Order> {
+public final class GetAllOrdersByUserIdSpecification implements Specification<Orders> {
   private final long userId;
 
   public GetAllOrdersByUserIdSpecification(long userId) {
@@ -18,10 +18,10 @@ public final class GetAllOrdersByUserIdSpecification implements Specification<Or
   }
 
   @Override
-  public CriteriaQuery<Order> getCriteriaQuery(CriteriaBuilder builder) {
-    CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
-    Root<Order> tagRoot = criteria.from(Order.class);
-    Join<Order, User> orderUserJoin = tagRoot.join("user");
+  public CriteriaQuery<Orders> getCriteriaQuery(CriteriaBuilder builder) {
+    CriteriaQuery<Orders> criteria = builder.createQuery(Orders.class);
+    Root<Orders> tagRoot = criteria.from(Orders.class);
+    Join<Orders, User> orderUserJoin = tagRoot.join("user");
     Path<String> userIdPath = orderUserJoin.get("id");
     criteria.select(tagRoot).distinct(true);
     criteria.where(builder.equal(userIdPath, userId));

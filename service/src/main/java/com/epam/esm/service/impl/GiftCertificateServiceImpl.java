@@ -6,7 +6,7 @@ import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByIdSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNameAndDescriptionPartAndTagsNameSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNameDescrTagsSpecification;
 import com.epam.esm.dao.specification.tag.GetAllTagsByGiftCertificatesIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
@@ -16,14 +16,16 @@ import com.epam.esm.service.builder.certificate.GiftCertificateDtoBuilder;
 import com.epam.esm.service.builder.tag.TagBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
-import com.epam.esm.service.dto.GiftCertificatePriceDto;
+import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
+import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.validator.GiftCertificatePriceValidator;
 import com.epam.esm.service.validator.GiftCertificateValidator;
+import com.epam.esm.service.validator.PageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   private final GiftCertificateDtoBuilder giftCertificateDtoBuilder;
   private final TagBuilder tagBuilder;
   private final TagDtoBuilder tagDtoBuilder;
+  private final PageValidator pageValidator;
 
   @Autowired
   public GiftCertificateServiceImpl(
@@ -54,7 +57,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       GiftCertificateBuilder giftCertificateBuilder,
       GiftCertificateDtoBuilder giftCertificateDtoBuilder,
       TagBuilder tagBuilder,
-      TagDtoBuilder tagDtoBuilder) {
+      TagDtoBuilder tagDtoBuilder,
+      PageValidator pageValidator) {
     this.giftCertificateRepository = giftCertificateRepository;
     this.tagRepository = tagRepository;
     this.giftCertificateValidator = giftCertificateValidator;
@@ -63,6 +67,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     this.giftCertificateDtoBuilder = giftCertificateDtoBuilder;
     this.tagBuilder = tagBuilder;
     this.tagDtoBuilder = tagDtoBuilder;
+    this.pageValidator = pageValidator;
   }
 
   @Override
@@ -120,13 +125,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       String description,
       List<String> tagNames,
       List<String> sorts) {
+    if (!pageValidator.isValid(new PageDto(page, size))) {
+      throw new PageNotValidException(pageValidator.getErrorMessage());
+    }
     if (name == null && description == null && tagNames == null) {
       return getAll(sorts, page, size);
     }
     return giftCertificateRepository
         .getEntityListWithPaginationBySpecification(
-            new GetGiftCertificatesByNameAndDescriptionPartAndTagsNameSpecification(
-                name, description, tagNames, sorts),
+            new GetGiftCertificatesByNameDescrTagsSpecification(name, description, tagNames, sorts),
             page,
             size)
         .stream()
@@ -185,13 +192,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   @Override
-  public Optional<GiftCertificateDto> updatePrice(
-      long id, GiftCertificatePriceDto giftCertificatePriceDto) {
-    if (!giftCertificatePriceValidator.isValid(giftCertificatePriceDto)) {
+  public Optional<GiftCertificateDto> updatePrice(long id, GiftCertificateDto giftCertificateDto) {
+    if (!giftCertificatePriceValidator.isValid(giftCertificateDto.getPrice())) {
       throw new EntityNotValidException(giftCertificatePriceValidator.getErrorMessage());
     }
     GiftCertificate giftCertificate = getGiftCertificateById(id);
-    giftCertificate.setPrice(giftCertificatePriceDto.getPrice());
+    giftCertificate.setPrice(giftCertificateDto.getPrice());
     giftCertificate = updateGiftCertificate(giftCertificate);
     return Optional.of(giftCertificateDtoBuilder.build(giftCertificate));
   }

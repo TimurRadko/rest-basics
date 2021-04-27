@@ -1,34 +1,45 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.entity.GiftCertificate;
-import com.epam.esm.dao.entity.Order;
+import com.epam.esm.dao.entity.Orders;
+import com.epam.esm.dao.entity.OrdersGiftCertificate;
 import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
-import com.epam.esm.dao.repository.OrderRepository;
+import com.epam.esm.dao.repository.OrdersGiftCertificateRepository;
+import com.epam.esm.dao.repository.OrdersRepository;
 import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.repository.UserRepository;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesBySeveralIdsSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetMostWidelyUsedTagSpecification;
 import com.epam.esm.dao.specification.user.GetAllUsersSpecification;
 import com.epam.esm.dao.specification.user.GetUserByIdSpecification;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.builder.certificate.GiftCertificateDtoBuilder;
-import com.epam.esm.service.builder.order.OrderBuilder;
-import com.epam.esm.service.builder.order.OrderDtoBuilder;
+import com.epam.esm.service.builder.order.OrdersBuilder;
+import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.builder.user.UserDtoBuilder;
-import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.OrdersDto;
+import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.InsufficientFundInAccount;
+import com.epam.esm.service.exception.PageNotValidException;
+import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.validator.PageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,40 +47,49 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
-  private final OrderRepository orderRepository;
+  private final OrdersRepository ordersRepository;
   private final GiftCertificateRepository giftCertificateRepository;
   private final UserDtoBuilder userDtoBuilder;
-  private final OrderBuilder orderBuilder;
+  private final OrdersBuilder ordersBuilder;
   private final GiftCertificateDtoBuilder giftCertificateDtoBuilder;
-  private final OrderDtoBuilder orderDtoBuilder;
+  private final OrdersDtoBuilder ordersDtoBuilder;
   private final TagDtoBuilder tagDtoBuilder;
   private final TagRepository tagRepository;
+  private final PageValidator pageValidator;
+  private final OrdersGiftCertificateRepository ordersGiftCertificateRepository;
   private static final int FIST_ELEMENT = 0;
 
   @Autowired
   public UserServiceImpl(
       UserRepository userRepository,
-      OrderRepository orderRepository,
+      OrdersRepository ordersRepository,
       GiftCertificateRepository giftCertificateRepository,
       UserDtoBuilder userDtoBuilder,
-      OrderBuilder orderBuilder,
+      OrdersBuilder ordersBuilder,
       GiftCertificateDtoBuilder giftCertificateDtoBuilder,
-      OrderDtoBuilder orderDtoBuilder,
+      OrdersDtoBuilder ordersDtoBuilder,
       TagDtoBuilder tagDtoBuilder,
-      TagRepository tagRepository) {
+      TagRepository tagRepository,
+      PageValidator pageValidator,
+      OrdersGiftCertificateRepository ordersGiftCertificateRepository) {
     this.userRepository = userRepository;
-    this.orderRepository = orderRepository;
+    this.ordersRepository = ordersRepository;
     this.giftCertificateRepository = giftCertificateRepository;
     this.userDtoBuilder = userDtoBuilder;
-    this.orderBuilder = orderBuilder;
+    this.ordersBuilder = ordersBuilder;
     this.giftCertificateDtoBuilder = giftCertificateDtoBuilder;
-    this.orderDtoBuilder = orderDtoBuilder;
+    this.ordersDtoBuilder = ordersDtoBuilder;
     this.tagDtoBuilder = tagDtoBuilder;
     this.tagRepository = tagRepository;
+    this.pageValidator = pageValidator;
+    this.ordersGiftCertificateRepository = ordersGiftCertificateRepository;
   }
 
   @Override
   public List<UserDto> getAll(Integer page, Integer size) {
+    if (!pageValidator.isValid(new PageDto(page, size))) {
+      throw new PageNotValidException(pageValidator.getErrorMessage());
+    }
     return userRepository
         .getEntityListWithPaginationBySpecification(new GetAllUsersSpecification(), page, size)
         .stream()
@@ -79,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public Optional<OrderDto> makeOrder(Long id, List<Long> giftCertificateDtoIds) {
+  public Optional<OrdersDto> makeOrder(Long id, List<Long> giftCertificateDtoIds) {
     User user =
         userRepository
             .getEntityBySpecification(new GetUserByIdSpecification(id))
@@ -90,11 +110,29 @@ public class UserServiceImpl implements UserService {
     if (giftCertificateDtoIds == null || giftCertificateDtoIds.isEmpty()) {
       throw new EmptyOrderException("You can't make empty order");
     }
+    List<GiftCertificate> giftCertificates = getAllGiftCertificates(giftCertificateDtoIds);
+    BigDecimal cost = getNewUserAccount(user, giftCertificates);
+    userDtoBuilder.build(
+        userRepository
+            .update(user)
+            .orElseThrow(() -> new EntityNotFoundException("The User not exists in the DB")));
 
-    List<GiftCertificate> giftCertificates =
-        giftCertificateRepository.getEntityListBySpecification(
-            new GetGiftCertificatesBySeveralIdsSpecification(giftCertificateDtoIds));
+    Set<GiftCertificate> giftCertificateSet = new HashSet<>(giftCertificates);
+    OrdersDto ordersDto = createOrderDto(user.getId(), cost, giftCertificates);
+    Orders orders =
+            ordersRepository
+                    .save(ordersBuilder.build(ordersDto, user))
+                    .orElseThrow(() -> new ServiceException("The Orders wasn't saved"));
+    for (GiftCertificate giftCertificate : giftCertificateSet) {
+      int amount = Collections.frequency(giftCertificates, giftCertificate);
+      ordersDto.setId(orders.getId());
+      ordersGiftCertificateRepository.save(
+              new OrdersGiftCertificate(ordersBuilder.build(ordersDto, user), giftCertificate, amount));
+    }
+    return Optional.of(ordersDtoBuilder.build(orders));
+  }
 
+  private BigDecimal getNewUserAccount(User user, List<GiftCertificate> giftCertificates) {
     BigDecimal cost =
         giftCertificates.stream()
             .map(GiftCertificate::getPrice)
@@ -104,26 +142,34 @@ public class UserServiceImpl implements UserService {
       throw new InsufficientFundInAccount("The user doesn't have enough funds in the account");
     }
     user.setAccount(account.subtract(cost));
-    userDtoBuilder.build(
-        userRepository
-            .update(user)
-            .orElseThrow(() -> new EntityNotFoundException("The User not exists in the DB")));
-    OrderDto orderDto = createOrderDto(user.getId(), cost, Set.copyOf(giftCertificates));
-    Order order = orderRepository.save(orderBuilder.build(orderDto, user)).orElseThrow();
-
-    return Optional.of(orderDtoBuilder.build(order));
+    return cost;
   }
 
-  private OrderDto createOrderDto(
-      long userId, BigDecimal cost, Set<GiftCertificate> giftCertificates) {
-    OrderDto orderDto = new OrderDto();
-    orderDto.setUserId(userId);
-    orderDto.setCost(cost);
-    orderDto.setGiftCertificates(
+  private List<GiftCertificate> getAllGiftCertificates(List<Long> giftCertificateDtoIds) {
+    List<GiftCertificate> giftCertificates = new ArrayList<>();
+    for (Long giftCertificateId : giftCertificateDtoIds) {
+      GiftCertificate giftCertificate =
+          giftCertificateRepository
+              .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(giftCertificateId))
+              .orElseThrow(
+                  () ->
+                      new EntityNotFoundException(
+                          "Requested resource not found (id = " + giftCertificateId + ")"));
+      giftCertificates.add(giftCertificate);
+    }
+    return giftCertificates;
+  }
+
+  private OrdersDto createOrderDto(
+      long userId, BigDecimal cost, List<GiftCertificate> giftCertificates) {
+    OrdersDto ordersDto = new OrdersDto();
+    ordersDto.setUserId(userId);
+    ordersDto.setCost(cost);
+    ordersDto.setGiftCertificates(
         giftCertificates.stream()
             .map(giftCertificateDtoBuilder::build)
-            .collect(Collectors.toSet()));
-    return orderDto;
+            .collect(Collectors.toList()));
+    return ordersDto;
   }
 
   @Override

@@ -1,7 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.entity.Tag;
-import com.epam.esm.dao.repository.GiftCertificateTagRepository;
 import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.service.builder.tag.TagBuilder;
 import com.epam.esm.service.dto.TagDto;
@@ -23,30 +22,30 @@ import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class TagServiceImplTest {
-  @Mock private TagRepository tagRepository;
-  @Mock private TagValidator tagValidator;
-  @Mock private TagBuilder builder;
-  @Mock private GiftCertificateTagRepository giftCertificateTagRepository;
-  @InjectMocks private TagServiceImpl tagService;
-
-  private Tag firstTestTag;
-  private TagDto firstTestTagDto;
-  private List<Tag> expectedTags;
-  private List<TagDto> expectedTagDtos;
-  private List<GiftCertificateTag> giftCertificateTags;
-  private static final String NULL_SORTING = null;
-  private static final long ID_FOR_MANIPULATIONS = 1L;
-
-  @BeforeEach
-  void setUp() {
-    firstTestTag = new Tag(1L, "tag1");
-    firstTestTagDto = new TagDto(firstTestTag);
-    GiftCertificateTag firstGiftCertificateTag = new GiftCertificateTag(1L, 1L, 1L);
-    Tag secondTestTag = new Tag(2L, "tag2");
-    expectedTags = Arrays.asList(firstTestTag, secondTestTag);
-    expectedTagDtos = expectedTags.stream().map(TagDto::new).collect(Collectors.toList());
-    giftCertificateTags = Collections.singletonList(firstGiftCertificateTag);
-  }
+//  @Mock private TagRepository tagRepository;
+//  @Mock private TagValidator tagValidator;
+//  @Mock private TagBuilder builder;
+//  @Mock private GiftCertificateTagRepository giftCertificateTagRepository;
+//  @InjectMocks private TagServiceImpl tagService;
+//
+//  private Tag firstTestTag;
+//  private TagDto firstTestTagDto;
+//  private List<Tag> expectedTags;
+//  private List<TagDto> expectedTagDtos;
+//  private List<GiftCertificateTag> giftCertificateTags;
+//  private static final String NULL_SORTING = null;
+//  private static final long ID_FOR_MANIPULATIONS = 1L;
+//
+//  @BeforeEach
+//  void setUp() {
+//    firstTestTag = new Tag(1L, "tag1");
+//    firstTestTagDto = new TagDto(firstTestTag);
+//    GiftCertificateTag firstGiftCertificateTag = new GiftCertificateTag(1L, 1L, 1L);
+//    Tag secondTestTag = new Tag(2L, "tag2");
+//    expectedTags = Arrays.asList(firstTestTag, secondTestTag);
+//    expectedTagDtos = expectedTags.stream().map(TagDto::new).collect(Collectors.toList());
+//    giftCertificateTags = Collections.singletonList(firstGiftCertificateTag);
+//  }
 
 //  @Test
 //  void testGetAll_shouldReturnTagList_whenTagsExist() {

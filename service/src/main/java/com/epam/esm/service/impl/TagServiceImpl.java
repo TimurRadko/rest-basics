@@ -9,11 +9,14 @@ import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.builder.tag.TagBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
+import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DeletingTagException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
+import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.TagAlreadyExistsException;
+import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,22 +31,30 @@ public class TagServiceImpl implements TagService {
   private final TagValidator tagValidator;
   private final TagBuilder builder;
   private final TagDtoBuilder tagDtoBuilder;
+  private final PageValidator pageValidator;
 
   @Autowired
   public TagServiceImpl(
       TagRepository tagRepository,
       TagValidator tagValidator,
       TagBuilder builder,
-      TagDtoBuilder tagDtoBuilder) {
+      TagDtoBuilder tagDtoBuilder,
+      PageValidator pageValidator) {
     this.tagRepository = tagRepository;
     this.tagValidator = tagValidator;
     this.builder = builder;
     this.tagDtoBuilder = tagDtoBuilder;
+    this.pageValidator = pageValidator;
   }
 
   @Override
   public List<TagDto> getAll(int page, int size, String sort) {
-    List<Tag> tags = tagRepository.getEntityListWithPaginationBySpecification(new GetAllTagsSpecification(sort), page, size);
+    if (!pageValidator.isValid(new PageDto(page, size))) {
+      throw new PageNotValidException(pageValidator.getErrorMessage());
+    }
+    List<Tag> tags =
+        tagRepository.getEntityListWithPaginationBySpecification(
+            new GetAllTagsSpecification(sort), page, size);
     return tags.stream().map(tagDtoBuilder::build).collect(Collectors.toList());
   }
 

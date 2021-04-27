@@ -1,7 +1,7 @@
 package com.epam.esm.web.link.builder;
 
 import com.epam.esm.service.dto.GiftCertificateDto;
-import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.web.controller.UsersController;
@@ -39,18 +39,18 @@ public class UserDtoLinkBuilder implements LinkBuilder<UserDto> {
             .collect(Collectors.toSet()));
   }
 
-  private OrderDto addLinkToOrderDto(OrderDto orderDto, UserDto userDto) {
-    addLinkToGiftCertificateDtos(orderDto);
-    return orderDto.add(
+  private OrdersDto addLinkToOrderDto(OrdersDto ordersDto, UserDto userDto) {
+    addLinkToGiftCertificateDtos(ordersDto);
+    return ordersDto.add(
         linkTo(methodOn(UsersController.class).get(userDto.getId())).withSelfRel());
   }
 
-  public OrderDto addLinkToGiftCertificateDtos(OrderDto orderDto) {
-    orderDto.setGiftCertificates(
-        orderDto.getGiftCertificates().stream()
+  public OrdersDto addLinkToGiftCertificateDtos(OrdersDto ordersDto) {
+    ordersDto.setGiftCertificates(
+        ordersDto.getGiftCertificates().stream()
             .map(giftCertificateDtoLinkBuilder::build)
-            .collect(Collectors.toSet()));
-    return orderDto;
+            .collect(Collectors.toList()));
+    return ordersDto;
   }
 
   public TagDto addLinkMostWidelyUsedTag(TagDto tagDto) {

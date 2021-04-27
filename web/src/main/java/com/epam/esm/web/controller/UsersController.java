@@ -2,7 +2,7 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
-import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
@@ -58,7 +58,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/orders")
-  public List<OrderDto> getOrdersByUserId(
+  public List<OrdersDto> getOrdersByUserId(
       @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "size", required = false) Integer size,
       @PathVariable Long id) {
@@ -68,20 +68,21 @@ public class UsersController {
   }
 
   @PostMapping("/{id}/orders")
-  public OrderDto makeOrder(
+  public OrdersDto makeOrder(
       @PathVariable Long id,
       @RequestBody List<Long> giftCertificateDtoIds,
       HttpServletRequest request,
       HttpServletResponse response) {
-    Optional<OrderDto> optionalOrderDto = userService.makeOrder(id, giftCertificateDtoIds);
-    OrderDto orderDto =
+    Optional<OrdersDto> optionalOrderDto = userService.makeOrder(id, giftCertificateDtoIds);
+    OrdersDto ordersDto =
         optionalOrderDto.orElseThrow(
             () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
 
     String url = request.getRequestURL().toString();
 
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
-    return userDtoLinkBuilder.addLinkToGiftCertificateDtos(orderDto);
+    return ordersDto;
+//    return userDtoLinkBuilder.addLinkToGiftCertificateDtos(ordersDto);
   }
 
   @GetMapping("/{id}/tags")

@@ -15,7 +15,7 @@ import javax.persistence.criteria.Subquery;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GetGiftCertificatesByNameAndDescriptionPartAndTagsNameSpecification
+public final class GetGiftCertificatesByNameDescrTagsSpecification
     implements Specification<GiftCertificate> {
   private final String name;
   private final String description;
@@ -23,7 +23,7 @@ public final class GetGiftCertificatesByNameAndDescriptionPartAndTagsNameSpecifi
   private final List<String> tagNames;
   private final GiftCertificateSorter giftCertificateSorter;
 
-  public GetGiftCertificatesByNameAndDescriptionPartAndTagsNameSpecification(
+  public GetGiftCertificatesByNameDescrTagsSpecification(
       String name, String description, List<String> tagNames, List<String> sorts) {
     this.name = name;
     this.description = description;

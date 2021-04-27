@@ -2,7 +2,6 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
-import com.epam.esm.service.dto.GiftCertificatePriceDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.web.link.builder.LinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,8 @@ public class GiftCertificateController {
       @RequestParam(value = "tag", required = false) List<String> tagNames,
       @RequestParam(value = "sort", required = false) List<String> sorts) {
 
-    return giftCertificateService.getAllByParams(page, size, name, description, tagNames, sorts).stream()
+    return giftCertificateService.getAllByParams(page, size, name, description, tagNames, sorts)
+        .stream()
         .map(giftCertificateDtoLinkBuilder::build)
         .collect(Collectors.toList());
   }
@@ -107,10 +107,10 @@ public class GiftCertificateController {
   @PatchMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public GiftCertificateDto updatePrice(
-      @PathVariable long id, @RequestBody GiftCertificatePriceDto giftCertificatePriceDto) {
+      @PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
     GiftCertificateDto patchingGiftCertificateDto =
         giftCertificateService
-            .updatePrice(id, giftCertificatePriceDto)
+            .updatePrice(id, giftCertificateDto)
             .orElseThrow(
                 () ->
                     new EntityNotFoundException(

@@ -10,11 +10,11 @@ public class UserDto extends RepresentationModel<UserDto> {
   private Long id;
   private String login;
   private BigDecimal account;
-  private Set<OrderDto> orders;
+  private Set<OrdersDto> orders;
 
   public UserDto() {}
 
-  public UserDto(Long id, String login, BigDecimal account, Set<OrderDto> orders) {
+  public UserDto(Long id, String login, BigDecimal account, Set<OrdersDto> orders) {
     this.id = id;
     this.login = login;
     this.account = account;
@@ -45,11 +45,11 @@ public class UserDto extends RepresentationModel<UserDto> {
     this.account = account;
   }
 
-  public Set<OrderDto> getOrders() {
+  public Set<OrdersDto> getOrders() {
     return (orders == null) ? null : new HashSet<>(orders);
   }
 
-  public void setOrders(Set<OrderDto> orders) {
+  public void setOrders(Set<OrdersDto> orders) {
     this.orders = orders;
   }
 

@@ -1,12 +1,12 @@
 package com.epam.esm.web.exception.handler;
 
-import com.epam.esm.dao.exception.PageNotValidException;
 import com.epam.esm.service.exception.DeletingTagException;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.InsufficientFundInAccount;
+import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.TagAlreadyExistsException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -93,13 +93,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
   }
 
-  @ExceptionHandler
-  public ResponseEntity<SingleExceptionResponse> handleException(Exception exception) {
-    SingleExceptionResponse response = new SingleExceptionResponse();
-    response.setErrorMessage(exception.getMessage());
-    response.setErrorCode(COMMON_CODE);
-    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-  }
+//  @ExceptionHandler
+//  public ResponseEntity<SingleExceptionResponse> handleException(Exception exception) {
+//    SingleExceptionResponse response = new SingleExceptionResponse();
+//    response.setErrorMessage(exception.getMessage());
+//    response.setErrorCode(COMMON_CODE);
+//    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//  }
 
   @Override
   protected ResponseEntity<Object> handleNoHandlerFoundException(
@@ -131,9 +131,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler
-  public ResponseEntity<SingleExceptionResponse> handleException(PageNotValidException exception) {
-    SingleExceptionResponse response = new SingleExceptionResponse();
-    response.setErrorMessage(exception.getMessage());
+  public ResponseEntity<MultipleExceptionResponse> handleException(
+      PageNotValidException exception) {
+    MultipleExceptionResponse response = new MultipleExceptionResponse();
+    List<String> exceptionList = new ArrayList<>(Arrays.asList(exception.getMessage().split("\n")));
+    response.setErrorMessages(exceptionList);
     response.setErrorCode(PAGE_NOT_VALID_CODE);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }

@@ -50,7 +50,7 @@ class GiftCertificateServiceImplTest {
   private static final String PART_NAME = "va";
   private static final String PART_DESCRIPTION = "es";
   private static final String FIRST_TAG_NAME = "tag1";
-  private GiftCertificateTag giftCertificateTag = new GiftCertificateTag(1L, 1L, 1L);
+//  private GiftCertificateTag giftCertificateTag = new GiftCertificateTag(1L, 1L, 1L);
   private GiftCertificateDto changedGiftCertificateDto =
       new GiftCertificateDto(
           1L,

@@ -1,7 +1,6 @@
 package com.epam.esm.service;
 
 import com.epam.esm.service.dto.GiftCertificateDto;
-import com.epam.esm.service.dto.GiftCertificatePriceDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,17 +49,15 @@ public interface GiftCertificateService extends Service<GiftCertificateDto> {
   Optional<GiftCertificateDto> update(long id, GiftCertificateDto giftCertificateDto);
 
   /**
-   * * This method describes update operation with the parameters passed in the
-   * GiftCertificatePriceDto
+   * * This method describes update operation with the price passed in the GiftCertificateDto
    *
    * @param id - passed into the method id parameter necessary for searching matched Entity
-   * @param giftCertificatePriceDto - GiftCertificatePriceDto necessary for update this Entity logic
+   * @param giftCertificateDto - GiftCertificateDto necessary for update this Entity logic
    * @return Optional<GiftCertificateDto> - container that is contained Entity (this is Entity
    *     describes the data-transfer object for working with representation entities necessary for
    *     public API
    */
-  Optional<GiftCertificateDto> updatePrice(
-      long id, GiftCertificatePriceDto giftCertificatePriceDto);
+  Optional<GiftCertificateDto> updatePrice(long id, GiftCertificateDto giftCertificateDto);
 
   /**
    * * This method describes a general delete (deleting a GitCertificate by parameter) operation for

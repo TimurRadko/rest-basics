@@ -1,9 +1,8 @@
 package com.epam.esm.dao.repository.impl;
 
-import com.epam.esm.dao.entity.Order;
-import com.epam.esm.dao.repository.OrderRepository;
+import com.epam.esm.dao.entity.Orders;
+import com.epam.esm.dao.repository.OrdersRepository;
 import com.epam.esm.dao.specification.Specification;
-import com.epam.esm.dao.validator.RepositoryPageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,38 +16,34 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class OrderRepositoryImpl implements OrderRepository {
+public class OrdersRepositoryImpl implements OrdersRepository {
   private final EntityManager entityManager;
-  private final RepositoryPageValidator repositoryPageValidator;
 
   @Autowired
-  public OrderRepositoryImpl(
-      EntityManager entityManager, RepositoryPageValidator repositoryPageValidator) {
+  public OrdersRepositoryImpl(EntityManager entityManager) {
     this.entityManager = entityManager;
-    this.repositoryPageValidator = repositoryPageValidator;
   }
 
   @Override
-  public List<Order> getEntityListBySpecification(Specification<Order> specification) {
+  public List<Orders> getEntityListBySpecification(Specification<Orders> specification) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<Order> criteriaQuery = specification.getCriteriaQuery(builder);
+    CriteriaQuery<Orders> criteriaQuery = specification.getCriteriaQuery(builder);
     return entityManager.createQuery(criteriaQuery).getResultList();
   }
 
   @Override
-  public List<Order> getEntityListWithPaginationBySpecification(
-      Specification<Order> specification, Integer page, Integer size) {
+  public List<Orders> getEntityListWithPaginationBySpecification(
+      Specification<Orders> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-    repositoryPageValidator.isValid(page, size, builder, entityManager);
-    CriteriaQuery<Order> criteriaQuery = specification.getCriteriaQuery(builder);
+    CriteriaQuery<Orders> criteriaQuery = specification.getCriteriaQuery(builder);
     return entityManager.createQuery(criteriaQuery).getResultList();
   }
 
   @Override
-  public Optional<Order> getEntityBySpecification(Specification<Order> specification) {
+  public Optional<Orders> getEntityBySpecification(Specification<Orders> specification) {
     try {
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-      CriteriaQuery<Order> criteriaQuery = specification.getCriteriaQuery(builder);
+      CriteriaQuery<Orders> criteriaQuery = specification.getCriteriaQuery(builder);
       return Optional.of(entityManager.createQuery(criteriaQuery).getSingleResult());
     } catch (NoResultException e) {
       return Optional.empty();
@@ -57,10 +52,10 @@ public class OrderRepositoryImpl implements OrderRepository {
 
   @Override
   @Transactional
-  public Optional<Order> save(Order order) {
+  public Optional<Orders> save(Orders orders) {
     LocalDateTime now = LocalDateTime.now();
-    order.setOrderDate(now);
-    entityManager.persist(order);
-    return Optional.of(order);
+    orders.setOrderDate(now);
+    entityManager.persist(orders);
+    return Optional.of(orders);
   }
 }

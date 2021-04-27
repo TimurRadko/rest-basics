@@ -1,6 +1,6 @@
 package com.epam.esm.dao.entity;
 
-import com.epam.esm.dao.audit.AuditListener;
+import com.epam.esm.dao.entity.audit.AuditListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +30,7 @@ public class User implements TableEntity {
   private BigDecimal account;
 
   @OneToMany(mappedBy = "user")
-  private Set<Order> orders;
+  private Set<Orders> orders;
 
   public User() {}
 
@@ -75,11 +75,11 @@ public class User implements TableEntity {
     this.account = account;
   }
 
-  public Set<Order> getOrders() {
+  public Set<Orders> getOrders() {
     return (orders == null) ? null : new HashSet<>(orders);
   }
 
-  public void setOrders(Set<Order> orders) {
+  public void setOrders(Set<Orders> orders) {
     this.orders = orders;
   }
 

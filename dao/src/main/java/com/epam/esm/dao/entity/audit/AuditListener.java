@@ -1,17 +1,16 @@
-package com.epam.esm.dao.audit;
+package com.epam.esm.dao.entity.audit;
 
 import com.epam.esm.dao.entity.AuditHistory;
 import com.epam.esm.dao.entity.TableEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 
-import static com.epam.esm.dao.audit.Action.DELETED;
-import static com.epam.esm.dao.audit.Action.INSERTED;
-import static com.epam.esm.dao.audit.Action.UPDATED;
+import static com.epam.esm.dao.entity.audit.Action.DELETED;
+import static com.epam.esm.dao.entity.audit.Action.INSERTED;
+import static com.epam.esm.dao.entity.audit.Action.UPDATED;
 
 public class AuditListener {
 

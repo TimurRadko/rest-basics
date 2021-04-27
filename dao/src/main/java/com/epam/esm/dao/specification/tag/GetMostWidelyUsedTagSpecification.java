@@ -1,7 +1,7 @@
 package com.epam.esm.dao.specification.tag;
 
 import com.epam.esm.dao.entity.GiftCertificate;
-import com.epam.esm.dao.entity.Order;
+import com.epam.esm.dao.entity.Orders;
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.entity.User;
 import com.epam.esm.dao.specification.Specification;
@@ -26,8 +26,8 @@ public final class GetMostWidelyUsedTagSpecification implements Specification<Ta
     CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
     Root<Tag> tagRoot = criteria.from(Tag.class);
     Join<Tag, GiftCertificate> tagGiftCertificateJoin = tagRoot.join("giftCertificates");
-    Join<Tag, Order> giftCertificateOrderJoin = tagGiftCertificateJoin.join("orders");
-    Join<Order, User> userJoin = giftCertificateOrderJoin.join("user");
+    Join<Tag, Orders> giftCertificateOrderJoin = tagGiftCertificateJoin.join("orders");
+    Join<Orders, User> userJoin = giftCertificateOrderJoin.join("user");
     criteria.select(tagRoot);
     Path<String> userIdPath = userJoin.get("id");
     Path<String> orderCostPath = giftCertificateOrderJoin.get("cost");

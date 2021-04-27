@@ -1,6 +1,6 @@
 package com.epam.esm.dao.entity;
 
-import com.epam.esm.dao.audit.AuditListener;
+import com.epam.esm.dao.entity.audit.AuditListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

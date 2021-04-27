@@ -1,4 +1,4 @@
-package com.epam.esm.dao.audit;
+package com.epam.esm.dao.entity.audit;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

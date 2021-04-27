@@ -1,16 +1,18 @@
 package com.epam.esm.dao.entity;
 
-import com.epam.esm.dao.audit.AuditListener;
+import com.epam.esm.dao.entity.audit.AuditListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -51,12 +53,12 @@ public class GiftCertificate implements TableEntity {
       inverseJoinColumns = @JoinColumn(name = "tag_id"))
   private Set<Tag> tags;
 
-  @ManyToMany()
+  @OneToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "orders_gift_certificates",
       joinColumns = @JoinColumn(name = "gift_certificate_id"),
       inverseJoinColumns = @JoinColumn(name = "order_id"))
-  private Set<Order> orders;
+  private Set<Orders> orders;
 
   public GiftCertificate() {}
 
@@ -143,11 +145,11 @@ public class GiftCertificate implements TableEntity {
     this.tags = tags;
   }
 
-  public Set<Order> getOrders() {
+  public Set<Orders> getOrders() {
     return (orders == null) ? null : new HashSet<>(orders);
   }
 
-  public void setOrders(Set<Order> orders) {
+  public void setOrders(Set<Orders> orders) {
     this.orders = orders;
   }
 

@@ -1,26 +1,25 @@
 package com.epam.esm.service.validator;
 
-import com.epam.esm.service.dto.GiftCertificatePriceDto;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
 @Component
-public class GiftCertificatePriceValidator extends AbstractValidator<GiftCertificatePriceDto> {
+public class GiftCertificatePriceValidator extends AbstractValidator<BigDecimal> {
   private static final double MIN_PRICE = 0.0d;
   private static final double MAX_PRICE = 5000d;
 
   @Override
-  public boolean isValid(GiftCertificatePriceDto giftCertificatePriceDto) {
+  public boolean isValid(BigDecimal price) {
     setIsReturnValidTrue();
     eraseErrorMessages();
 
-    if (giftCertificatePriceDto == null) {
+    if (price == null) {
       addErrorMessage(
           "To update price for Gift Certificate you must send the GiftCertificatePrice Entity");
       return false;
     }
-    checkPrice(giftCertificatePriceDto.getPrice());
+    checkPrice(price);
     return isResultValid();
   }
 
