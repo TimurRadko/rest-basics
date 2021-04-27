@@ -42,8 +42,8 @@ public class GiftCertificateController {
 
   @GetMapping()
   public List<GiftCertificateDto> getAll(
-      @RequestParam(value = "page") int page,
-      @RequestParam(value = "size") int size,
+      @RequestParam(value = "page", required = false) Integer page,
+      @RequestParam(value = "size", required = false) Integer size,
       @RequestParam(value = "name", required = false) String name,
       @RequestParam(value = "description", required = false) String description,
       @RequestParam(value = "tag", required = false) List<String> tagNames,

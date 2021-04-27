@@ -37,8 +37,11 @@ public class TagsController {
   }
 
   @GetMapping()
-  public List<TagDto> getAll(@RequestParam(value = "sort", required = false) String sort) {
-    return tagService.getAll(sort).stream().map(tagLinkBuilder::build).collect(Collectors.toList());
+  public List<TagDto> getAll(
+      @RequestParam(value = "page", required = false) Integer page,
+      @RequestParam(value = "size", required = false) Integer size,
+      @RequestParam(value = "sort", required = false) String sort) {
+    return tagService.getAll(page, size, sort).stream().map(tagLinkBuilder::build).collect(Collectors.toList());
   }
 
   @GetMapping("/{id}")

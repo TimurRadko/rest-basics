@@ -42,7 +42,7 @@ public class UserDtoLinkBuilder implements LinkBuilder<UserDto> {
   private OrderDto addLinkToOrderDto(OrderDto orderDto, UserDto userDto) {
     addLinkToGiftCertificateDtos(orderDto);
     return orderDto.add(
-        linkTo(methodOn(UsersController.class).getOrdersByUserId(userDto.getId())).withSelfRel());
+        linkTo(methodOn(UsersController.class).get(userDto.getId())).withSelfRel());
   }
 
   public OrderDto addLinkToGiftCertificateDtos(OrderDto orderDto) {

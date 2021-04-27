@@ -383,6 +383,41 @@ where (lower(giftcertif0_.name) like ?)
                            where tag3_.name=?))
 order by giftcertif0_.id asc;
 
+select distinct giftcertif0_.id               as id1_0_0_,
+                tag2_.id                      as id1_4_1_,
+                giftcertif0_.create_date      as create_d2_0_0_,
+                giftcertif0_.description      as descript3_0_0_,
+                giftcertif0_.duration         as duration4_0_0_,
+                giftcertif0_.last_update_date as last_upd5_0_0_,
+                giftcertif0_.name             as name6_0_0_,
+                giftcertif0_.price            as price7_0_0_,
+                tag2_.name                    as name2_4_1_,
+                tags1_.gift_certificate_id    as gift_cer1_1_0__,
+                tags1_.tag_id                 as tag_id2_1_0__
+from gift_certificates giftcertif0_
+         inner join gift_certificates_tags tags1_ on giftcertif0_.id = tags1_.gift_certificate_id
+         inner join tags tag2_ on tags1_.tag_id = tag2_.id
+order by giftcertif0_.id asc;
+
+select distinct giftcertif0_.id               as id1_0_0_,
+                tag2_.id                      as id1_4_1_,
+                giftcertif0_.create_date      as create_d2_0_0_,
+                giftcertif0_.description      as descript3_0_0_,
+                giftcertif0_.duration         as duration4_0_0_,
+                giftcertif0_.last_update_date as last_upd5_0_0_,
+                giftcertif0_.name             as name6_0_0_,
+                giftcertif0_.price            as price7_0_0_,
+                tag2_.name                    as name2_4_1_,
+                tags1_.gift_certificate_id    as gift_cer1_1_0__,
+                tags1_.tag_id                 as tag_id2_1_0__
+from gift_certificates giftcertif0_
+         inner join gift_certificates_tags tags1_ on giftcertif0_.id = tags1_.gift_certificate_id
+         inner join tags tag2_ on tags1_.tag_id = tag2_.id
+order by giftcertif0_.id asc;
+
+
+
+
 
 
 

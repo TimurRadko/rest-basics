@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
   private final OrderDtoBuilder orderDtoBuilder;
   private final TagDtoBuilder tagDtoBuilder;
   private final TagRepository tagRepository;
+  private static final int FIST_ELEMENT = 0;
 
   @Autowired
   public UserServiceImpl(
@@ -68,8 +69,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<UserDto> getAll() {
-    return userRepository.getEntityListBySpecification(new GetAllUsersSpecification()).stream()
+  public List<UserDto> getAll(Integer page, Integer size) {
+    return userRepository
+        .getEntityListWithPaginationBySpecification(new GetAllUsersSpecification(), page, size)
+        .stream()
         .map((userDtoBuilder::build))
         .collect(Collectors.toList());
   }
@@ -142,7 +145,7 @@ public class UserServiceImpl implements UserService {
 
   private Optional<TagDto> getMostWidelyTagFromList(List<TagDto> tagDtos) {
     if (!tagDtos.isEmpty()) {
-      return Optional.of(tagDtos.get(0));
+      return Optional.of(tagDtos.get(FIST_ELEMENT));
     } else {
       return Optional.empty();
     }

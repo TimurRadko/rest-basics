@@ -22,8 +22,17 @@ public interface Repository<T extends TableEntity> {
    */
   List<T> getEntityListBySpecification(Specification<T> specification);
 
+  /**
+   * * This method describes a general getAll (getting a list of all entities) operation for all
+   * Entities with pagination, located in the DB
+   *
+   * @param specification - specification used to search for Entities in the database
+   * @param page - the parameter describes current page
+   * @param size - the parameter describes quantity of the Entities for one page
+   * @return List<T> - List of T contained in one of all tables in the DB
+   */
   List<T> getEntityListWithPaginationBySpecification(
-      Specification<T> specification, int page, int size);
+      Specification<T> specification, Integer page, Integer size);
 
   /**
    * * This method describes a general get (getting a entity by parameter) operation for all

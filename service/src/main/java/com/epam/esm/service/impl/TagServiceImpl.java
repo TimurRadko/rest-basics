@@ -42,8 +42,8 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  public List<TagDto> getAll(String sort) {
-    List<Tag> tags = tagRepository.getEntityListBySpecification(new GetAllTagsSpecification(sort));
+  public List<TagDto> getAll(int page, int size, String sort) {
+    List<Tag> tags = tagRepository.getEntityListWithPaginationBySpecification(new GetAllTagsSpecification(sort), page, size);
     return tags.stream().map(tagDtoBuilder::build).collect(Collectors.toList());
   }
 

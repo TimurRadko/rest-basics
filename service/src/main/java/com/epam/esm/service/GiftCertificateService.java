@@ -20,8 +20,8 @@ public interface GiftCertificateService extends Service<GiftCertificateDto> {
    * * This method describes a general getting a list of all entities by parameters entity. This
    * operation for all Entities, from the persistence layer
    *
-   * @param page
-   * @param size
+   * @param page - the parameter describes current page
+   * @param size - the parameter describes quantity of the GiftCertificates for one page
    * @param name - the parameter required to search for GiftCertificate in the name field of this
    *     object
    * @param description - the parameter required to search for GiftCertificate in the describe field
@@ -32,8 +32,8 @@ public interface GiftCertificateService extends Service<GiftCertificateDto> {
    *     data-transfer object for working with representation entities necessary for public API)
    */
   List<GiftCertificateDto> getAllByParams(
-      int page,
-      int size,
+      Integer page,
+      Integer size,
       String name,
       String description,
       List<String> tagNames,

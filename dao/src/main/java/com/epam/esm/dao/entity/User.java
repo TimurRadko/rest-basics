@@ -1,7 +1,10 @@
 package com.epam.esm.dao.entity;
 
+import com.epam.esm.dao.audit.AuditListener;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -11,6 +14,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@EntityListeners(value = AuditListener.class)
 public class User implements TableEntity {
   @Id
   @Column(name = "id")

@@ -3,6 +3,7 @@ package com.epam.esm.dao.repository.impl;
 import com.epam.esm.dao.entity.Order;
 import com.epam.esm.dao.repository.OrderRepository;
 import com.epam.esm.dao.specification.Specification;
+import com.epam.esm.dao.validator.RepositoryPageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +18,14 @@ import java.util.Optional;
 
 @Repository
 public class OrderRepositoryImpl implements OrderRepository {
-  private EntityManager entityManager;
+  private final EntityManager entityManager;
+  private final RepositoryPageValidator repositoryPageValidator;
 
   @Autowired
-  public OrderRepositoryImpl(EntityManager entityManager) {
+  public OrderRepositoryImpl(
+      EntityManager entityManager, RepositoryPageValidator repositoryPageValidator) {
     this.entityManager = entityManager;
+    this.repositoryPageValidator = repositoryPageValidator;
   }
 
   @Override
@@ -33,8 +37,11 @@ public class OrderRepositoryImpl implements OrderRepository {
 
   @Override
   public List<Order> getEntityListWithPaginationBySpecification(
-      Specification<Order> specification, int page, int size) {
-    return null;
+      Specification<Order> specification, Integer page, Integer size) {
+    CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+    repositoryPageValidator.isValid(page, size, builder, entityManager);
+    CriteriaQuery<Order> criteriaQuery = specification.getCriteriaQuery(builder);
+    return entityManager.createQuery(criteriaQuery).getResultList();
   }
 
   @Override

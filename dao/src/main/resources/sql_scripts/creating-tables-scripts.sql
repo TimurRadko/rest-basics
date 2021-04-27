@@ -1,7 +1,7 @@
 ----------------CREATE TABLE GIFT-CERTIFICATES------------
 CREATE TABLE gift_certificates
 (
-    id               SERIAL    NOT NULL,
+    id               SERIAL       NOT NULL,
     name             varchar(255) NOT NULL,
     description      varchar(255),
     price            double precision,
@@ -85,3 +85,14 @@ CREATE TABLE orders_gift_certificates
     PRIMARY KEY (id)
 );
 ------------------------------------------------------------
+
+------------CREATE TABLE AUDIT-HISTORY-OPERATIONS------------------------
+CREATE TABLE audit_history_operations
+(
+    id          SERIAL,
+    action      varchar(255) NOT NULL,
+    content     varchar(255) NOT NULL,
+    create_date timestamp    NOT NULL,
+    PRIMARY KEY (id)
+);
+---------------------------------------------------------------------------

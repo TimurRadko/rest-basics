@@ -114,8 +114,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   @Override
   public List<GiftCertificateDto> getAllByParams(
-      int page,
-      int size,
+      Integer page,
+      Integer size,
       String name,
       String description,
       List<String> tagNames,
@@ -124,17 +124,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       return getAll(sorts, page, size);
     }
     return giftCertificateRepository
-        .getEntityListBySpecification(
+        .getEntityListWithPaginationBySpecification(
             new GetGiftCertificatesByNameAndDescriptionPartAndTagsNameSpecification(
-                name, description, tagNames, sorts))
+                name, description, tagNames, sorts),
+            page,
+            size)
         .stream()
         .map(giftCertificateDtoBuilder::build)
         .collect(Collectors.toList());
   }
 
-  private List<GiftCertificateDto> getAll(List<String> sort, int page, int size) {
+  private List<GiftCertificateDto> getAll(List<String> sort, Integer page, Integer size) {
     return giftCertificateRepository
-        .getEntityListWithPaginationBySpecification(new GetAllGiftCertificatesSpecification(sort), page, size)
+        .getEntityListWithPaginationBySpecification(
+            new GetAllGiftCertificatesSpecification(sort), page, size)
         .stream()
         .map((giftCertificateDtoBuilder::build))
         .collect(Collectors.toList());
@@ -150,8 +153,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   @Override
   @Transactional
-  public Optional<GiftCertificateDto> update(
-      long id, GiftCertificateDto giftCertificateDto) {
+  public Optional<GiftCertificateDto> update(long id, GiftCertificateDto giftCertificateDto) {
     if (!giftCertificateValidator.isValid(giftCertificateDto)) {
       throw new EntityNotValidMultipleException(giftCertificateValidator.getErrorMessage());
     }

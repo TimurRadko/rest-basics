@@ -18,10 +18,12 @@ public interface TagService extends Service<TagDto> {
    * * This method describes a general getAll (getting a list of all TagDto) operation for all
    * TagDtos, from persistence layer
    *
+   * @param page - the parameter describes current page
+   * @param size - the parameter describes quantity of the Tags for one page
    * @param sort - the parameter, which describes rules of sorting getting data
    * @return List<TagDto> - List of TagDto contained in one of all tables in the DB
    */
-  List<TagDto> getAll(String sort);
+  List<TagDto> getAll(int page, int size, String sort);
   /**
    * * This method describes a general delete (deleting a Tag by parameter) operation for all Tags,
    * from persistence layer

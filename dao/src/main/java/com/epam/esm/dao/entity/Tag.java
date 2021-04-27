@@ -1,7 +1,10 @@
 package com.epam.esm.dao.entity;
 
+import com.epam.esm.dao.audit.AuditListener;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +16,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tags")
+@EntityListeners(value = AuditListener.class)
 public class Tag implements TableEntity {
   @Id
   @Column(name = "id")

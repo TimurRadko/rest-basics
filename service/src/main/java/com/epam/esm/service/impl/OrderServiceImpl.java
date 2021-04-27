@@ -33,9 +33,10 @@ public class OrderServiceImpl implements OrderService {
   }
 
   @Override
-  public List<OrderDto> getAllOrdersByUserId(long id) {
+  public List<OrderDto> getAllOrdersByUserId(int page, int size, long id) {
     List<Order> orders =
-        orderRepository.getEntityListBySpecification(new GetAllOrdersByUserIdSpecification(id));
+        orderRepository.getEntityListWithPaginationBySpecification(
+            new GetAllOrdersByUserIdSpecification(id), page, size);
     return orders.stream().map(orderDtoBuilder::build).collect(Collectors.toList());
   }
 }

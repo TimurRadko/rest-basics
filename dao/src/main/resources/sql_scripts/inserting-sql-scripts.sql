@@ -44,3 +44,6 @@ VALUES (2, 77, '2021-03-28 00:00:00.084745');
 INSERT INTO orders_gift_certificates(order_id, gift_certificate_id)
 VALUES (12,2),
        (12,4);
+
+INSERT INTO audit_history_operations(user_id, operation, entity_id, entity_type, modified_field, old_value_modified_field, new_value_modified_field, operation_date)
+VALUES (2, 'update', 2, 'GiftCertificate','price', '43', '10','2021-03-25 00:00:00.084745');

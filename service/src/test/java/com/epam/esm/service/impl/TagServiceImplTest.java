@@ -1,6 +1,5 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.entity.GiftCertificateTag;
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.repository.GiftCertificateTagRepository;
 import com.epam.esm.dao.repository.TagRepository;
