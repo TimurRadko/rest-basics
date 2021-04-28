@@ -10,7 +10,7 @@ public abstract class AbstractValidator<T> {
   private boolean isResultValid = true;
   private List<String> errorMessages = new ArrayList<>();
 
-  boolean isResultValid() {
+  public boolean isResultValid() {
     return isResultValid;
   }
 

@@ -57,9 +57,11 @@ public class UserDtoLinkBuilder implements LinkBuilder<UserDto> {
     return tagDtoLinkBuilder.build(tagDto);
   }
 
-  public OrdersDto addLinkToOrderDtoUsingUserId(OrdersDto ordersDto, long userId) {
+  public OrdersDto addLinkToOrderDtoUsingUserId(
+      OrdersDto ordersDto, Integer page, Integer size, long userId) {
     addLinkToGiftCertificateDtos(ordersDto);
     return ordersDto.add(
-            linkTo(methodOn(UsersController.class).get(userId)).withSelfRel());
+        linkTo(methodOn(UsersController.class).getOrdersByUserId(page, size, userId))
+            .withSelfRel());
   }
 }

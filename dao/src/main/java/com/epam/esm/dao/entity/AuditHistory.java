@@ -4,11 +4,14 @@ import com.epam.esm.dao.entity.audit.Action;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+
+import static javax.persistence.EnumType.STRING;
 
 @Entity
 @Table(name = "audit_history_operations")
@@ -18,8 +21,9 @@ public class AuditHistory implements TableEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Enumerated(STRING)
   @Column(name = "action")
-  private String action;
+  private Action action;
 
   @Column(name = "content")
   private String content;
@@ -30,7 +34,7 @@ public class AuditHistory implements TableEntity {
   public AuditHistory() {}
 
   public AuditHistory(TableEntity tableEntity, Action action) {
-    this.action = action.value();
+    this.action = action;
     this.content = tableEntity.toString();
     this.createDate = LocalDateTime.now();
   }
@@ -45,11 +49,11 @@ public class AuditHistory implements TableEntity {
     this.id = id;
   }
 
-  public String getAction() {
+  public Action getAction() {
     return action;
   }
 
-  public void setAction(String action) {
+  public void setAction(Action action) {
     this.action = action;
   }
 
@@ -83,7 +87,7 @@ public class AuditHistory implements TableEntity {
     if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) {
       return false;
     }
-    if (getAction() != null ? !getAction().equals(that.getAction()) : that.getAction() != null) {
+    if (getAction() != that.getAction()) {
       return false;
     }
     if (getContent() != null
@@ -110,9 +114,8 @@ public class AuditHistory implements TableEntity {
     return "AuditHistory{"
         + "id="
         + id
-        + ", action='"
+        + ", action="
         + action
-        + '\''
         + ", content='"
         + content
         + '\''

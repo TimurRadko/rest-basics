@@ -18,13 +18,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class OrderServiceImpl implements OrderService {
+public class OrdersServiceImpl implements OrderService {
   private final OrdersRepository ordersRepository;
   private final OrdersDtoBuilder ordersDtoBuilder;
   private final PageValidator pageValidator;
 
   @Autowired
-  public OrderServiceImpl(
+  public OrdersServiceImpl(
       OrdersRepository ordersRepository,
       OrdersDtoBuilder ordersDtoBuilder,
       PageValidator pageValidator) {

@@ -23,7 +23,6 @@ import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.service.validator.GiftCertificatePriceValidator;
 import com.epam.esm.service.validator.GiftCertificateValidator;
 import com.epam.esm.service.validator.PageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   private final GiftCertificateRepository giftCertificateRepository;
   private final TagRepository tagRepository;
   private final GiftCertificateValidator giftCertificateValidator;
-  private final GiftCertificatePriceValidator giftCertificatePriceValidator;
   private final GiftCertificateBuilder giftCertificateBuilder;
   private final GiftCertificateDtoBuilder giftCertificateDtoBuilder;
   private final TagBuilder tagBuilder;
@@ -53,7 +51,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       GiftCertificateRepository giftCertificateRepository,
       TagRepository tagRepository,
       GiftCertificateValidator giftCertificateValidator,
-      GiftCertificatePriceValidator giftCertificatePriceValidator,
       GiftCertificateBuilder giftCertificateBuilder,
       GiftCertificateDtoBuilder giftCertificateDtoBuilder,
       TagBuilder tagBuilder,
@@ -62,7 +59,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     this.giftCertificateRepository = giftCertificateRepository;
     this.tagRepository = tagRepository;
     this.giftCertificateValidator = giftCertificateValidator;
-    this.giftCertificatePriceValidator = giftCertificatePriceValidator;
     this.giftCertificateBuilder = giftCertificateBuilder;
     this.giftCertificateDtoBuilder = giftCertificateDtoBuilder;
     this.tagBuilder = tagBuilder;
@@ -193,8 +189,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   @Override
   public Optional<GiftCertificateDto> updatePrice(long id, GiftCertificateDto giftCertificateDto) {
-    if (!giftCertificatePriceValidator.isValid(giftCertificateDto.getPrice())) {
-      throw new EntityNotValidException(giftCertificatePriceValidator.getErrorMessage());
+    giftCertificateValidator.checkPrice(giftCertificateDto.getPrice());
+    if (!giftCertificateValidator.isResultValid()) {
+      throw new EntityNotValidException(giftCertificateValidator.getErrorMessage());
     }
     GiftCertificate giftCertificate = getGiftCertificateById(id);
     giftCertificate.setPrice(giftCertificateDto.getPrice());

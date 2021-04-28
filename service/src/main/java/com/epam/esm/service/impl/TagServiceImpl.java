@@ -49,7 +49,7 @@ public class TagServiceImpl implements TagService {
   }
 
   @Override
-  public List<TagDto> getAll(int page, int size, String sort) {
+  public List<TagDto> getAll(Integer page, Integer size, String sort) {
     if (!pageValidator.isValid(new PageDto(page, size))) {
       throw new PageNotValidException(pageValidator.getErrorMessage());
     }

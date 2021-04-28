@@ -63,7 +63,7 @@ public class UsersController {
       @RequestParam(value = "size", required = false) Integer size,
       @PathVariable Long id) {
     return orderService.getAllOrdersByUserId(page, size, id).stream()
-        .map(ordersDto -> userDtoLinkBuilder.addLinkToOrderDtoUsingUserId(ordersDto, id))
+        .map(ordersDto -> userDtoLinkBuilder.addLinkToOrderDtoUsingUserId(ordersDto, page, size, id))
         .collect(Collectors.toList());
   }
 

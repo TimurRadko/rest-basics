@@ -38,7 +38,7 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
     }
   }
 
-  private void checkPrice(BigDecimal price) {
+  public void checkPrice(BigDecimal price) {
     if (price == null) {
       addErrorMessage("The price is required");
       setIsResultValidFalse();

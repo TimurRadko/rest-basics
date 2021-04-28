@@ -23,7 +23,7 @@ public interface TagService extends Service<TagDto> {
    * @param sort - the parameter, which describes rules of sorting getting data
    * @return List<TagDto> - List of TagDto contained in one of all tables in the DB
    */
-  List<TagDto> getAll(int page, int size, String sort);
+  List<TagDto> getAll(Integer page, Integer size, String sort);
   /**
    * * This method describes a general delete (deleting a Tag by parameter) operation for all Tags,
    * from persistence layer
