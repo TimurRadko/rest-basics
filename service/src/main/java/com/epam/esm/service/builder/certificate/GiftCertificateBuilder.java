@@ -49,9 +49,7 @@ public class GiftCertificateBuilder {
   private void setTagsFromTagDtos(
       GiftCertificate giftCertificate, GiftCertificateDto giftCertificateDto) {
     giftCertificate.setTags(
-        giftCertificateDto.getTags().stream()
-            .map(tagBuilder::build)
-            .collect(Collectors.toSet()));
+        giftCertificateDto.getTags().stream().map(tagBuilder::build).collect(Collectors.toSet()));
   }
 
   private GiftCertificate getGiftCertificate(GiftCertificateDto giftCertificateDto) {

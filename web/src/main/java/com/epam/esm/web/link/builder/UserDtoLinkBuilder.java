@@ -42,7 +42,8 @@ public class UserDtoLinkBuilder implements LinkBuilder<UserDto> {
   private OrdersDto addLinkToOrderDto(OrdersDto ordersDto, UserDto userDto) {
     addLinkToGiftCertificateDtos(ordersDto);
     return ordersDto.add(
-        linkTo(methodOn(UsersController.class).get(userDto.getId())).withSelfRel());
+        linkTo(methodOn(UsersController.class).getOrdersById(userDto.getId(), ordersDto.getId()))
+            .withSelfRel());
   }
 
   public OrdersDto addLinkToGiftCertificateDtos(OrdersDto ordersDto) {
@@ -57,11 +58,10 @@ public class UserDtoLinkBuilder implements LinkBuilder<UserDto> {
     return tagDtoLinkBuilder.build(tagDto);
   }
 
-  public OrdersDto addLinkToOrderDtoUsingUserId(
-      OrdersDto ordersDto, Integer page, Integer size, long userId) {
+  public OrdersDto addLinkToOrderDtoUsingUserId(OrdersDto ordersDto, long userId) {
     addLinkToGiftCertificateDtos(ordersDto);
     return ordersDto.add(
-        linkTo(methodOn(UsersController.class).getOrdersByUserId(page, size, userId))
+        linkTo(methodOn(UsersController.class).getOrdersById(userId, ordersDto.getId()))
             .withSelfRel());
   }
 }

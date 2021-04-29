@@ -4,6 +4,7 @@ import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.TagRepository;
+import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesAssociatedWithOrders;
 import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByIdSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNameDescrTagsSpecification;
@@ -18,6 +19,7 @@ import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.exception.DeletingEntityException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
@@ -232,6 +234,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(id))
         .orElseThrow(
             () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+
+    List<GiftCertificate> existingGiftCertificate =
+        giftCertificateRepository.getEntityListBySpecification(
+            new GetAllGiftCertificatesAssociatedWithOrders(id));
+
+    if (!existingGiftCertificate.isEmpty()) {
+      throw new DeletingEntityException(
+          "The Gift Certificate with id = " + id + " attached to the Order. Deletion denied.");
+    }
     return giftCertificateRepository.delete(id);
   }
 }

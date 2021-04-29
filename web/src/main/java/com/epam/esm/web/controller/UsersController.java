@@ -63,7 +63,7 @@ public class UsersController {
       @RequestParam(value = "size", required = false) Integer size,
       @PathVariable Long id) {
     return orderService.getAllOrdersByUserId(page, size, id).stream()
-        .map(ordersDto -> userDtoLinkBuilder.addLinkToOrderDtoUsingUserId(ordersDto, page, size, id))
+        .map(ordersDto -> userDtoLinkBuilder.addLinkToOrderDtoUsingUserId(ordersDto, id))
         .collect(Collectors.toList());
   }
 
@@ -82,6 +82,17 @@ public class UsersController {
 
     response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
     return userDtoLinkBuilder.addLinkToGiftCertificateDtos(ordersDto);
+  }
+
+  @GetMapping("/{userId}/orders/{ordersId}")
+  public OrdersDto getOrdersById(@PathVariable Long userId, @PathVariable Long ordersId) {
+    Optional<OrdersDto> optionalOrdersDto = orderService.getById(ordersId);
+    OrdersDto ordersDto =
+        optionalOrdersDto.orElseThrow(
+            () ->
+                new EntityNotFoundException(
+                    "Requested resource not found (id = " + ordersId + ")"));
+    return userDtoLinkBuilder.addLinkToOrderDtoUsingUserId(ordersDto, userId);
   }
 
   @GetMapping("/{id}/tags")

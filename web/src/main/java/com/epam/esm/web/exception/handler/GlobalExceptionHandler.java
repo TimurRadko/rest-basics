@@ -1,6 +1,6 @@
 package com.epam.esm.web.exception.handler;
 
-import com.epam.esm.service.exception.DeletingTagException;
+import com.epam.esm.service.exception.DeletingEntityException;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
@@ -8,6 +8,7 @@ import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.InsufficientFundInAccount;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.TagAlreadyExistsException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   private static final int INSUFFICIENT_FUND_IN_ACCOUNT_CODE = 40005;
   private static final int EMPTY_ORDER_CODE = 40006;
   private static final int PAGE_NOT_VALID_CODE = 40007;
+  private static final int PAGE_OR_SIZE_PASS_TYPE_NOT_VALID_CODE = 40008;
 
   @ExceptionHandler
   public ResponseEntity<SingleExceptionResponse> handleException(
@@ -55,7 +57,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler
-  public ResponseEntity<SingleExceptionResponse> handleException(DeletingTagException exception) {
+  public ResponseEntity<SingleExceptionResponse> handleException(
+      DeletingEntityException exception) {
     SingleExceptionResponse response = new SingleExceptionResponse();
     response.setErrorMessage(exception.getMessage());
     response.setErrorCode(DELETING_TAG_CODE);
@@ -93,13 +96,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
   }
 
-//  @ExceptionHandler
-//  public ResponseEntity<SingleExceptionResponse> handleException(Exception exception) {
-//    SingleExceptionResponse response = new SingleExceptionResponse();
-//    response.setErrorMessage(exception.getMessage());
-//    response.setErrorCode(COMMON_CODE);
-//    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-//  }
+  @Override
+  protected ResponseEntity<Object> handleTypeMismatch(
+      TypeMismatchException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(PAGE_OR_SIZE_PASS_TYPE_NOT_VALID_CODE);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<SingleExceptionResponse> handleException(Exception exception) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(COMMON_CODE);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
 
   @Override
   protected ResponseEntity<Object> handleNoHandlerFoundException(

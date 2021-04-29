@@ -11,7 +11,7 @@ import com.epam.esm.service.builder.tag.TagBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.DeletingTagException;
+import com.epam.esm.service.exception.DeletingEntityException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.PageNotValidException;
@@ -96,8 +96,8 @@ public class TagServiceImpl implements TagService {
             new GetAllTagsAssociatedWithGiftCertificates(id));
 
     if (!existingTags.isEmpty()) {
-      throw new DeletingTagException(
-          "The tag with id = " + id + " attached to the Gift Certificate. Deletion denied.");
+      throw new DeletingEntityException(
+          "The Tag with id = " + id + " attached to the Gift Certificate. Deletion denied.");
     }
     return tagRepository.delete(id);
   }

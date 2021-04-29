@@ -23,9 +23,7 @@ public class UserDtoBuilder {
     userDto.setLogin(user.getLogin());
     userDto.setAccount(user.getAccount());
     userDto.setOrders(
-        user.getOrders().stream()
-            .map(ordersDtoBuilder::build)
-            .collect(Collectors.toSet()));
+        user.getOrders().stream().map(ordersDtoBuilder::build).collect(Collectors.toSet()));
     return userDto;
   }
 }

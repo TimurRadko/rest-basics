@@ -22,9 +22,7 @@ public class GiftCertificateDtoBuilder {
   public GiftCertificateDto build(GiftCertificate giftCertificate) {
     GiftCertificateDto giftCertificateDto = getGiftCertificateDto(giftCertificate);
     giftCertificateDto.setTags(
-        giftCertificate.getTags().stream()
-            .map(tagDtoBuilder::build)
-            .collect(Collectors.toSet()));
+        giftCertificate.getTags().stream().map(tagDtoBuilder::build).collect(Collectors.toSet()));
     return giftCertificateDto;
   }
 

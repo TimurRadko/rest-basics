@@ -5,7 +5,7 @@ import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.service.builder.tag.TagBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.DeletingTagException;
+import com.epam.esm.service.exception.DeletingEntityException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.PageNotValidException;
@@ -135,7 +135,7 @@ class TagServiceImplTest {
         .thenReturn(Collections.singletonList(firstTestTag));
     // when
     // then
-    assertThrows(DeletingTagException.class, () -> tagService.delete(ID_FOR_MANIPULATIONS));
+    assertThrows(DeletingEntityException.class, () -> tagService.delete(ID_FOR_MANIPULATIONS));
   }
 
   @Test

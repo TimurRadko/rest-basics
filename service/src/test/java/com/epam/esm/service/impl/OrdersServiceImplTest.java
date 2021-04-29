@@ -2,7 +2,6 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.entity.Orders;
 import com.epam.esm.dao.repository.OrdersRepository;
-import com.epam.esm.dao.specification.order.GetAllOrdersByUserIdSpecification;
 import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.OrdersDto;

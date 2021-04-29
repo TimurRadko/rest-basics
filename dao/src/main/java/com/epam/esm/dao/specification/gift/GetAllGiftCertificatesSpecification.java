@@ -6,6 +6,7 @@ import com.epam.esm.dao.specification.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public final class GetAllGiftCertificatesSpecification implements Specification<
   public CriteriaQuery<GiftCertificate> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
     Root<GiftCertificate> giftCertificateRoot = criteria.from(GiftCertificate.class);
-    giftCertificateRoot.fetch("tags");
+    giftCertificateRoot.fetch("tags", JoinType.LEFT);
     criteria.select(giftCertificateRoot).distinct(true);
     if (sorts == null) {
       return criteria.orderBy(builder.asc(giftCertificateRoot.get("id")));

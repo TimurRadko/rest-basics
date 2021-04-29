@@ -4,7 +4,6 @@ import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
