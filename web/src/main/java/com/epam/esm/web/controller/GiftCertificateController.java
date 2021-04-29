@@ -106,11 +106,11 @@ public class GiftCertificateController {
 
   @PatchMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public GiftCertificateDto updatePrice(
+  public GiftCertificateDto updateOneField(
       @PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
     GiftCertificateDto patchingGiftCertificateDto =
         giftCertificateService
-            .updatePrice(id, giftCertificateDto)
+            .updateOneField(id, giftCertificateDto)
             .orElseThrow(
                 () ->
                     new EntityNotFoundException(

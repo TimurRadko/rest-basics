@@ -49,7 +49,7 @@ public interface GiftCertificateService extends Service<GiftCertificateDto> {
   Optional<GiftCertificateDto> update(long id, GiftCertificateDto giftCertificateDto);
 
   /**
-   * * This method describes update operation with the price passed in the GiftCertificateDto
+   * * This method describes update operation in the GiftCertificateDto (update one passed field)
    *
    * @param id - passed into the method id parameter necessary for searching matched Entity
    * @param giftCertificateDto - GiftCertificateDto necessary for update this Entity logic
@@ -57,7 +57,7 @@ public interface GiftCertificateService extends Service<GiftCertificateDto> {
    *     describes the data-transfer object for working with representation entities necessary for
    *     public API
    */
-  Optional<GiftCertificateDto> updatePrice(long id, GiftCertificateDto giftCertificateDto);
+  Optional<GiftCertificateDto> updateOneField(long id, GiftCertificateDto giftCertificateDto);
 
   /**
    * * This method describes a general delete (deleting a GitCertificate by parameter) operation for

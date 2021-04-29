@@ -21,7 +21,6 @@ import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DeletingEntityException;
 import com.epam.esm.service.exception.EntityNotFoundException;
-import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
@@ -31,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -190,15 +190,38 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   @Override
-  public Optional<GiftCertificateDto> updatePrice(long id, GiftCertificateDto giftCertificateDto) {
-    giftCertificateValidator.checkPrice(giftCertificateDto.getPrice());
-    if (!giftCertificateValidator.isResultValid()) {
-      throw new EntityNotValidException(giftCertificateValidator.getErrorMessage());
-    }
+  public Optional<GiftCertificateDto> updateOneField(
+      long id, GiftCertificateDto giftCertificateDto) {
     GiftCertificate giftCertificate = getGiftCertificateById(id);
-    giftCertificate.setPrice(giftCertificateDto.getPrice());
-    giftCertificate = updateGiftCertificate(giftCertificate);
+    GiftCertificate newParameterGiftCertificate =
+        getNewParameterGiftCertificate(giftCertificate, giftCertificateDto);
+    if (!giftCertificateValidator.isValid(
+        giftCertificateDtoBuilder.build(newParameterGiftCertificate))) {
+      throw new EntityNotValidMultipleException(giftCertificateValidator.getErrorMessage());
+    }
+    giftCertificate = updateGiftCertificate(newParameterGiftCertificate);
     return Optional.of(giftCertificateDtoBuilder.build(giftCertificate));
+  }
+
+  private GiftCertificate getNewParameterGiftCertificate(
+      GiftCertificate giftCertificate, GiftCertificateDto giftCertificateDto) {
+    String name = giftCertificateDto.getName();
+    String description = giftCertificateDto.getDescription();
+    BigDecimal price = giftCertificateDto.getPrice();
+    Integer duration = giftCertificateDto.getDuration();
+    if (name != null) {
+      giftCertificate.setName(name);
+    }
+    if (price != null) {
+      giftCertificate.setPrice(price);
+    }
+    if (duration != null) {
+      giftCertificate.setDuration(duration);
+    }
+    if (description != null) {
+      giftCertificate.setDescription(description);
+    }
+    return giftCertificate;
   }
 
   private GiftCertificate getGiftCertificateById(Long id) {

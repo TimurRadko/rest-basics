@@ -13,6 +13,7 @@ import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
+import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.validator.GiftCertificateValidator;
@@ -392,9 +393,9 @@ class GiftCertificateServiceImplTest {
   }
 
   @Test
-  void testUpdatePrice_shouldUpdatePrice_whenPriceIsValid() {
+  void testUpdateOneField_shouldUpdatePrice_whenPriceIsValid() {
     // given
-    when(giftCertificateValidator.isResultValid()).thenReturn(true);
+    when(giftCertificateValidator.isValid(any())).thenReturn(true);
     when(giftCertificateRepository.getEntityBySpecification(any()))
         .thenReturn(Optional.of(expectedGiftCertificate));
     when(giftCertificateDtoBuilder.build(expectedGiftCertificate))
@@ -403,21 +404,25 @@ class GiftCertificateServiceImplTest {
         .thenReturn(Optional.of(newPriceGiftCertificate));
     // when
     Optional<GiftCertificateDto> actualOptionalGiftCertificate =
-        giftCertificateService.updatePrice(ID_FOR_MANIPULATIONS, expectedGiftCertificateDto);
-
+        giftCertificateService.updateOneField(ID_FOR_MANIPULATIONS, expectedGiftCertificateDto);
     // then
     assertEquals(Optional.of(newPriceGiftCertificateDto), actualOptionalGiftCertificate);
   }
 
   @Test
-  void testUpdatePrice_shouldThrowEntityNotValidException_whenPriceIsInvalid() {
+  void testUpdateOneField_shouldThrowEntityNotValidMultipleException_whenPriceIsInvalid() {
     // given
-    when(giftCertificateValidator.isResultValid()).thenReturn(false);
+    when(giftCertificateValidator.isValid(any())).thenReturn(false);
+    when(giftCertificateDtoBuilder.build(any())).thenReturn(expectedGiftCertificateDto);
+    when(giftCertificateRepository.getEntityBySpecification(any()))
+        .thenReturn(Optional.ofNullable(expectedGiftCertificate));
     // when
     // then
     assertThrows(
-        EntityNotValidException.class,
-        () -> giftCertificateService.updatePrice(ID_FOR_MANIPULATIONS, expectedGiftCertificateDto));
+        EntityNotValidMultipleException.class,
+        () ->
+            giftCertificateService.updateOneField(
+                ID_FOR_MANIPULATIONS, expectedGiftCertificateDto));
   }
 
   @Test

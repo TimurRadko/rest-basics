@@ -24,7 +24,7 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
     }
     checkName(giftCertificateDto.getName());
     checkPrice(giftCertificateDto.getPrice());
-    checkDuration(giftCertificateDto);
+    checkDuration(giftCertificateDto.getDuration());
     return isResultValid();
   }
 
@@ -38,7 +38,7 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
     }
   }
 
-  public void checkPrice(BigDecimal price) {
+  private void checkPrice(BigDecimal price) {
     if (price == null) {
       addErrorMessage("The price is required");
       setIsResultValidFalse();
@@ -49,8 +49,7 @@ public class GiftCertificateValidator extends AbstractValidator<GiftCertificateD
     }
   }
 
-  private void checkDuration(GiftCertificateDto giftCertificateDto) {
-    Integer duration = giftCertificateDto.getDuration();
+  private void checkDuration(Integer duration) {
     if (duration == null) {
       addErrorMessage("The duration is required");
       setIsResultValidFalse();

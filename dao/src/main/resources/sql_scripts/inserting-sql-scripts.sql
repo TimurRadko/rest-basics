@@ -1,3 +1,5 @@
+USING gift_certificates_task_dev
+
 INSERT INTO gift_certificates (name, description, price, duration, create_date, last_update_date)
 VALUES ('The first', 'The first certificate', 55.0, 14, '2021-03-25 00:00:00.084745', '2020-10-05 00:00:00.084745'),
        ('The second', 'The second certificate', 35.0, 18, '2021-07-07 00:00:00.084745', '2020-11-07 00:00:00.084745'),
