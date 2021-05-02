@@ -36,7 +36,11 @@ public class OrdersRepositoryImpl implements OrdersRepository {
       Specification<Orders> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Orders> criteriaQuery = specification.getCriteriaQuery(builder);
-    return entityManager.createQuery(criteriaQuery).getResultList();
+    return entityManager
+            .createQuery(criteriaQuery)
+            .setFirstResult((page - 1) * size)
+            .setMaxResults(size)
+            .getResultList();
   }
 
   @Override

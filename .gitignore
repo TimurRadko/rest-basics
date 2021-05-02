@@ -10,3 +10,4 @@ build
 /.gitattributes
 /persistence/out/
 /dao/out/
+/dao/out/

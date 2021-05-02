@@ -17,9 +17,9 @@ public final class GetTagByNameSpecification implements Specification<Tag> {
   @Override
   public CriteriaQuery<Tag> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
-    Root<Tag> root = criteria.from(Tag.class);
-    criteria.select(root);
-    criteria.where(builder.equal(root.get("name"), name));
+    Root<Tag> tagRoot = criteria.from(Tag.class);
+    criteria.select(tagRoot);
+    criteria.where(builder.equal(tagRoot.get("name"), name));
     return criteria;
   }
 }

@@ -20,11 +20,11 @@ public final class GetAllOrdersByUserIdSpecification implements Specification<Or
   @Override
   public CriteriaQuery<Orders> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<Orders> criteria = builder.createQuery(Orders.class);
-    Root<Orders> tagRoot = criteria.from(Orders.class);
-    Join<Orders, User> orderUserJoin = tagRoot.join("user");
+    Root<Orders> ordersRoot = criteria.from(Orders.class);
+    Join<Orders, User> orderUserJoin = ordersRoot.join("user");
     Path<String> userIdPath = orderUserJoin.get("id");
-    criteria.select(tagRoot).distinct(true);
+    criteria.select(ordersRoot).distinct(true);
     criteria.where(builder.equal(userIdPath, userId));
-    return criteria;
+    return criteria.orderBy(builder.asc(ordersRoot.get("id")));
   }
 }

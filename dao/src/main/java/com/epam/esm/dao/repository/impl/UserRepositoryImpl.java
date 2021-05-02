@@ -35,7 +35,11 @@ public class UserRepositoryImpl implements UserRepository {
       Specification<User> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<User> criteriaQuery = specification.getCriteriaQuery(builder);
-    return entityManager.createQuery(criteriaQuery).getResultList();
+    return entityManager
+        .createQuery(criteriaQuery)
+        .setFirstResult((page - 1) * size)
+        .setMaxResults(size)
+        .getResultList();
   }
 
   @Override

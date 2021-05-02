@@ -17,9 +17,9 @@ public final class GetTagByIdSpecification implements Specification<Tag> {
   @Override
   public CriteriaQuery<Tag> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
-    Root<Tag> root = criteria.from(Tag.class);
-    criteria.select(root);
-    criteria.where(builder.equal(root.get("id"), id));
+    Root<Tag> tagRoot = criteria.from(Tag.class);
+    criteria.select(tagRoot);
+    criteria.where(builder.equal(tagRoot.get("id"), id));
     return criteria;
   }
 }

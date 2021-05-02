@@ -41,3 +41,6 @@ select giftcertif0_.order_id            as order_id1_4_0_,
 from orders_gift_certificates giftcertif0_
          inner join gift_certificates giftcertif1_ on giftcertif0_.gift_certificate_id = giftcertif1_.id
 where giftcertif0_.order_id=?;
+
+
+select * from gift_certificates where id = 4975;

@@ -35,7 +35,11 @@ public class TagRepositoryImpl implements TagRepository {
       Specification<Tag> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Tag> criteriaQuery = specification.getCriteriaQuery(builder);
-    return entityManager.createQuery(criteriaQuery).getResultList();
+    return entityManager
+        .createQuery(criteriaQuery)
+        .setFirstResult((page - 1) * size)
+        .setMaxResults(size)
+        .getResultList();
   }
 
   @Override

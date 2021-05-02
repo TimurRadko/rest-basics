@@ -13,9 +13,9 @@ public final class GetAllUsersSpecification implements Specification<User> {
   @Override
   public CriteriaQuery<User> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<User> criteria = builder.createQuery(User.class);
-    Root<User> giftCertificateRoot = criteria.from(User.class);
-    giftCertificateRoot.fetch("orders", JoinType.LEFT);
-    criteria.select(giftCertificateRoot).distinct(true);
-    return criteria;
+    Root<User> userRoot = criteria.from(User.class);
+    userRoot.fetch("orders", JoinType.LEFT);
+    criteria.select(userRoot).distinct(true);
+    return criteria.orderBy(builder.asc(userRoot.get("id")));
   }
 }

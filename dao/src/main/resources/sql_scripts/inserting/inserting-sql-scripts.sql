@@ -1,4 +1,4 @@
-USING gift_certificates_task_dev
+
 
 INSERT INTO gift_certificates (name, description, price, duration, create_date, last_update_date)
 VALUES ('The first', 'The first certificate', 55.0, 14, '2021-03-25 00:00:00.084745', '2020-10-05 00:00:00.084745'),
@@ -35,14 +35,10 @@ INSERT INTO orders(user_id, cost, order_date)
 VALUES (1, 55.0, '2021-03-25 00:00:00.084745'),
        (2, 67, '2021-03-25 00:00:00.084745');
 
-INSERT INTO orders_gift_certificates(order_id, gift_certificate_id)
+INSERT INTOorders_gift_certificates(order_id, gift_certificate_id)
 VALUES (1,1),
        (2, 2),
        (2, 4);
 
 INSERT INTO orders(user_id, cost, order_date)
 VALUES (2, 77, '2021-03-28 00:00:00.084745');
-
-INSERT INTO orders_gift_certificates(order_id, gift_certificate_id)
-VALUES (12,2),
-       (12,4);

@@ -17,9 +17,9 @@ public final class GetUserByIdSpecification implements Specification<User> {
   @Override
   public CriteriaQuery<User> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<User> criteria = builder.createQuery(User.class);
-    Root<User> root = criteria.from(User.class);
-    criteria.select(root).distinct(true);
-    criteria.where(builder.equal(root.get("id"), id));
+    Root<User> userRoot = criteria.from(User.class);
+    criteria.select(userRoot).distinct(true);
+    criteria.where(builder.equal(userRoot.get("id"), id));
     return criteria;
   }
 }
