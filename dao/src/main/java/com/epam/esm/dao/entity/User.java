@@ -5,6 +5,7 @@ import com.epam.esm.dao.entity.audit.AuditListener;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -29,7 +30,7 @@ public class User implements TableEntity {
   @Column(name = "balance")
   private BigDecimal balance;
 
-  @OneToMany(mappedBy = "user")
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
   private Set<Orders> orders;
 
   public User() {}

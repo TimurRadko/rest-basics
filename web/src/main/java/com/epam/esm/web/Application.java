@@ -1,12 +1,13 @@
 package com.epam.esm.web;
 
-import com.epam.esm.service.config.ServiceConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication(scanBasePackages = "com.epam.esm")
-@Import(ServiceConfig.class)
+@EntityScan(basePackages = "com.epam.esm.dao.entity")
+@EnableTransactionManagement
 public class Application {
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
