@@ -44,9 +44,9 @@ class OrdersServiceImplTest {
   private static final long FIRST_ORDER_ID = 1L;
   private static final BigDecimal FIRST_ORDER_COST = new BigDecimal("10");
   private static final LocalDateTime FIRST_ORDER_CREATE_TIME = LocalDateTime.now();
-  private Orders order = new Orders(FIRST_ORDER_ID, FIRST_ORDER_COST, FIRST_ORDER_CREATE_TIME);
-  private Set<TagDto> emptyTagSet = new HashSet<>();
-  private GiftCertificateDto giftCertificateDto =
+  private final Orders order = new Orders(FIRST_ORDER_ID, FIRST_ORDER_COST, FIRST_ORDER_CREATE_TIME);
+  private final Set<TagDto> emptyTagSet = new HashSet<>();
+  private final GiftCertificateDto giftCertificateDto =
       new GiftCertificateDto(
           1L,
           "anotherValidName1",
@@ -57,16 +57,16 @@ class OrdersServiceImplTest {
           LocalDateTime.now(),
           emptyTagSet);
 
-  private List<GiftCertificateDto> expectedGiftCertificateDtos =
+  private final List<GiftCertificateDto> expectedGiftCertificateDtos =
       Collections.singletonList(giftCertificateDto);
-  private OrdersDto orderDto =
+  private final OrdersDto orderDto =
       new OrdersDto(
           FIRST_ORDER_ID,
           FIRST_ORDER_COST,
           FIRST_ORDER_CREATE_TIME,
           DEFAULT_USER_ID,
           expectedGiftCertificateDtos);
-  private List<OrdersDto> expectedOrderDtos = new ArrayList<>();
+  private final List<OrdersDto> expectedOrderDtos = new ArrayList<>();
 
   @BeforeEach
   void setUp() {
@@ -104,7 +104,7 @@ class OrdersServiceImplTest {
   @Test
   void testGetById_shouldReturnOrders_whenItExist() {
     // given
-    when(ordersRepository.getEntity(any())).thenReturn(Optional.ofNullable(order));
+    when(ordersRepository.getEntity(any())).thenReturn(Optional.of(order));
     when(ordersDtoBuilder.build(order)).thenReturn(orderDto);
     // when
     Optional<OrdersDto> actualOptionalOrdersDto = ordersService.getById(DEFAULT_USER_ID);

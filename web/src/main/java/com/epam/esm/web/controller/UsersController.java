@@ -2,6 +2,7 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
+import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
@@ -70,7 +71,7 @@ public class UsersController {
   @PostMapping("/{id}/orders")
   public OrdersDto makeOrder(
       @PathVariable Long id,
-      @RequestBody List<Long> giftCertificateDtoIds,
+      @RequestBody GiftCertificateDtoIds giftCertificateDtoIds,
       HttpServletRequest request,
       HttpServletResponse response) {
     Optional<OrdersDto> optionalOrderDto = userService.makeOrder(id, giftCertificateDtoIds);

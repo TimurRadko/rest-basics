@@ -39,8 +39,8 @@ public class PageValidator extends AbstractValidator<PageDto> {
   }
 
   private void checkSizeParameter(Integer size) {
-    if (size < 0) {
-      addErrorMessage("The size must be positive");
+    if (size <= 0) {
+      addErrorMessage("The size must be more than 0");
       setIsResultValidFalse();
     }
     if (size > 50) {

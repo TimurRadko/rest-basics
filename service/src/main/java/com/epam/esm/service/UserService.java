@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
@@ -23,10 +24,11 @@ public interface UserService extends Service<UserDto> {
    * * This method describes a execute order by User
    *
    * @param id - passed into the method id User's parameter that required for work with the DB
-   * @param giftCertificateDtoIds - passed into the method List<Long> giftCertificateDtoIds
+   * @param giftCertificateDtoIds - passed into the method giftCertificateDtoIds, which contains
+   *     List of GiftCertificate id
    * @return Optional<UserDto> - container that is contained UserDto
    */
-  Optional<OrdersDto> makeOrder(Long id, List<Long> giftCertificateDtoIds);
+  Optional<OrdersDto> makeOrder(Long id, GiftCertificateDtoIds giftCertificateDtoIds);
 
   /**
    * * This method describes a get most widely used tag by User id

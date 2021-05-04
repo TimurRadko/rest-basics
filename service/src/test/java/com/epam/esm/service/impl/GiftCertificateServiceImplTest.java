@@ -66,11 +66,11 @@ class GiftCertificateServiceImplTest {
   private GiftCertificateDto expectedGiftCertificateDto;
   private GiftCertificate newPriceGiftCertificate;
   private GiftCertificateDto newPriceGiftCertificateDto;
-  private List<GiftCertificateDto> expectedGiftCertificateDtos = new ArrayList<>();
-  private List<GiftCertificate> expectedGiftCertificates = new ArrayList<>();
-  private Set<TagDto> emptyTagSet = new HashSet<>();
-  private TagDto firstTagDto = new TagDto(FIRST_TAG_ID, FIRST_TAG_NAME);
-  private Tag firstTag = new Tag(FIRST_TAG_ID, FIRST_TAG_NAME);
+  private final List<GiftCertificateDto> expectedGiftCertificateDtos = new ArrayList<>();
+  private final List<GiftCertificate> expectedGiftCertificates = new ArrayList<>();
+  private final Set<TagDto> emptyTagSet = new HashSet<>();
+  private final TagDto firstTagDto = new TagDto(FIRST_TAG_ID, FIRST_TAG_NAME);
+  private final Tag firstTag = new Tag(FIRST_TAG_ID, FIRST_TAG_NAME);
   private static final long ID = 1L;
   private static final String NAME = "Valid Name";
   private static final String DESCRIPTION = "Valid Description";
@@ -78,7 +78,7 @@ class GiftCertificateServiceImplTest {
   private static final int DURATION = 14;
   private static final LocalDateTime NOW = LocalDateTime.now();
 
-  private GiftCertificateDto changedGiftCertificateDto =
+  private final GiftCertificateDto changedGiftCertificateDto =
       new GiftCertificateDto(
           ID, "anotherValidName1", DESCRIPTION, PRICE, DURATION, NOW, NOW, emptyTagSet);
 

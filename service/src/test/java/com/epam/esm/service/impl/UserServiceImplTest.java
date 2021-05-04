@@ -14,6 +14,7 @@ import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.builder.user.UserDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
+import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UserDto;
@@ -64,17 +65,17 @@ class UserServiceImplTest {
   private static final String LOGIN = "Valid Login";
   private static final String PASSWORD = "Valid Password";
   private static final BigDecimal ACCOUNT = new BigDecimal("100");
-  private User user = new User(USER_ID, LOGIN, PASSWORD, ACCOUNT);
-  private List<User> users = new ArrayList<>();
-  private List<UserDto> userDtos = new ArrayList<>();
+  private final User user = new User(USER_ID, LOGIN, PASSWORD, ACCOUNT);
+  private final List<User> users = new ArrayList<>();
+  private final List<UserDto> userDtos = new ArrayList<>();
   private static final int DEFAULT_PAGE_PARAMETER = 1;
   private static final int DEFAULT_SIZE_PARAMETER = 1;
   private static final long FIRST_ORDER_ID = 1L;
   private static final BigDecimal FIRST_ORDER_COST = BigDecimal.valueOf(10);
   private static final LocalDateTime FIRST_ORDER_CREATE_TIME = LocalDateTime.now();
-  private Orders order = new Orders(FIRST_ORDER_ID, FIRST_ORDER_COST, FIRST_ORDER_CREATE_TIME);
-  private Set<TagDto> emptyTagSet = new HashSet<>();
-  private GiftCertificate giftCertificate =
+  private final Orders order = new Orders(FIRST_ORDER_ID, FIRST_ORDER_COST, FIRST_ORDER_CREATE_TIME);
+  private final Set<TagDto> emptyTagSet = new HashSet<>();
+  private final GiftCertificate giftCertificate =
       new GiftCertificate(
           1L,
           "anotherValidName1",
@@ -83,7 +84,7 @@ class UserServiceImplTest {
           14,
           LocalDateTime.now(),
           LocalDateTime.now());
-  private GiftCertificateDto giftCertificateDto =
+  private final GiftCertificateDto giftCertificateDto =
       new GiftCertificateDto(
           1L,
           "anotherValidName1",
@@ -94,26 +95,28 @@ class UserServiceImplTest {
           LocalDateTime.now(),
           emptyTagSet);
 
-  private List<GiftCertificateDto> expectedGiftCertificateDtos =
+  private final List<GiftCertificateDto> expectedGiftCertificateDtos =
       Collections.singletonList(giftCertificateDto);
-  private OrdersDto orderDto =
+  private final OrdersDto orderDto =
       new OrdersDto(
           FIRST_ORDER_ID,
           FIRST_ORDER_COST,
           FIRST_ORDER_CREATE_TIME,
           USER_ID,
           expectedGiftCertificateDtos);
-  private UserDto userDto = new UserDto(USER_ID, LOGIN, ACCOUNT, Set.of(orderDto));
-  private List<Long> giftCertificateIds = Collections.singletonList(1L);
+  private final UserDto userDto = new UserDto(USER_ID, LOGIN, ACCOUNT, Set.of(orderDto));
+  private final List<Long> giftCertificateIds = Collections.singletonList(1L);
+  private final GiftCertificateDtoIds giftCertificateDtoIds = new GiftCertificateDtoIds();
   private static final long MOST_WIDE_TAG_ID = 2L;
   private static final String MOST_WIDE_TAG_NAME = "The Most";
-  private Tag mostWideTag = new Tag(MOST_WIDE_TAG_ID, MOST_WIDE_TAG_NAME);
-  private TagDto expectedMostWideTag = new TagDto(MOST_WIDE_TAG_ID, MOST_WIDE_TAG_NAME);
+  private final Tag mostWideTag = new Tag(MOST_WIDE_TAG_ID, MOST_WIDE_TAG_NAME);
+  private final TagDto expectedMostWideTag = new TagDto(MOST_WIDE_TAG_ID, MOST_WIDE_TAG_NAME);
 
   @BeforeEach
   void setUp() {
     users.add(user);
     userDtos.add(userDto);
+    giftCertificateDtoIds.setGiftCertificateDtoIds(giftCertificateIds);
   }
 
   @Test
@@ -142,20 +145,20 @@ class UserServiceImplTest {
   @Test
   void testMakeOrder_shouldThrowEmptyOrderException_whenOrderIsNull() {
     // given
-    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     // when
     // then
-    assertThrows(EmptyOrderException.class, () -> userService.makeOrder(USER_ID, null));
+    assertThrows(EmptyOrderException.class, () -> userService.makeOrder(USER_ID, new GiftCertificateDtoIds()));
   }
 
   @Test
   void testMakeOrder_shouldThrowEmptyOrderException_whenOrderIsEmpty() {
     // given
-    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     // when
     // then
     assertThrows(
-        EmptyOrderException.class, () -> userService.makeOrder(USER_ID, new ArrayList<>()));
+        EmptyOrderException.class, () -> userService.makeOrder(USER_ID, new GiftCertificateDtoIds()));
   }
 
   @Test
@@ -165,61 +168,61 @@ class UserServiceImplTest {
     poorUser.setBalance(BigDecimal.valueOf(0));
     when(userRepository.getEntity(any())).thenReturn(Optional.of(poorUser));
     when(giftCertificateRepository.getEntity(any()))
-        .thenReturn(Optional.ofNullable(giftCertificate));
+        .thenReturn(Optional.of(giftCertificate));
     // when
     // then
     assertThrows(
-        InsufficientFundInAccount.class, () -> userService.makeOrder(USER_ID, giftCertificateIds));
+        InsufficientFundInAccount.class, () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));
   }
 
   @Test
   void testMakeOrder_shouldThrowEntityNotFoundException_whenUserWasNotUpdated() {
     // given
-    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     // when
     // then
     assertThrows(
-        EntityNotFoundException.class, () -> userService.makeOrder(USER_ID, giftCertificateIds));
+        EntityNotFoundException.class, () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));
   }
 
   @Test
   void testMakeOrder_shouldThrowEntityNotFoundException_whenUserNotUpdated() {
     // given
-    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     when(giftCertificateRepository.getEntity(any()))
-        .thenReturn(Optional.ofNullable(giftCertificate));
+        .thenReturn(Optional.of(giftCertificate));
     // when
     // then
     assertThrows(
-        EntityNotFoundException.class, () -> userService.makeOrder(USER_ID, giftCertificateIds));
+        EntityNotFoundException.class, () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));
   }
 
   @Test
   void testMakeOrder_shouldThrowServiceException_whenOrdersWasNotSaved() {
     // given
-    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     when(userDtoBuilder.build(any())).thenReturn(userDto);
     when(giftCertificateRepository.getEntity(any()))
-        .thenReturn(Optional.ofNullable(giftCertificate));
-    when(userRepository.update(user)).thenReturn(Optional.ofNullable(user));
+        .thenReturn(Optional.of(giftCertificate));
+    when(userRepository.update(user)).thenReturn(Optional.of(user));
     // when
     // then
-    assertThrows(ServiceException.class, () -> userService.makeOrder(USER_ID, giftCertificateIds));
+    assertThrows(ServiceException.class, () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));
   }
 
   @Test
   void testMakeOrder_shouldOrder_whenUserMadeOrderSuccessful() {
     // given
-    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     when(userDtoBuilder.build(any())).thenReturn(userDto);
     when(giftCertificateRepository.getEntity(any()))
-        .thenReturn(Optional.ofNullable(giftCertificate));
-    when(userRepository.update(user)).thenReturn(Optional.ofNullable(user));
-    when(ordersRepository.save(any())).thenReturn(Optional.ofNullable(order));
+        .thenReturn(Optional.of(giftCertificate));
+    when(userRepository.update(user)).thenReturn(Optional.of(user));
+    when(ordersRepository.save(any())).thenReturn(Optional.of(order));
     when(ordersDtoBuilder.build(any())).thenReturn(orderDto);
     // when
     Optional<OrdersDto> actualOptionalOrdersDto =
-        userService.makeOrder(USER_ID, giftCertificateIds);
+        userService.makeOrder(USER_ID, giftCertificateDtoIds);
     // then
     assertEquals(Optional.of(orderDto), actualOptionalOrdersDto);
   }
@@ -238,8 +241,8 @@ class UserServiceImplTest {
   @Test
   void testGetMostWidelyUsedTag_shouldReturnTag_whenItIsExists() {
     // given
-    when(tagRepository.getEntityList(any()))
-        .thenReturn(Collections.singletonList(mostWideTag));
+    when(tagRepository.getEntity(any()))
+        .thenReturn(Optional.of(mostWideTag));
     when(tagDtoBuilder.build(mostWideTag)).thenReturn(expectedMostWideTag);
     // when
     Optional<TagDto> actualOptionalTag = userService.getMostWidelyUsedTagByUserId(USER_ID);

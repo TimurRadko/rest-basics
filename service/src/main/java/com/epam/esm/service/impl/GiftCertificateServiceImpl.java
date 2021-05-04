@@ -98,8 +98,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       optionalExistingTag =
           tagRepository.getEntity(new GetTagByNameSpecification(tagDto.getName()));
     } else {
-      optionalExistingTag =
-          tagRepository.getEntity(new GetTagByIdSpecification(tagDto.getId()));
+      optionalExistingTag = tagRepository.getEntity(new GetTagByIdSpecification(tagDto.getId()));
       if (optionalExistingTag.isEmpty()) {
         throw new EntityNotFoundException(
             "The Tag with id = " + tagDto.getId() + " cannot be created in the database");
@@ -131,7 +130,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
     return giftCertificateRepository
         .getEntityListWithPagination(
-            new GetGiftCertificatesBySeveralSearchParametersSpecification(name, description, tagNames, sorts),
+            new GetGiftCertificatesBySeveralSearchParametersSpecification(
+                name, description, tagNames, sorts),
             page,
             size)
         .stream()
@@ -141,8 +141,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   private List<GiftCertificateDto> getAll(List<String> sort, Integer page, Integer size) {
     return giftCertificateRepository
-        .getEntityListWithPagination(
-            new GetAllGiftCertificatesSpecification(sort), page, size)
+        .getEntityListWithPagination(new GetAllGiftCertificatesSpecification(sort), page, size)
         .stream()
         .map((giftCertificateDtoBuilder::build))
         .collect(Collectors.toList());
@@ -151,8 +150,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   @Override
   public Optional<GiftCertificateDto> getById(long id) {
     Optional<GiftCertificate> optionalGiftCertificate =
-        giftCertificateRepository.getEntity(
-            new GetGiftCertificatesByIdSpecification(id));
+        giftCertificateRepository.getEntity(new GetGiftCertificatesByIdSpecification(id));
     return optionalGiftCertificate.map(giftCertificateDtoBuilder::build);
   }
 
@@ -195,33 +193,55 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     GiftCertificate giftCertificate = getGiftCertificateById(id);
     GiftCertificate newParameterGiftCertificate =
         getNewParameterGiftCertificate(giftCertificate, giftCertificateDto);
+
     if (!giftCertificateValidator.isValid(
         giftCertificateDtoBuilder.build(newParameterGiftCertificate))) {
       throw new EntityNotValidMultipleException(giftCertificateValidator.getErrorMessage());
     }
+    Set<TagDto> tagDtos = giftCertificateDto.getTags();
+    tagDtos = saveTags(tagDtos);
+    deletingNonTransmittedTags(id, tagDtos);
     giftCertificate = updateGiftCertificate(newParameterGiftCertificate);
-    return Optional.of(giftCertificateDtoBuilder.build(giftCertificate));
+    return Optional.of(giftCertificateDtoBuilder.buildWithTagDtos(giftCertificate, tagDtos));
   }
 
   private GiftCertificate getNewParameterGiftCertificate(
       GiftCertificate giftCertificate, GiftCertificateDto giftCertificateDto) {
+    setNewName(giftCertificate, giftCertificateDto);
+    setNewPrice(giftCertificate, giftCertificateDto);
+    setNewDuration(giftCertificate, giftCertificateDto);
+    setNewDescription(giftCertificate, giftCertificateDto);
+    return giftCertificate;
+  }
+
+  private void setNewName(GiftCertificate giftCertificate, GiftCertificateDto giftCertificateDto) {
     String name = giftCertificateDto.getName();
-    String description = giftCertificateDto.getDescription();
-    BigDecimal price = giftCertificateDto.getPrice();
-    Integer duration = giftCertificateDto.getDuration();
     if (name != null) {
       giftCertificate.setName(name);
     }
+  }
+
+  private void setNewPrice(GiftCertificate giftCertificate, GiftCertificateDto giftCertificateDto) {
+    BigDecimal price = giftCertificateDto.getPrice();
     if (price != null) {
       giftCertificate.setPrice(price);
     }
+  }
+
+  private void setNewDuration(
+      GiftCertificate giftCertificate, GiftCertificateDto giftCertificateDto) {
+    Integer duration = giftCertificateDto.getDuration();
     if (duration != null) {
       giftCertificate.setDuration(duration);
     }
+  }
+
+  private void setNewDescription(
+      GiftCertificate giftCertificate, GiftCertificateDto giftCertificateDto) {
+    String description = giftCertificateDto.getDescription();
     if (description != null) {
       giftCertificate.setDescription(description);
     }
-    return giftCertificate;
   }
 
   private GiftCertificate getGiftCertificateById(Long id) {
@@ -240,8 +260,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   private void deletingNonTransmittedTags(long id, Set<TagDto> tagDtos) {
     List<Tag> existingTags =
-        tagRepository.getEntityList(
-            new GetAllTagsByGiftCertificatesIdSpecification(id));
+        tagRepository.getEntityList(new GetAllTagsByGiftCertificatesIdSpecification(id));
     Set<Tag> tags = tagDtos.stream().map(tagBuilder::build).collect(Collectors.toSet());
     for (Tag existingTag : existingTags) {
       if (!tags.contains(existingTag)) {
@@ -259,8 +278,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
 
     List<GiftCertificate> existingGiftCertificate =
-        giftCertificateRepository.getEntityList(
-            new GetAllGiftCertificatesAssociatedWithOrders(id));
+        giftCertificateRepository.getEntityList(new GetAllGiftCertificatesAssociatedWithOrders(id));
 
     if (!existingGiftCertificate.isEmpty()) {
       throw new DeletingEntityException(

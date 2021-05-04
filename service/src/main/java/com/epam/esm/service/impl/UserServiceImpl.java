@@ -17,6 +17,7 @@ import com.epam.esm.service.builder.order.OrdersBuilder;
 import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.builder.user.UserDtoBuilder;
+import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
@@ -88,7 +89,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public Optional<OrdersDto> makeOrder(Long id, List<Long> giftCertificateDtoIds) {
+  public Optional<OrdersDto> makeOrder(Long id, GiftCertificateDtoIds giftCertificateDtoIds) {
     User user =
         userRepository
             .getEntity(new GetUserByIdSpecification(id))
@@ -96,10 +97,11 @@ public class UserServiceImpl implements UserService {
                 () ->
                     new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
 
-    if (giftCertificateDtoIds == null || giftCertificateDtoIds.isEmpty()) {
+    List<Long> giftCertificateIds = giftCertificateDtoIds.getGiftCertificateDtoIds();
+    if (giftCertificateIds == null || giftCertificateIds.isEmpty()) {
       throw new EmptyOrderException("You can't make empty order");
     }
-    List<GiftCertificate> giftCertificates = getAllGiftCertificates(giftCertificateDtoIds);
+    List<GiftCertificate> giftCertificates = getAllGiftCertificates(giftCertificateIds);
     BigDecimal cost = getNewUserAccount(user, giftCertificates);
     userDtoBuilder.build(
         userRepository
@@ -156,9 +158,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Optional<UserDto> getById(long id) {
-    return userRepository
-        .getEntity(new GetUserByIdSpecification(id))
-        .map(userDtoBuilder::build);
+    return userRepository.getEntity(new GetUserByIdSpecification(id)).map(userDtoBuilder::build);
   }
 
   @Override
