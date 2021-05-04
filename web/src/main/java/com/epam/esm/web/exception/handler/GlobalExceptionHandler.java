@@ -100,7 +100,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   protected ResponseEntity<Object> handleTypeMismatch(
       TypeMismatchException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
     SingleExceptionResponse response = new SingleExceptionResponse();
-    response.setErrorMessage(exception.getMessage());
+    response.setErrorMessage("The passed parameter must be number");
     response.setErrorCode(PAGE_OR_SIZE_PASS_TYPE_NOT_VALID_CODE);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }

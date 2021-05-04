@@ -15,7 +15,7 @@ import javax.persistence.criteria.Subquery;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GetGiftCertificatesByNameDescrTagsSpecification
+public final class GetGiftCertificatesBySeveralSearchParametersSpecification
     implements Specification<GiftCertificate> {
   private final String name;
   private final String description;
@@ -23,7 +23,7 @@ public final class GetGiftCertificatesByNameDescrTagsSpecification
   private final List<String> tagNames;
   private final GiftCertificateSorter giftCertificateSorter;
 
-  public GetGiftCertificatesByNameDescrTagsSpecification(
+  public GetGiftCertificatesBySeveralSearchParametersSpecification(
       String name, String description, List<String> tagNames, List<String> sorts) {
     this.name = name;
     this.description = description;
@@ -47,7 +47,7 @@ public final class GetGiftCertificatesByNameDescrTagsSpecification
     if (sorts == null) {
       return criteria.orderBy(builder.asc(giftCertificateRoot.get("id")));
     }
-    giftCertificateSorter.sort(criteria, builder, giftCertificateRoot, sorts);
+    giftCertificateSorter.sort(builder, sorts);
     return criteria;
   }
 

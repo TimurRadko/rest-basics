@@ -11,20 +11,18 @@ import java.util.List;
 
 public class GiftCertificateSorter {
 
-  public void sort(
-      CriteriaQuery<GiftCertificate> criteria,
-      CriteriaBuilder builder,
-      Root<GiftCertificate> root,
-      List<String> sorts) {
+  public void sort(CriteriaBuilder builder, List<String> sorts) {
+    CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
+    Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
     List<Order> orders = new ArrayList<>();
     nameSorting(builder, root, sorts, orders);
-    descriptionSorting(builder, root, sorts, orders);
-    createDateSorting(builder, root, sorts, orders);
-    lastUpdateDateSorting(builder, root, sorts, orders);
+    descriptionSort(builder, root, sorts, orders);
+    createDateSort(builder, root, sorts, orders);
+    lastUpdateDateSort(builder, root, sorts, orders);
     criteria.orderBy(orders);
   }
 
-  private void lastUpdateDateSorting(
+  private void lastUpdateDateSort(
       CriteriaBuilder builder, Root<GiftCertificate> root, List<String> sorts, List<Order> orders) {
     for (String sort : sorts) {
       if (sort.equals("last-update-date-asc")) {
@@ -35,7 +33,7 @@ public class GiftCertificateSorter {
     }
   }
 
-  private void createDateSorting(
+  private void createDateSort(
       CriteriaBuilder builder, Root<GiftCertificate> root, List<String> sorts, List<Order> orders) {
     for (String sort : sorts) {
       if (sort.equals("create-date-asc")) {
@@ -46,7 +44,7 @@ public class GiftCertificateSorter {
     }
   }
 
-  private void descriptionSorting(
+  private void descriptionSort(
       CriteriaBuilder builder, Root<GiftCertificate> root, List<String> sorts, List<Order> orders) {
     for (String sort : sorts) {
       if (sort.equals("description-asc")) {

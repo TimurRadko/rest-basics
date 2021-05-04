@@ -11,7 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,7 +29,7 @@ public class Tag implements TableEntity {
   private String name;
 
   @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
-  private Set<GiftCertificate> giftCertificates;
+  private List<GiftCertificate> giftCertificates;
 
   public Tag() {}
 
@@ -54,11 +56,11 @@ public class Tag implements TableEntity {
     this.name = name;
   }
 
-  public Set<GiftCertificate> getGiftCertificates() {
-    return (giftCertificates == null) ? null : new HashSet<>(giftCertificates);
+  public List<GiftCertificate> getGiftCertificates() {
+    return (giftCertificates == null) ? null : new ArrayList<>(giftCertificates);
   }
 
-  public void setGiftCertificates(Set<GiftCertificate> giftCertificates) {
+  public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
     this.giftCertificates = giftCertificates;
   }
 

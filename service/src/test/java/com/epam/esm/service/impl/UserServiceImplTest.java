@@ -120,7 +120,7 @@ class UserServiceImplTest {
   void testGetAll_shouldReturnUsers_whenTheyAreExistInDatabase() {
     // given
     when(pageValidator.isValid(any())).thenReturn(true);
-    when(userRepository.getEntityListWithPaginationBySpecification(any(), anyInt(), anyInt()))
+    when(userRepository.getEntityListWithPagination(any(), anyInt(), anyInt()))
         .thenReturn(users);
     when(userDtoBuilder.build(user)).thenReturn(userDto);
     // when
@@ -142,7 +142,7 @@ class UserServiceImplTest {
   @Test
   void testMakeOrder_shouldThrowEmptyOrderException_whenOrderIsNull() {
     // given
-    when(userRepository.getEntityBySpecification(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
     // when
     // then
     assertThrows(EmptyOrderException.class, () -> userService.makeOrder(USER_ID, null));
@@ -151,7 +151,7 @@ class UserServiceImplTest {
   @Test
   void testMakeOrder_shouldThrowEmptyOrderException_whenOrderIsEmpty() {
     // given
-    when(userRepository.getEntityBySpecification(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
     // when
     // then
     assertThrows(
@@ -162,9 +162,9 @@ class UserServiceImplTest {
   void testMakeOrder_shouldThrowInsufficientFundInAccount_whenUserAccountLessThanOrderCost() {
     // given
     User poorUser = user;
-    poorUser.setAccount(BigDecimal.valueOf(0));
-    when(userRepository.getEntityBySpecification(any())).thenReturn(Optional.of(poorUser));
-    when(giftCertificateRepository.getEntityBySpecification(any()))
+    poorUser.setBalance(BigDecimal.valueOf(0));
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(poorUser));
+    when(giftCertificateRepository.getEntity(any()))
         .thenReturn(Optional.ofNullable(giftCertificate));
     // when
     // then
@@ -175,7 +175,7 @@ class UserServiceImplTest {
   @Test
   void testMakeOrder_shouldThrowEntityNotFoundException_whenUserWasNotUpdated() {
     // given
-    when(userRepository.getEntityBySpecification(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
     // when
     // then
     assertThrows(
@@ -185,8 +185,8 @@ class UserServiceImplTest {
   @Test
   void testMakeOrder_shouldThrowEntityNotFoundException_whenUserNotUpdated() {
     // given
-    when(userRepository.getEntityBySpecification(any())).thenReturn(Optional.ofNullable(user));
-    when(giftCertificateRepository.getEntityBySpecification(any()))
+    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
+    when(giftCertificateRepository.getEntity(any()))
         .thenReturn(Optional.ofNullable(giftCertificate));
     // when
     // then
@@ -197,9 +197,9 @@ class UserServiceImplTest {
   @Test
   void testMakeOrder_shouldThrowServiceException_whenOrdersWasNotSaved() {
     // given
-    when(userRepository.getEntityBySpecification(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
     when(userDtoBuilder.build(any())).thenReturn(userDto);
-    when(giftCertificateRepository.getEntityBySpecification(any()))
+    when(giftCertificateRepository.getEntity(any()))
         .thenReturn(Optional.ofNullable(giftCertificate));
     when(userRepository.update(user)).thenReturn(Optional.ofNullable(user));
     // when
@@ -210,9 +210,9 @@ class UserServiceImplTest {
   @Test
   void testMakeOrder_shouldOrder_whenUserMadeOrderSuccessful() {
     // given
-    when(userRepository.getEntityBySpecification(any())).thenReturn(Optional.ofNullable(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.ofNullable(user));
     when(userDtoBuilder.build(any())).thenReturn(userDto);
-    when(giftCertificateRepository.getEntityBySpecification(any()))
+    when(giftCertificateRepository.getEntity(any()))
         .thenReturn(Optional.ofNullable(giftCertificate));
     when(userRepository.update(user)).thenReturn(Optional.ofNullable(user));
     when(ordersRepository.save(any())).thenReturn(Optional.ofNullable(order));
@@ -227,7 +227,7 @@ class UserServiceImplTest {
   @Test
   void testGetById_shouldReturnUser_whenUserIsExistsInDataBase() {
     // given
-    when(userRepository.getEntityBySpecification(any())).thenReturn(Optional.of(user));
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     when(userDtoBuilder.build(any())).thenReturn(userDto);
     // when
     UserDto actualUserDto = userService.getById(USER_ID).orElse(new UserDto());
@@ -238,7 +238,7 @@ class UserServiceImplTest {
   @Test
   void testGetMostWidelyUsedTag_shouldReturnTag_whenItIsExists() {
     // given
-    when(tagRepository.getEntityListBySpecification(any()))
+    when(tagRepository.getEntityList(any()))
         .thenReturn(Collections.singletonList(mostWideTag));
     when(tagDtoBuilder.build(mostWideTag)).thenReturn(expectedMostWideTag);
     // when

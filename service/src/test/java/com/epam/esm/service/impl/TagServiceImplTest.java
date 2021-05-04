@@ -61,7 +61,7 @@ class TagServiceImplTest {
   void testGetAll_shouldReturnTagList_whenTagsExist() {
     // given
     when(pageValidator.isValid(any())).thenReturn(true);
-    when(tagRepository.getEntityListWithPaginationBySpecification(any(), anyInt(), anyInt()))
+    when(tagRepository.getEntityListWithPagination(any(), anyInt(), anyInt()))
         .thenReturn(expectedTags);
     when(tagDtoBuilder.build(any())).thenReturn(firstTestTagDto);
     // when
@@ -85,7 +85,7 @@ class TagServiceImplTest {
   @Test
   void testGetById_shouldReturnRightTag_whenItExists() {
     // given
-    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
+    when(tagRepository.getEntity(any())).thenReturn(Optional.of(firstTestTag));
     when(tagDtoBuilder.build(any())).thenReturn(firstTestTagDto);
     // when
     TagDto actualTagDto = tagService.getById(ID_FOR_MANIPULATIONS).orElse(new TagDto());
@@ -96,7 +96,7 @@ class TagServiceImplTest {
   @Test
   void testSave_shouldReturnSavedTag_whenParametersIsValid() {
     // given
-    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.empty());
+    when(tagRepository.getEntity(any())).thenReturn(Optional.empty());
     when(tagRepository.save(firstTestTag)).thenReturn(Optional.of(firstTestTag));
     when(tagValidator.isValid(firstTestTagDto)).thenReturn(true);
     when(tagBuilder.build(firstTestTagDto)).thenReturn(firstTestTag);
@@ -119,7 +119,7 @@ class TagServiceImplTest {
   @Test
   void testSave_shouldThrowTagAlreadyExistsException_whenTagExistsInDatabase() {
     // given
-    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
+    when(tagRepository.getEntity(any())).thenReturn(Optional.of(firstTestTag));
     when(tagValidator.isValid(firstTestTagDto)).thenReturn(true);
     when(tagBuilder.build(firstTestTagDto)).thenReturn(firstTestTag);
     // when
@@ -130,8 +130,8 @@ class TagServiceImplTest {
   @Test
   void testDelete_ShouldThrowDeletingTagException_whenItExists() {
     // given
-    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
-    when(tagRepository.getEntityListBySpecification(any()))
+    when(tagRepository.getEntity(any())).thenReturn(Optional.of(firstTestTag));
+    when(tagRepository.getEntityList(any()))
         .thenReturn(Collections.singletonList(firstTestTag));
     // when
     // then
@@ -143,8 +143,8 @@ class TagServiceImplTest {
     // given
     int expectedResult = 1;
     when(tagRepository.delete(ID_FOR_MANIPULATIONS)).thenReturn(expectedResult);
-    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.of(firstTestTag));
-    when(tagRepository.getEntityListBySpecification(any())).thenReturn(Collections.emptyList());
+    when(tagRepository.getEntity(any())).thenReturn(Optional.of(firstTestTag));
+    when(tagRepository.getEntityList(any())).thenReturn(Collections.emptyList());
     // when
     int actualResult = tagService.delete(ID_FOR_MANIPULATIONS);
     // then
@@ -154,7 +154,7 @@ class TagServiceImplTest {
   @Test
   void testDelete_shouldThrowEntityNotFoundException_whenItNotExistsInDatabase() {
     // given
-    when(tagRepository.getEntityBySpecification(any())).thenReturn(Optional.empty());
+    when(tagRepository.getEntity(any())).thenReturn(Optional.empty());
     // when
     // then
     assertThrows(EntityNotFoundException.class, () -> tagService.delete(ID_FOR_MANIPULATIONS));

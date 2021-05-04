@@ -42,7 +42,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   }
 
   @Override
-  public List<GiftCertificate> getEntityListBySpecification(
+  public List<GiftCertificate> getEntityList(
       Specification<GiftCertificate> specification) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<GiftCertificate> criteriaQuery = specification.getCriteriaQuery(builder);
@@ -50,7 +50,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   }
 
   @Override
-  public List<GiftCertificate> getEntityListWithPaginationBySpecification(
+  public List<GiftCertificate> getEntityListWithPagination(
       Specification<GiftCertificate> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<GiftCertificate> criteriaQuery = specification.getCriteriaQuery(builder);
@@ -62,7 +62,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
   }
 
   @Override
-  public Optional<GiftCertificate> getEntityBySpecification(
+  public Optional<GiftCertificate> getEntity(
       Specification<GiftCertificate> specification) {
     try {
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();

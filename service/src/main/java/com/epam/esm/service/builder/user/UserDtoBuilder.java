@@ -21,7 +21,7 @@ public class UserDtoBuilder {
     UserDto userDto = new UserDto();
     userDto.setId(user.getId());
     userDto.setLogin(user.getLogin());
-    userDto.setAccount(user.getAccount());
+    userDto.setBalance(user.getBalance());
     userDto.setOrders(
         user.getOrders().stream().map(ordersDtoBuilder::build).collect(Collectors.toSet()));
     return userDto;

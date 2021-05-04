@@ -28,7 +28,7 @@ public final class GetAllGiftCertificatesSpecification implements Specification<
     if (sorts == null) {
       return criteria.orderBy(builder.asc(giftCertificateRoot.get("id")));
     }
-    giftCertificateSorter.sort(criteria, builder, giftCertificateRoot, sorts);
+    giftCertificateSorter.sort(builder, sorts);
     return criteria;
   }
 }

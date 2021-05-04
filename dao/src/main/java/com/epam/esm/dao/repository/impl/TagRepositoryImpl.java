@@ -24,14 +24,14 @@ public class TagRepositoryImpl implements TagRepository {
   }
 
   @Override
-  public List<Tag> getEntityListBySpecification(Specification<Tag> specification) {
+  public List<Tag> getEntityList(Specification<Tag> specification) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Tag> criteriaQuery = specification.getCriteriaQuery(builder);
     return entityManager.createQuery(criteriaQuery).getResultList();
   }
 
   @Override
-  public List<Tag> getEntityListWithPaginationBySpecification(
+  public List<Tag> getEntityListWithPagination(
       Specification<Tag> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Tag> criteriaQuery = specification.getCriteriaQuery(builder);
@@ -50,11 +50,11 @@ public class TagRepositoryImpl implements TagRepository {
   }
 
   @Override
-  public Optional<Tag> getEntityBySpecification(Specification<Tag> specification) {
+  public Optional<Tag> getEntity(Specification<Tag> specification) {
     try {
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();
       CriteriaQuery<Tag> criteriaQuery = specification.getCriteriaQuery(builder);
-      return Optional.of(entityManager.createQuery(criteriaQuery).getSingleResult());
+      return Optional.of(entityManager.createQuery(criteriaQuery).setMaxResults(1).getSingleResult());
     } catch (NoResultException e) {
       return Optional.empty();
     }

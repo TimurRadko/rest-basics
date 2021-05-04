@@ -77,7 +77,7 @@ class OrdersServiceImplTest {
   void testGetAllOrdersByUserId_shouldReturnAllOrders_whenItIsExists() {
     // given
     when(pageValidator.isValid(any())).thenReturn(true);
-    when(ordersRepository.getEntityListWithPaginationBySpecification(any(), anyInt(), anyInt()))
+    when(ordersRepository.getEntityListWithPagination(any(), anyInt(), anyInt()))
         .thenReturn(Collections.singletonList(order));
     when(ordersDtoBuilder.build(order)).thenReturn(orderDto);
     // when
@@ -104,7 +104,7 @@ class OrdersServiceImplTest {
   @Test
   void testGetById_shouldReturnOrders_whenItExist() {
     // given
-    when(ordersRepository.getEntityBySpecification(any())).thenReturn(Optional.ofNullable(order));
+    when(ordersRepository.getEntity(any())).thenReturn(Optional.ofNullable(order));
     when(ordersDtoBuilder.build(order)).thenReturn(orderDto);
     // when
     Optional<OrdersDto> actualOptionalOrdersDto = ordersService.getById(DEFAULT_USER_ID);

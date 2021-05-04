@@ -996,3 +996,5 @@ insert into gift_certificates_tags (gift_certificate_id, tag_id) values (2609, 2
 insert into gift_certificates_tags (gift_certificate_id, tag_id) values (547, 774);
 insert into gift_certificates_tags (gift_certificate_id, tag_id) values (8520, 875);
 insert into gift_certificates_tags (gift_certificate_id, tag_id) values (2541, 185);
+
+

@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
   private final TagDtoBuilder tagDtoBuilder;
   private final TagRepository tagRepository;
   private final PageValidator pageValidator;
-  private static final int FIST_ELEMENT = 0;
 
   @Autowired
   public UserServiceImpl(
@@ -81,7 +80,7 @@ public class UserServiceImpl implements UserService {
       throw new PageNotValidException(pageValidator.getErrorMessage());
     }
     return userRepository
-        .getEntityListWithPaginationBySpecification(new GetAllUsersSpecification(), page, size)
+        .getEntityListWithPagination(new GetAllUsersSpecification(), page, size)
         .stream()
         .map((userDtoBuilder::build))
         .collect(Collectors.toList());
@@ -92,7 +91,7 @@ public class UserServiceImpl implements UserService {
   public Optional<OrdersDto> makeOrder(Long id, List<Long> giftCertificateDtoIds) {
     User user =
         userRepository
-            .getEntityBySpecification(new GetUserByIdSpecification(id))
+            .getEntity(new GetUserByIdSpecification(id))
             .orElseThrow(
                 () ->
                     new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
@@ -120,11 +119,11 @@ public class UserServiceImpl implements UserService {
         giftCertificates.stream()
             .map(GiftCertificate::getPrice)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
-    BigDecimal account = user.getAccount();
+    BigDecimal account = user.getBalance();
     if (account.compareTo(cost) < 0) {
       throw new InsufficientFundInAccount("The user doesn't have enough funds in the account");
     }
-    user.setAccount(account.subtract(cost));
+    user.setBalance(account.subtract(cost));
     return cost;
   }
 
@@ -133,7 +132,7 @@ public class UserServiceImpl implements UserService {
     for (Long giftCertificateId : giftCertificateDtoIds) {
       GiftCertificate giftCertificate =
           giftCertificateRepository
-              .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(giftCertificateId))
+              .getEntity(new GetGiftCertificatesByIdSpecification(giftCertificateId))
               .orElseThrow(
                   () ->
                       new EntityNotFoundException(
@@ -158,25 +157,14 @@ public class UserServiceImpl implements UserService {
   @Override
   public Optional<UserDto> getById(long id) {
     return userRepository
-        .getEntityBySpecification(new GetUserByIdSpecification(id))
+        .getEntity(new GetUserByIdSpecification(id))
         .map(userDtoBuilder::build);
   }
 
   @Override
   public Optional<TagDto> getMostWidelyUsedTagByUserId(Long id) {
-    List<TagDto> tagDto =
-        tagRepository.getEntityListBySpecification(new GetMostWidelyUsedTagSpecification(id))
-            .stream()
-            .map(tagDtoBuilder::build)
-            .collect(Collectors.toList());
-    return getMostWidelyTagFromList(tagDto);
-  }
-
-  private Optional<TagDto> getMostWidelyTagFromList(List<TagDto> tagDtos) {
-    if (!tagDtos.isEmpty()) {
-      return Optional.of(tagDtos.get(FIST_ELEMENT));
-    } else {
-      return Optional.empty();
-    }
+    return tagRepository
+        .getEntity(new GetMostWidelyUsedTagSpecification(id))
+        .map(tagDtoBuilder::build);
   }
 }

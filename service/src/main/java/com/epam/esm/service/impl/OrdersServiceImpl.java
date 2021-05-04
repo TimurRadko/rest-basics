@@ -36,7 +36,7 @@ public class OrdersServiceImpl implements OrderService {
   @Override
   public Optional<OrdersDto> getById(long id) {
     return ordersRepository
-        .getEntityBySpecification(new GetOrderByIdSpecification(id))
+        .getEntity(new GetOrderByIdSpecification(id))
         .map(ordersDtoBuilder::build);
   }
 
@@ -46,7 +46,7 @@ public class OrdersServiceImpl implements OrderService {
       throw new PageNotValidException(pageValidator.getErrorMessage());
     }
     List<Orders> orders =
-        ordersRepository.getEntityListWithPaginationBySpecification(
+        ordersRepository.getEntityListWithPagination(
             new GetAllOrdersByUserIdSpecification(id), page, size);
     return orders.stream().map(ordersDtoBuilder::build).collect(Collectors.toList());
   }

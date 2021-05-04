@@ -26,19 +26,19 @@ public class User implements TableEntity {
   @Column(name = "password")
   private String password;
 
-  @Column(name = "account")
-  private BigDecimal account;
+  @Column(name = "balance")
+  private BigDecimal balance;
 
   @OneToMany(mappedBy = "user")
   private Set<Orders> orders;
 
   public User() {}
 
-  public User(Long id, String login, String password, BigDecimal account) {
+  public User(Long id, String login, String password, BigDecimal balance) {
     this.id = id;
     this.login = login;
     this.password = password;
-    this.account = account;
+    this.balance = balance;
   }
 
   @Override
@@ -67,12 +67,12 @@ public class User implements TableEntity {
     this.password = password;
   }
 
-  public BigDecimal getAccount() {
-    return account;
+  public BigDecimal getBalance() {
+    return balance;
   }
 
-  public void setAccount(BigDecimal account) {
-    this.account = account;
+  public void setBalance(BigDecimal balance) {
+    this.balance = balance;
   }
 
   public Set<Orders> getOrders() {
@@ -105,9 +105,9 @@ public class User implements TableEntity {
         : user.getPassword() != null) {
       return false;
     }
-    return getAccount() != null
-        ? getAccount().equals(user.getAccount())
-        : user.getAccount() == null;
+    return getBalance() != null
+        ? getBalance().equals(user.getBalance())
+        : user.getBalance() == null;
   }
 
   @Override
@@ -115,7 +115,7 @@ public class User implements TableEntity {
     int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getLogin() != null ? getLogin().hashCode() : 0);
     result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
-    result = 31 * result + (getAccount() != null ? getAccount().hashCode() : 0);
+    result = 31 * result + (getBalance() != null ? getBalance().hashCode() : 0);
     return result;
   }
 
@@ -130,8 +130,8 @@ public class User implements TableEntity {
         + ", password='"
         + password
         + '\''
-        + ", account="
-        + account
+        + ", balance="
+        + balance
         + '}';
   }
 }

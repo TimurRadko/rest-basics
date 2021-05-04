@@ -25,14 +25,14 @@ public class OrdersRepositoryImpl implements OrdersRepository {
   }
 
   @Override
-  public List<Orders> getEntityListBySpecification(Specification<Orders> specification) {
+  public List<Orders> getEntityList(Specification<Orders> specification) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Orders> criteriaQuery = specification.getCriteriaQuery(builder);
     return entityManager.createQuery(criteriaQuery).getResultList();
   }
 
   @Override
-  public List<Orders> getEntityListWithPaginationBySpecification(
+  public List<Orders> getEntityListWithPagination(
       Specification<Orders> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Orders> criteriaQuery = specification.getCriteriaQuery(builder);
@@ -44,7 +44,7 @@ public class OrdersRepositoryImpl implements OrdersRepository {
   }
 
   @Override
-  public Optional<Orders> getEntityBySpecification(Specification<Orders> specification) {
+  public Optional<Orders> getEntity(Specification<Orders> specification) {
     try {
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();
       CriteriaQuery<Orders> criteriaQuery = specification.getCriteriaQuery(builder);

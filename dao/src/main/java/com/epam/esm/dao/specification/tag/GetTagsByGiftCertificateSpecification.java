@@ -10,10 +10,10 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
-public final class GetAllTagsAssociatedWithGiftCertificates implements Specification<Tag> {
+public final class GetTagsByGiftCertificateSpecification implements Specification<Tag> {
   private final long id;
 
-  public GetAllTagsAssociatedWithGiftCertificates(long id) {
+  public GetTagsByGiftCertificateSpecification(long id) {
     this.id = id;
   }
 

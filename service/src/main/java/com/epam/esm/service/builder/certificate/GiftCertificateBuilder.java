@@ -20,24 +20,44 @@ public class GiftCertificateBuilder {
 
   public GiftCertificate buildNewParameterGiftCertificate(
       GiftCertificate existingGiftCertificate, GiftCertificateDto giftCertificateDto) {
+    addName(existingGiftCertificate, giftCertificateDto);
+    addDescription(existingGiftCertificate, giftCertificateDto);
+    addPrice(existingGiftCertificate, giftCertificateDto);
+    addDuration(existingGiftCertificate, giftCertificateDto);
+    setTagsFromTagDtos(existingGiftCertificate, giftCertificateDto);
+    return existingGiftCertificate;
+  }
+
+  private void addName(
+      GiftCertificate existingGiftCertificate, GiftCertificateDto giftCertificateDto) {
     String name = giftCertificateDto.getName();
-    String description = giftCertificateDto.getDescription();
-    BigDecimal price = giftCertificateDto.getPrice();
-    Integer duration = giftCertificateDto.getDuration();
     if (name != null) {
       existingGiftCertificate.setName(name);
     }
+  }
+
+  private void addDescription(
+      GiftCertificate existingGiftCertificate, GiftCertificateDto giftCertificateDto) {
+    String description = giftCertificateDto.getDescription();
     if (description != null) {
       existingGiftCertificate.setDescription(description);
     }
+  }
+
+  private void addPrice(
+      GiftCertificate existingGiftCertificate, GiftCertificateDto giftCertificateDto) {
+    BigDecimal price = giftCertificateDto.getPrice();
     if (price != null) {
       existingGiftCertificate.setPrice(price);
     }
+  }
+
+  private void addDuration(
+      GiftCertificate existingGiftCertificate, GiftCertificateDto giftCertificateDto) {
+    Integer duration = giftCertificateDto.getDuration();
     if (duration != null) {
       existingGiftCertificate.setDuration(duration);
     }
-    setTagsFromTagDtos(existingGiftCertificate, giftCertificateDto);
-    return existingGiftCertificate;
   }
 
   public GiftCertificate build(GiftCertificateDto giftCertificateDto) {

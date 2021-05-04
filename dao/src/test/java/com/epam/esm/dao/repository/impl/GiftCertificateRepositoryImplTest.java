@@ -5,7 +5,7 @@ import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.specification.Specification;
 import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByIdSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNameDescrTagsSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesBySeveralSearchParametersSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -212,7 +212,7 @@ class GiftCertificateRepositoryImplTest {
     // given
     List<GiftCertificate> expected = Collections.singletonList(secondGiftCertificate);
     Specification<GiftCertificate> specification =
-        new GetGiftCertificatesByNameDescrTagsSpecification("A", null, null, null);
+        new GetGiftCertificatesBySeveralSearchParametersSpecification("A", null, null, null);
     CriteriaQuery<GiftCertificate> criteriaQuery = specification.getCriteriaQuery(builder);
     // when
     List<GiftCertificate> actual =
@@ -231,7 +231,7 @@ class GiftCertificateRepositoryImplTest {
     // given
     List<GiftCertificate> expected = Collections.singletonList(secondGiftCertificate);
     Specification<GiftCertificate> specification =
-        new GetGiftCertificatesByNameDescrTagsSpecification(null, "sec", null, null);
+        new GetGiftCertificatesBySeveralSearchParametersSpecification(null, "sec", null, null);
     CriteriaQuery<GiftCertificate> criteriaQuery = specification.getCriteriaQuery(builder);
     // when
     List<GiftCertificate> actual =

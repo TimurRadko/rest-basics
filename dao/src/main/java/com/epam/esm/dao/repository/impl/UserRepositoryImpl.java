@@ -5,7 +5,6 @@ import com.epam.esm.dao.repository.UserRepository;
 import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -24,14 +23,14 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public List<User> getEntityListBySpecification(Specification<User> specification) {
+  public List<User> getEntityList(Specification<User> specification) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<User> criteriaQuery = specification.getCriteriaQuery(builder);
     return entityManager.createQuery(criteriaQuery).getResultList();
   }
 
   @Override
-  public List<User> getEntityListWithPaginationBySpecification(
+  public List<User> getEntityListWithPagination(
       Specification<User> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<User> criteriaQuery = specification.getCriteriaQuery(builder);
@@ -43,7 +42,7 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<User> getEntityBySpecification(Specification<User> specification) {
+  public Optional<User> getEntity(Specification<User> specification) {
     try {
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();
       CriteriaQuery<User> criteriaQuery = specification.getCriteriaQuery(builder);
@@ -54,7 +53,6 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  @Transactional
   public Optional<User> update(User user) {
     return Optional.of(entityManager.merge(user));
   }

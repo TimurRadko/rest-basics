@@ -7,7 +7,7 @@ import com.epam.esm.dao.repository.TagRepository;
 import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesAssociatedWithOrders;
 import com.epam.esm.dao.specification.gift.GetAllGiftCertificatesSpecification;
 import com.epam.esm.dao.specification.gift.GetGiftCertificatesByIdSpecification;
-import com.epam.esm.dao.specification.gift.GetGiftCertificatesByNameDescrTagsSpecification;
+import com.epam.esm.dao.specification.gift.GetGiftCertificatesBySeveralSearchParametersSpecification;
 import com.epam.esm.dao.specification.tag.GetAllTagsByGiftCertificatesIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
@@ -96,10 +96,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     Optional<Tag> optionalExistingTag;
     if (tagDto.getId() == null) {
       optionalExistingTag =
-          tagRepository.getEntityBySpecification(new GetTagByNameSpecification(tagDto.getName()));
+          tagRepository.getEntity(new GetTagByNameSpecification(tagDto.getName()));
     } else {
       optionalExistingTag =
-          tagRepository.getEntityBySpecification(new GetTagByIdSpecification(tagDto.getId()));
+          tagRepository.getEntity(new GetTagByIdSpecification(tagDto.getId()));
       if (optionalExistingTag.isEmpty()) {
         throw new EntityNotFoundException(
             "The Tag with id = " + tagDto.getId() + " cannot be created in the database");
@@ -130,8 +130,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       return getAll(sorts, page, size);
     }
     return giftCertificateRepository
-        .getEntityListWithPaginationBySpecification(
-            new GetGiftCertificatesByNameDescrTagsSpecification(name, description, tagNames, sorts),
+        .getEntityListWithPagination(
+            new GetGiftCertificatesBySeveralSearchParametersSpecification(name, description, tagNames, sorts),
             page,
             size)
         .stream()
@@ -141,7 +141,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   private List<GiftCertificateDto> getAll(List<String> sort, Integer page, Integer size) {
     return giftCertificateRepository
-        .getEntityListWithPaginationBySpecification(
+        .getEntityListWithPagination(
             new GetAllGiftCertificatesSpecification(sort), page, size)
         .stream()
         .map((giftCertificateDtoBuilder::build))
@@ -151,7 +151,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   @Override
   public Optional<GiftCertificateDto> getById(long id) {
     Optional<GiftCertificate> optionalGiftCertificate =
-        giftCertificateRepository.getEntityBySpecification(
+        giftCertificateRepository.getEntity(
             new GetGiftCertificatesByIdSpecification(id));
     return optionalGiftCertificate.map(giftCertificateDtoBuilder::build);
   }
@@ -184,7 +184,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   private GiftCertificate getExistingGiftCertificate(long id) {
     return giftCertificateRepository
-        .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(id))
+        .getEntity(new GetGiftCertificatesByIdSpecification(id))
         .orElseThrow(
             () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
   }
@@ -226,7 +226,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   private GiftCertificate getGiftCertificateById(Long id) {
     return giftCertificateRepository
-        .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(id))
+        .getEntity(new GetGiftCertificatesByIdSpecification(id))
         .orElseThrow(
             () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
   }
@@ -240,7 +240,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
   private void deletingNonTransmittedTags(long id, Set<TagDto> tagDtos) {
     List<Tag> existingTags =
-        tagRepository.getEntityListBySpecification(
+        tagRepository.getEntityList(
             new GetAllTagsByGiftCertificatesIdSpecification(id));
     Set<Tag> tags = tagDtos.stream().map(tagBuilder::build).collect(Collectors.toSet());
     for (Tag existingTag : existingTags) {
@@ -254,12 +254,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   @Transactional
   public int delete(long id) {
     giftCertificateRepository
-        .getEntityBySpecification(new GetGiftCertificatesByIdSpecification(id))
+        .getEntity(new GetGiftCertificatesByIdSpecification(id))
         .orElseThrow(
             () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
 
     List<GiftCertificate> existingGiftCertificate =
-        giftCertificateRepository.getEntityListBySpecification(
+        giftCertificateRepository.getEntityList(
             new GetAllGiftCertificatesAssociatedWithOrders(id));
 
     if (!existingGiftCertificate.isEmpty()) {

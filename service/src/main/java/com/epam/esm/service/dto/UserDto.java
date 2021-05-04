@@ -9,15 +9,15 @@ import java.util.Set;
 public class UserDto extends RepresentationModel<UserDto> {
   private Long id;
   private String login;
-  private BigDecimal account;
+  private BigDecimal balance;
   private Set<OrdersDto> orders;
 
   public UserDto() {}
 
-  public UserDto(Long id, String login, BigDecimal account, Set<OrdersDto> orders) {
+  public UserDto(Long id, String login, BigDecimal balance, Set<OrdersDto> orders) {
     this.id = id;
     this.login = login;
-    this.account = account;
+    this.balance = balance;
     this.orders = orders;
   }
 
@@ -37,12 +37,12 @@ public class UserDto extends RepresentationModel<UserDto> {
     this.login = login;
   }
 
-  public BigDecimal getAccount() {
-    return account;
+  public BigDecimal getBalance() {
+    return balance;
   }
 
-  public void setAccount(BigDecimal account) {
-    this.account = account;
+  public void setBalance(BigDecimal balance) {
+    this.balance = balance;
   }
 
   public Set<OrdersDto> getOrders() {
@@ -70,9 +70,9 @@ public class UserDto extends RepresentationModel<UserDto> {
     if (getLogin() != null ? !getLogin().equals(userDto.getLogin()) : userDto.getLogin() != null) {
       return false;
     }
-    if (getAccount() != null
-        ? !getAccount().equals(userDto.getAccount())
-        : userDto.getAccount() != null) {
+    if (getBalance() != null
+        ? !getBalance().equals(userDto.getBalance())
+        : userDto.getBalance() != null) {
       return false;
     }
     return getOrders() != null
@@ -84,7 +84,7 @@ public class UserDto extends RepresentationModel<UserDto> {
   public int hashCode() {
     int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getLogin() != null ? getLogin().hashCode() : 0);
-    result = 31 * result + (getAccount() != null ? getAccount().hashCode() : 0);
+    result = 31 * result + (getBalance() != null ? getBalance().hashCode() : 0);
     result = 31 * result + (getOrders() != null ? getOrders().hashCode() : 0);
     return result;
   }
@@ -97,8 +97,8 @@ public class UserDto extends RepresentationModel<UserDto> {
         + ", login='"
         + login
         + '\''
-        + ", account="
-        + account
+        + ", balance="
+        + balance
         + ", orderDtos="
         + orders
         + '}';
