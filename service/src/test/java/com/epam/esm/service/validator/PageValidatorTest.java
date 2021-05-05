@@ -14,7 +14,7 @@ class PageValidatorTest {
   private static final String NULL_PAGE_AND_SIZE_MESSAGE =
       "The page mustn't be null\nThe size mustn't be null";
   private static final String LESS_THAN_ZERO_PAGE_MESSAGE = "The page must be more than 0";
-  private static final String LESS_THAN_ZERO_SIZE_MESSAGE = "The page must be positive";
+  private static final String LESS_THAN_ZERO_SIZE_MESSAGE = "The size must be more than 0";
   private PageDto pageDto;
 
   @BeforeEach

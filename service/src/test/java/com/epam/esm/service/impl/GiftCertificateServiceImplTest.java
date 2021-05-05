@@ -398,7 +398,7 @@ class GiftCertificateServiceImplTest {
     when(giftCertificateValidator.isValid(any())).thenReturn(true);
     when(giftCertificateRepository.getEntity(any()))
         .thenReturn(Optional.of(expectedGiftCertificate));
-    when(giftCertificateDtoBuilder.build(expectedGiftCertificate))
+    when(giftCertificateDtoBuilder.buildWithTagDtos(expectedGiftCertificate, new HashSet<>()))
         .thenReturn(expectedGiftCertificateDto);
     when(giftCertificateRepository.update(expectedGiftCertificate))
         .thenReturn(Optional.of(newPriceGiftCertificate));

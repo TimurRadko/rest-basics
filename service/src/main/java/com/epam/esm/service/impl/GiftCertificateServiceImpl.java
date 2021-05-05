@@ -188,6 +188,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   @Override
+  @Transactional
   public Optional<GiftCertificateDto> updateOneField(
       long id, GiftCertificateDto giftCertificateDto) {
     GiftCertificate giftCertificate = getGiftCertificateById(id);
@@ -199,10 +200,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       throw new EntityNotValidMultipleException(giftCertificateValidator.getErrorMessage());
     }
     Set<TagDto> tagDtos = giftCertificateDto.getTags();
-    tagDtos = saveTags(tagDtos);
-    deletingNonTransmittedTags(id, tagDtos);
-    giftCertificate = updateGiftCertificate(newParameterGiftCertificate);
-    return Optional.of(giftCertificateDtoBuilder.buildWithTagDtos(giftCertificate, tagDtos));
+    if (tagDtos != null) {
+      tagDtos = saveTags(tagDtos);
+      deletingNonTransmittedTags(id, tagDtos);
+    } else {
+      tagDtos =
+          tagRepository.getEntityList(new GetAllTagsByGiftCertificatesIdSpecification(id)).stream()
+              .map(tagDtoBuilder::build)
+              .collect(Collectors.toSet());
+    }
+    giftCertificate = updateGiftCertificate(newParameterGiftCertificate, tagDtos);
+    return Optional.of(giftCertificateDtoBuilder.build(giftCertificate));
   }
 
   private GiftCertificate getNewParameterGiftCertificate(
@@ -251,7 +259,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
   }
 
-  private GiftCertificate updateGiftCertificate(GiftCertificate giftCertificate) {
+  private GiftCertificate updateGiftCertificate(
+      GiftCertificate giftCertificate, Set<TagDto> tagDtos) {
+    giftCertificate.setTags(tagDtos.stream().map(tagBuilder::build).collect(Collectors.toSet()));
     return giftCertificateRepository
         .update(giftCertificate)
         .orElseThrow(
