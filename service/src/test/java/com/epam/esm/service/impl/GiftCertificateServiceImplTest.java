@@ -143,8 +143,7 @@ class GiftCertificateServiceImplTest {
   void testGetAll_shouldReturnGiftCertificateList_whenGiftCertificatesExist() {
     // given
     expectedGiftCertificates.add(expectedGiftCertificate);
-    when(giftCertificateRepository.getEntityListWithPagination(
-            any(), anyInt(), anyInt()))
+    when(giftCertificateRepository.getEntityListWithPagination(any(), anyInt(), anyInt()))
         .thenReturn(expectedGiftCertificates);
     when(giftCertificateBuilder.build(any())).thenReturn(expectedGiftCertificate);
     when(pageValidator.isValid(any())).thenReturn(true);
@@ -341,13 +340,10 @@ class GiftCertificateServiceImplTest {
         .thenReturn(Optional.ofNullable(expectedGiftCertificate));
     when(tagRepository.getEntity(any())).thenReturn(Optional.of(firstTag));
     when(tagDtoBuilder.build(firstTag)).thenReturn(firstTagDto);
-    when(tagBuilder.build(firstTagDto)).thenReturn(firstTag);
     when(giftCertificateRepository.update(any())).thenReturn(Optional.of(expectedGiftCertificate));
     GiftCertificateDto incomingGiftCertificateDto = expectedGiftCertificateDto;
     incomingGiftCertificateDto.setTags(Set.of(firstTagDto));
     when(giftCertificateDtoBuilder.build(any())).thenReturn(changedGiftCertificateDto);
-    when(tagRepository.getEntityList(any()))
-        .thenReturn(Collections.singletonList(firstTag));
     // when
     Optional<GiftCertificateDto> actualGiftCertificateDto =
         giftCertificateService.update(ID_FOR_MANIPULATIONS, incomingGiftCertificateDto);
@@ -363,13 +359,10 @@ class GiftCertificateServiceImplTest {
         .thenReturn(Optional.ofNullable(expectedGiftCertificate));
     when(tagRepository.getEntity(any())).thenReturn(Optional.of(firstTag));
     when(tagDtoBuilder.build(firstTag)).thenReturn(firstTagDto);
-    when(tagBuilder.build(firstTagDto)).thenReturn(firstTag);
     when(giftCertificateRepository.update(any())).thenReturn(Optional.of(expectedGiftCertificate));
     GiftCertificateDto incomingGiftCertificateDto = expectedGiftCertificateDto;
     incomingGiftCertificateDto.setTags(Set.of(firstTagDto));
     when(giftCertificateRepository.update(any())).thenReturn(Optional.empty());
-    when(tagRepository.getEntityList(any()))
-        .thenReturn(Collections.singletonList(firstTag));
     // when
     // then
     assertThrows(
@@ -401,7 +394,7 @@ class GiftCertificateServiceImplTest {
     when(giftCertificateDtoBuilder.buildWithTagDtos(expectedGiftCertificate, new HashSet<>()))
         .thenReturn(expectedGiftCertificateDto);
     when(giftCertificateRepository.update(expectedGiftCertificate))
-        .thenReturn(Optional.of(newPriceGiftCertificate));
+        .thenReturn(Optional.of(expectedGiftCertificate));
     // when
     Optional<GiftCertificateDto> actualOptionalGiftCertificate =
         giftCertificateService.updateOneField(ID_FOR_MANIPULATIONS, expectedGiftCertificateDto);

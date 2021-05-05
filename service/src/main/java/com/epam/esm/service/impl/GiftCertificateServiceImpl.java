@@ -164,7 +164,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     Set<TagDto> tagDtos = giftCertificateDto.getTags();
     tagDtos = saveTags(tagDtos);
-    deletingNonTransmittedTags(id, tagDtos);
     giftCertificateDto.setTags(tagDtos);
 
     GiftCertificate giftCertificate =
@@ -202,15 +201,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     Set<TagDto> tagDtos = giftCertificateDto.getTags();
     if (tagDtos != null) {
       tagDtos = saveTags(tagDtos);
-      deletingNonTransmittedTags(id, tagDtos);
     } else {
       tagDtos =
           tagRepository.getEntityList(new GetAllTagsByGiftCertificatesIdSpecification(id)).stream()
               .map(tagDtoBuilder::build)
               .collect(Collectors.toSet());
     }
-    giftCertificate = updateGiftCertificate(newParameterGiftCertificate, tagDtos);
-    return Optional.of(giftCertificateDtoBuilder.build(giftCertificate));
+    updateGiftCertificate(newParameterGiftCertificate, tagDtos);
+    return Optional.of(
+        giftCertificateDtoBuilder.buildWithTagDtos(newParameterGiftCertificate, tagDtos));
   }
 
   private GiftCertificate getNewParameterGiftCertificate(
@@ -259,24 +258,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
   }
 
-  private GiftCertificate updateGiftCertificate(
-      GiftCertificate giftCertificate, Set<TagDto> tagDtos) {
+  private void updateGiftCertificate(GiftCertificate giftCertificate, Set<TagDto> tagDtos) {
     giftCertificate.setTags(tagDtos.stream().map(tagBuilder::build).collect(Collectors.toSet()));
-    return giftCertificateRepository
+    giftCertificateRepository
         .update(giftCertificate)
         .orElseThrow(
             () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
-  }
-
-  private void deletingNonTransmittedTags(long id, Set<TagDto> tagDtos) {
-    List<Tag> existingTags =
-        tagRepository.getEntityList(new GetAllTagsByGiftCertificatesIdSpecification(id));
-    Set<Tag> tags = tagDtos.stream().map(tagBuilder::build).collect(Collectors.toSet());
-    for (Tag existingTag : existingTags) {
-      if (!tags.contains(existingTag)) {
-        tagRepository.delete(existingTag.getId());
-      }
-    }
   }
 
   @Override
