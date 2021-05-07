@@ -19,10 +19,13 @@ public interface OrderService extends Service<OrdersDto> {
   List<OrdersDto> getAllOrdersByUserId(Integer page, Integer size, long id);
 
   /**
-   * * This method describes a general get operation for all Orders, from persistence layer
+   * * This method describes a general get operation for Order by id, from persistence layer
    *
-   * @param id - passed into the method id Entity's parameter that required for work with the DB
+   * @param userId - passed into the method userId Entity's parameter that required for work with
+   *     the DB
+   * @param orderId - passed into the method userId Entity's parameter that required for work with
+   *     the DB
    * @return Optional<OrderDto> - container that is contained OrderDto
    */
-  Optional<OrdersDto> getById(long id);
+  Optional<OrdersDto> getByUserAndOrderId(long userId, long orderId);
 }

@@ -85,14 +85,13 @@ public class UsersController {
     return userDtoLinkBuilder.addLinkToGiftCertificateDtos(ordersDto);
   }
 
-  @GetMapping("/{userId}/orders/{ordersId}")
-  public OrdersDto getOrdersById(@PathVariable Long userId, @PathVariable Long ordersId) {
-    Optional<OrdersDto> optionalOrdersDto = orderService.getById(ordersId);
+  @GetMapping("/{userId}/orders/{orderId}")
+  public OrdersDto getOrdersById(@PathVariable Long userId, @PathVariable Long orderId) {
+    Optional<OrdersDto> optionalOrdersDto = orderService.getByUserAndOrderId(userId, orderId);
     OrdersDto ordersDto =
         optionalOrdersDto.orElseThrow(
             () ->
-                new EntityNotFoundException(
-                    "Requested resource not found (id = " + ordersId + ")"));
+                new EntityNotFoundException("Requested resource not found (id = " + orderId + ")"));
     return userDtoLinkBuilder.addLinkToOrderDtoUsingUserId(ordersDto, userId);
   }
 

@@ -8,6 +8,8 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.PageDto;
+import com.epam.esm.service.exception.EmptyOrderException;
+import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.validator.PageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +36,18 @@ public class OrdersServiceImpl implements OrderService {
   }
 
   @Override
-  public Optional<OrdersDto> getById(long id) {
-    return ordersRepository
-        .getEntity(new GetOrderByIdSpecification(id))
-        .map(ordersDtoBuilder::build);
+  public Optional<OrdersDto> getByUserAndOrderId(long userId, long orderId) {
+    List<Orders> existingOrders =
+        ordersRepository.getEntityList(new GetAllOrdersByUserIdSpecification(userId));
+    Orders order =
+        ordersRepository
+            .getEntity(new GetOrderByIdSpecification(orderId))
+            .orElseThrow(() -> new EntityNotFoundException("The Order not exists in the DB"));
+    if (existingOrders.isEmpty() || !existingOrders.contains(order)) {
+      throw new EmptyOrderException(
+          "User with id=" + userId + " doesn't have order with id=" + orderId);
+    }
+    return Optional.of(ordersDtoBuilder.build(order));
   }
 
   @Override
@@ -49,5 +59,12 @@ public class OrdersServiceImpl implements OrderService {
         ordersRepository.getEntityListWithPagination(
             new GetAllOrdersByUserIdSpecification(id), page, size);
     return orders.stream().map(ordersDtoBuilder::build).collect(Collectors.toList());
+  }
+
+  @Override
+  public Optional<OrdersDto> getById(long id) {
+    return ordersRepository
+        .getEntity(new GetOrderByIdSpecification(id))
+        .map(ordersDtoBuilder::build);
   }
 }

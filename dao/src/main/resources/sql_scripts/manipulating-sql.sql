@@ -123,7 +123,17 @@ from tags tag0_
          inner join orders orders4_ on orders3_.order_id = orders4_.id
 where orders4_.user_id = 1
 group by tag0_.id
-order by sum(orders4_.cost) desc
+order by sum(orders4_.cost) desc;
+
+select tags0_.gift_certificate_id as gift_cer1_2_0_,
+       tags0_.tag_id              as tag_id2_2_0_,
+       tag1_.id                   as id1_5_1_,
+       tag1_.name                 as name2_5_1_
+from gift_certificates_tags tags0_
+         inner join tags tag1_ on tags0_.tag_id = tag1_.id
+where tags0_.gift_certificate_id=?;
+
+
 
 
 
