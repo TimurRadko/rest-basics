@@ -73,7 +73,8 @@ class UserServiceImplTest {
   private static final long FIRST_ORDER_ID = 1L;
   private static final BigDecimal FIRST_ORDER_COST = BigDecimal.valueOf(10);
   private static final LocalDateTime FIRST_ORDER_CREATE_TIME = LocalDateTime.now();
-  private final Orders order = new Orders(FIRST_ORDER_ID, FIRST_ORDER_COST, FIRST_ORDER_CREATE_TIME);
+  private final Orders order =
+      new Orders(FIRST_ORDER_ID, FIRST_ORDER_COST, FIRST_ORDER_CREATE_TIME);
   private final Set<TagDto> emptyTagSet = new HashSet<>();
   private final GiftCertificate giftCertificate =
       new GiftCertificate(
@@ -123,8 +124,7 @@ class UserServiceImplTest {
   void testGetAll_shouldReturnUsers_whenTheyAreExistInDatabase() {
     // given
     when(pageValidator.isValid(any())).thenReturn(true);
-    when(userRepository.getEntityListWithPagination(any(), anyInt(), anyInt()))
-        .thenReturn(users);
+    when(userRepository.getEntityListWithPagination(any(), anyInt(), anyInt())).thenReturn(users);
     when(userDtoBuilder.build(user)).thenReturn(userDto);
     // when
     List<UserDto> actualUserDtos =
@@ -148,7 +148,9 @@ class UserServiceImplTest {
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     // when
     // then
-    assertThrows(EmptyOrderException.class, () -> userService.makeOrder(USER_ID, new GiftCertificateDtoIds()));
+    assertThrows(
+        EmptyOrderException.class,
+        () -> userService.makeOrder(USER_ID, new GiftCertificateDtoIds()));
   }
 
   @Test
@@ -158,7 +160,8 @@ class UserServiceImplTest {
     // when
     // then
     assertThrows(
-        EmptyOrderException.class, () -> userService.makeOrder(USER_ID, new GiftCertificateDtoIds()));
+        EmptyOrderException.class,
+        () -> userService.makeOrder(USER_ID, new GiftCertificateDtoIds()));
   }
 
   @Test
@@ -167,12 +170,12 @@ class UserServiceImplTest {
     User poorUser = user;
     poorUser.setBalance(BigDecimal.valueOf(0));
     when(userRepository.getEntity(any())).thenReturn(Optional.of(poorUser));
-    when(giftCertificateRepository.getEntity(any()))
-        .thenReturn(Optional.of(giftCertificate));
+    when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.of(giftCertificate));
     // when
     // then
     assertThrows(
-        InsufficientFundInAccount.class, () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));
+        InsufficientFundInAccount.class,
+        () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));
   }
 
   @Test
@@ -189,8 +192,7 @@ class UserServiceImplTest {
   void testMakeOrder_shouldThrowEntityNotFoundException_whenUserNotUpdated() {
     // given
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
-    when(giftCertificateRepository.getEntity(any()))
-        .thenReturn(Optional.of(giftCertificate));
+    when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.of(giftCertificate));
     // when
     // then
     assertThrows(
@@ -202,12 +204,12 @@ class UserServiceImplTest {
     // given
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     when(userDtoBuilder.build(any())).thenReturn(userDto);
-    when(giftCertificateRepository.getEntity(any()))
-        .thenReturn(Optional.of(giftCertificate));
+    when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.of(giftCertificate));
     when(userRepository.update(user)).thenReturn(Optional.of(user));
     // when
     // then
-    assertThrows(ServiceException.class, () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));
+    assertThrows(
+        ServiceException.class, () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));
   }
 
   @Test
@@ -215,8 +217,7 @@ class UserServiceImplTest {
     // given
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     when(userDtoBuilder.build(any())).thenReturn(userDto);
-    when(giftCertificateRepository.getEntity(any()))
-        .thenReturn(Optional.of(giftCertificate));
+    when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.of(giftCertificate));
     when(userRepository.update(user)).thenReturn(Optional.of(user));
     when(ordersRepository.save(any())).thenReturn(Optional.of(order));
     when(ordersDtoBuilder.build(any())).thenReturn(orderDto);
@@ -241,8 +242,7 @@ class UserServiceImplTest {
   @Test
   void testGetMostWidelyUsedTag_shouldReturnTag_whenItIsExists() {
     // given
-    when(tagRepository.getEntity(any()))
-        .thenReturn(Optional.of(mostWideTag));
+    when(tagRepository.getEntity(any())).thenReturn(Optional.of(mostWideTag));
     when(tagDtoBuilder.build(mostWideTag)).thenReturn(expectedMostWideTag);
     // when
     Optional<TagDto> actualOptionalTag = userService.getMostWidelyUsedTagByUserId(USER_ID);

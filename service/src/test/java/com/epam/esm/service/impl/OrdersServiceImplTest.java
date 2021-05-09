@@ -6,6 +6,7 @@ import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.validator.PageValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +45,8 @@ class OrdersServiceImplTest {
   private static final long FIRST_ORDER_ID = 1L;
   private static final BigDecimal FIRST_ORDER_COST = new BigDecimal("10");
   private static final LocalDateTime FIRST_ORDER_CREATE_TIME = LocalDateTime.now();
-  private final Orders order = new Orders(FIRST_ORDER_ID, FIRST_ORDER_COST, FIRST_ORDER_CREATE_TIME);
+  private final Orders order =
+      new Orders(FIRST_ORDER_ID, FIRST_ORDER_COST, FIRST_ORDER_CREATE_TIME);
   private final Set<TagDto> emptyTagSet = new HashSet<>();
   private final GiftCertificateDto giftCertificateDto =
       new GiftCertificateDto(
@@ -102,7 +104,7 @@ class OrdersServiceImplTest {
   }
 
   @Test
-  void testGetById_shouldReturnOrders_whenItExist() {
+  void testGetById_shouldReturnOrders_whenItExists() {
     // given
     when(ordersRepository.getEntity(any())).thenReturn(Optional.of(order));
     when(ordersDtoBuilder.build(order)).thenReturn(orderDto);
@@ -110,5 +112,30 @@ class OrdersServiceImplTest {
     Optional<OrdersDto> actualOptionalOrdersDto = ordersService.getById(DEFAULT_USER_ID);
     // then
     assertEquals(Optional.of(orderDto), actualOptionalOrdersDto);
+  }
+
+  @Test
+  void testGetByUserAndOrderId_shouldReturnCorrectOrders_whenItExists() {
+    // given
+    when(ordersRepository.getEntityList(any())).thenReturn(Collections.singletonList(order));
+    when(ordersRepository.getEntity(any())).thenReturn(Optional.of(order));
+    when(ordersDtoBuilder.build(order)).thenReturn(orderDto);
+    // when
+    Optional<OrdersDto> actualOptionalOrdersDto =
+        ordersService.getByUserAndOrderId(DEFAULT_USER_ID, FIRST_ORDER_ID);
+    // then
+    assertEquals(Optional.of(orderDto), actualOptionalOrdersDto);
+  }
+
+  @Test
+  void testGetByUserAndOrderId_shouldThrowEmptyOrderException_whenItDoesNotExist() {
+    // given
+    when(ordersRepository.getEntityList(any())).thenReturn(new ArrayList<>());
+    when(ordersRepository.getEntity(any())).thenReturn(Optional.of(order));
+    // when
+    // then
+    assertThrows(
+        EmptyOrderException.class,
+        () -> ordersService.getByUserAndOrderId(DEFAULT_USER_ID, FIRST_ORDER_ID));
   }
 }

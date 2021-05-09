@@ -64,7 +64,6 @@ class GiftCertificateServiceImplTest {
   private static final String PART_DESCRIPTION = "es";
   private GiftCertificate expectedGiftCertificate;
   private GiftCertificateDto expectedGiftCertificateDto;
-  private GiftCertificate newPriceGiftCertificate;
   private GiftCertificateDto newPriceGiftCertificateDto;
   private final List<GiftCertificateDto> expectedGiftCertificateDtos = new ArrayList<>();
   private final List<GiftCertificate> expectedGiftCertificates = new ArrayList<>();
@@ -89,7 +88,7 @@ class GiftCertificateServiceImplTest {
     expectedGiftCertificateDto =
         new GiftCertificateDto(ID, NAME, DESCRIPTION, PRICE, DURATION, NOW, NOW, emptyTagSet);
 
-    newPriceGiftCertificate = expectedGiftCertificate;
+    GiftCertificate newPriceGiftCertificate = expectedGiftCertificate;
     newPriceGiftCertificate.setPrice(BigDecimal.valueOf(24));
     newPriceGiftCertificateDto = expectedGiftCertificateDto;
     newPriceGiftCertificateDto.setPrice(BigDecimal.valueOf(24));
