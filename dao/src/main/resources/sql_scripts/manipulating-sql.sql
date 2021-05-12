@@ -112,8 +112,7 @@ from tags tag0_
          inner join orders orders4_ on orders3_.order_id = orders4_.id
 where orders4_.user_id = 1
 group by tag0_.id
-order by sum(orders4_.cost) desc
-LIMIT 1;
+order by sum(orders4_.cost) desc LIMIT 1;
 
 select tag0_.id as id1_5_, tag0_.name as name2_5_
 from tags tag0_
@@ -131,7 +130,51 @@ select tags0_.gift_certificate_id as gift_cer1_2_0_,
        tag1_.name                 as name2_5_1_
 from gift_certificates_tags tags0_
          inner join tags tag1_ on tags0_.tag_id = tag1_.id
-where tags0_.gift_certificate_id=?;
+where tags0_.gift_certificate_id = ?;
+
+select giftcertif0_.id               as id1_1_0_,
+       tag3_.id                      as id1_5_1_,
+       giftcertif0_.create_date      as create_d2_1_0_,
+       giftcertif0_.description      as descript3_1_0_,
+       giftcertif0_.duration         as duration4_1_0_,
+       giftcertif0_.last_update_date as last_upd5_1_0_,
+       giftcertif0_.name             as name6_1_0_,
+       giftcertif0_.price            as price7_1_0_,
+       tag3_.name                    as name2_5_1_,
+       tags2_.gift_certificate_id    as gift_cer1_2_0__,
+       tags2_.tag_id                 as tag_id2_2_0__
+from gift_certificates giftcertif0_
+         cross join gift_certificates giftcertif1_
+         left outer join gift_certificates_tags tags2_ on giftcertif0_.id = tags2_.gift_certificate_id
+         left outer join tags tag3_ on tags2_.tag_id = tag3_.id
+order by giftcertif1_.name asc;
+
+select distinct giftcertif0_.id               as id1_1_0_,
+                tag2_.id                      as id1_5_1_,
+                giftcertif0_.create_date      as create_d2_1_0_,
+                giftcertif0_.description      as descript3_1_0_,
+                giftcertif0_.duration         as duration4_1_0_,
+                giftcertif0_.last_update_date as last_upd5_1_0_,
+                giftcertif0_.name             as name6_1_0_,
+                giftcertif0_.price            as price7_1_0_,
+                tag2_.name                    as name2_5_1_,
+                tags1_.gift_certificate_id    as gift_cer1_2_0__,
+                tags1_.tag_id                 as tag_id2_2_0__
+from gift_certificates giftcertif0_
+         left outer join gift_certificates_tags tags1_ on giftcertif0_.id = tags1_.gift_certificate_id
+         left outer join tags tag2_ on tags1_.tag_id = tag2_.id
+order by giftcertif0_.name desc;
+
+select tag0_.id as id1_5_, tag0_.name as name2_5_
+from tags tag0_
+         inner join gift_certificates_tags giftcertif1_ on tag0_.id = giftcertif1_.tag_id
+         inner join gift_certificates giftcertif2_ on giftcertif1_.gift_certificate_id = giftcertif2_.id
+         inner join orders_gift_certificates orders3_ on giftcertif2_.id = orders3_.gift_certificate_id
+         inner join orders orders4_ on orders3_.order_id = orders4_.id
+where orders4_.user_id = 5
+group by tag0_.id
+order by sum(orders4_.cost) desc limit 1;
+
 
 
 

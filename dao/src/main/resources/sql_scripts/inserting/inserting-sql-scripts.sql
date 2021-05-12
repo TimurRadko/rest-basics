@@ -1,5 +1,3 @@
-
-
 INSERT INTO gift_certificates (name, description, price, duration, create_date, last_update_date)
 VALUES ('The first', 'The first certificate', 55.0, 14, '2021-03-25 00:00:00.084745', '2020-10-05 00:00:00.084745'),
        ('The second', 'The second certificate', 35.0, 18, '2021-07-07 00:00:00.084745', '2020-11-07 00:00:00.084745'),
@@ -8,12 +6,12 @@ VALUES ('The first', 'The first certificate', 55.0, 14, '2021-03-25 00:00:00.084
 
 
 INSERT INTO tags(name)
-                VALUES ('tag1'),
-                       ('tag2'),
-                       ('tag3'),
-                       ('tag4');
+VALUES ('tag1'),
+       ('tag2'),
+       ('tag3'),
+       ('tag4');
 
-INSERT INTO gift_certificates_tags(gift_certificate_id, tag_id)
+INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id)
 VALUES (1, 1),
        (1, 2),
        (2, 3),
@@ -24,7 +22,7 @@ VALUES (1, 1),
        (4, 2),
        (4, 4);
 
-INSERT INTO users(login, password, account)
+INSERT INTO users(login, password, balance)
 VALUES ('Tom', md5('Tom'), 100),
        ('Jerry', md5('Jerry'), 100),
        ('Spike', md5('Spike'), 100),
@@ -35,8 +33,8 @@ INSERT INTO orders(user_id, cost, order_date)
 VALUES (1, 55.0, '2021-03-25 00:00:00.084745'),
        (2, 67, '2021-03-25 00:00:00.084745');
 
-INSERT INTOorders_gift_certificates(order_id, gift_certificate_id)
-VALUES (1,1),
+INSERT INTO orders_gift_certificates(order_id, gift_certificate_id)
+VALUES (1, 1),
        (2, 2),
        (2, 4);
 

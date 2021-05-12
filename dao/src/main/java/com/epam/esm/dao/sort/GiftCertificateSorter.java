@@ -11,11 +11,9 @@ import java.util.List;
 
 public class GiftCertificateSorter {
 
-  public void sort(CriteriaBuilder builder, List<String> sorts) {
-    CriteriaQuery<GiftCertificate> criteria = builder.createQuery(GiftCertificate.class);
-    Root<GiftCertificate> root = criteria.from(GiftCertificate.class);
+  public void sort(CriteriaQuery<GiftCertificate> criteria, CriteriaBuilder builder, Root<GiftCertificate> root, List<String> sorts) {
     List<Order> orders = new ArrayList<>();
-    nameSorting(builder, root, sorts, orders);
+    nameSort(builder, root, sorts, orders);
     descriptionSort(builder, root, sorts, orders);
     createDateSort(builder, root, sorts, orders);
     lastUpdateDateSort(builder, root, sorts, orders);
@@ -55,7 +53,7 @@ public class GiftCertificateSorter {
     }
   }
 
-  private void nameSorting(
+  private void nameSort(
       CriteriaBuilder builder, Root<GiftCertificate> root, List<String> sorts, List<Order> orders) {
     for (String sort : sorts) {
       if (sort.equals("name-asc")) {
