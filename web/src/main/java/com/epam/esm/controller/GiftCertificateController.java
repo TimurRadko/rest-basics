@@ -1,12 +1,13 @@
-package com.epam.esm.web.controller;
+package com.epam.esm.controller;
 
+import com.epam.esm.link.builder.LinkBuilder;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
-import com.epam.esm.web.link.builder.LinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -40,6 +41,7 @@ public class GiftCertificateController {
   }
 
   @GetMapping()
+  @PreAuthorize("hasAnyAuthority('ROLE_GUEST', 'ROLE_USER', 'USER_ADMIN')")
   public List<GiftCertificateDto> getAll(
       @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "size", required = false) Integer size,
@@ -55,6 +57,7 @@ public class GiftCertificateController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAnyAuthority('ROLE_GUEST', 'ROLE_USER', 'USER_ADMIN')")
   public GiftCertificateDto get(@PathVariable Long id) {
     return giftCertificateDtoLinkBuilder.build(
         giftCertificateService
@@ -66,6 +69,7 @@ public class GiftCertificateController {
 
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("hasAuthority('USER_ADMIN')")
   public GiftCertificateDto save(
       @RequestBody GiftCertificateDto giftCertificateDto,
       HttpServletRequest request,
@@ -86,6 +90,7 @@ public class GiftCertificateController {
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("hasAuthority('USER_ADMIN')")
   public GiftCertificateDto update(
       @PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
     GiftCertificateDto updatedGiftCertificateDto =
@@ -100,12 +105,14 @@ public class GiftCertificateController {
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PreAuthorize("hasAuthority('USER_ADMIN')")
   public void delete(@PathVariable long id) {
     giftCertificateService.delete(id);
   }
 
   @PatchMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("hasAuthority('USER_ADMIN')")
   public GiftCertificateDto updateOneField(
       @PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
     GiftCertificateDto patchingGiftCertificateDto =

@@ -1,6 +1,6 @@
 package com.epam.esm.dao.repository.impl;
 
-import com.epam.esm.dao.entity.User;
+import com.epam.esm.dao.entity.Users;
 import com.epam.esm.dao.repository.UserRepository;
 import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +23,17 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public List<User> getEntityList(Specification<User> specification) {
+  public List<Users> getEntityList(Specification<Users> specification) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<User> criteriaQuery = specification.getCriteriaQuery(builder);
+    CriteriaQuery<Users> criteriaQuery = specification.getCriteriaQuery(builder);
     return entityManager.createQuery(criteriaQuery).getResultList();
   }
 
   @Override
-  public List<User> getEntityListWithPagination(
-      Specification<User> specification, Integer page, Integer size) {
+  public List<Users> getEntityListWithPagination(
+          Specification<Users> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-    CriteriaQuery<User> criteriaQuery = specification.getCriteriaQuery(builder);
+    CriteriaQuery<Users> criteriaQuery = specification.getCriteriaQuery(builder);
     return entityManager
         .createQuery(criteriaQuery)
         .setFirstResult((page - 1) * size)
@@ -42,10 +42,10 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<User> getEntity(Specification<User> specification) {
+  public Optional<Users> getEntity(Specification<Users> specification) {
     try {
       CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-      CriteriaQuery<User> criteriaQuery = specification.getCriteriaQuery(builder);
+      CriteriaQuery<Users> criteriaQuery = specification.getCriteriaQuery(builder);
       return Optional.of(entityManager.createQuery(criteriaQuery).getSingleResult());
     } catch (NoResultException e) {
       return Optional.empty();
@@ -53,7 +53,7 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<User> update(User user) {
-    return Optional.of(entityManager.merge(user));
+  public Optional<Users> update(Users users) {
+    return Optional.of(entityManager.merge(users));
   }
 }

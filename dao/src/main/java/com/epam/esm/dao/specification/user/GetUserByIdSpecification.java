@@ -1,13 +1,13 @@
 package com.epam.esm.dao.specification.user;
 
-import com.epam.esm.dao.entity.User;
+import com.epam.esm.dao.entity.Users;
 import com.epam.esm.dao.specification.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-public final class GetUserByIdSpecification implements Specification<User> {
+public final class GetUserByIdSpecification implements Specification<Users> {
   private final long id;
 
   public GetUserByIdSpecification(long id) {
@@ -15,9 +15,9 @@ public final class GetUserByIdSpecification implements Specification<User> {
   }
 
   @Override
-  public CriteriaQuery<User> getCriteriaQuery(CriteriaBuilder builder) {
-    CriteriaQuery<User> criteria = builder.createQuery(User.class);
-    Root<User> userRoot = criteria.from(User.class);
+  public CriteriaQuery<Users> getCriteriaQuery(CriteriaBuilder builder) {
+    CriteriaQuery<Users> criteria = builder.createQuery(Users.class);
+    Root<Users> userRoot = criteria.from(Users.class);
     criteria.select(userRoot).distinct(true);
     criteria.where(builder.equal(userRoot.get("id"), id));
     return criteria;

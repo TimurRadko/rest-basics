@@ -1,4 +1,4 @@
-package com.epam.esm.web.exception;
+package com.epam.esm.exception;
 
 class ControllerException extends RuntimeException {
   ControllerException(String message) {

@@ -1,13 +1,14 @@
-package com.epam.esm.web.controller;
+package com.epam.esm.controller;
 
+import com.epam.esm.link.builder.LinkBuilder;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.web.link.builder.LinkBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +59,7 @@ public class TagsController {
 
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("hasAuthority('USER_ADMIN')")
   public TagDto save(
       @RequestBody TagDto tagDto, HttpServletRequest request, HttpServletResponse response) {
     Optional<TagDto> optionalTag = tagService.save(tagDto);
@@ -73,6 +75,7 @@ public class TagsController {
 
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PreAuthorize("hasAuthority('USER_ADMIN')")
   public void delete(@PathVariable long id) {
     tagService.delete(id);
   }

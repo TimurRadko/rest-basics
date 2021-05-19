@@ -5,17 +5,21 @@ import com.epam.esm.dao.specification.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
-public final class GetAllUsersSpecification implements Specification<Users> {
+public class GetUserByLoginSpecification implements Specification<Users> {
+  private final String login;
+
+  public GetUserByLoginSpecification(String login) {
+    this.login = login;
+  }
 
   @Override
   public CriteriaQuery<Users> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<Users> criteria = builder.createQuery(Users.class);
     Root<Users> userRoot = criteria.from(Users.class);
-    userRoot.fetch("orders", JoinType.LEFT);
     criteria.select(userRoot).distinct(true);
-    return criteria.orderBy(builder.asc(userRoot.get("id")));
+    criteria.where(builder.equal(userRoot.get("login"), login));
+    return criteria;
   }
 }

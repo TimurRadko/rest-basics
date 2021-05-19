@@ -1,7 +1,7 @@
-package com.epam.esm.web.link.builder;
+package com.epam.esm.link.builder;
 
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.web.controller.TagsController;
+import com.epam.esm.controller.TagsController;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;

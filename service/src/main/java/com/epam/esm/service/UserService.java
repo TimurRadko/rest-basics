@@ -3,13 +3,14 @@ package com.epam.esm.service;
 import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.UsersDto;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 import java.util.Optional;
 
 /** * This interface describes specific realization of CRUD operation on User Entities */
-public interface UserService extends Service<UserDto> {
+public interface UserService extends Service<UsersDto>, UserDetailsService {
   /**
    * * This method describes a general getAll (getting a list of all UserDto) operation for all
    * UserDtos, from persistence layer
@@ -18,7 +19,7 @@ public interface UserService extends Service<UserDto> {
    * @param size - the parameter describes quantity of the Users for one page
    * @return List<UserDto> - List of UserDto contained in one of all tables in the DB
    */
-  List<UserDto> getAll(Integer page, Integer size);
+  List<UsersDto> getAll(Integer page, Integer size);
 
   /**
    * * This method describes a execute order by User

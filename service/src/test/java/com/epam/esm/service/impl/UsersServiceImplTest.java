@@ -2,8 +2,9 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.entity.Orders;
+import com.epam.esm.dao.entity.Role;
 import com.epam.esm.dao.entity.Tag;
-import com.epam.esm.dao.entity.User;
+import com.epam.esm.dao.entity.Users;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.OrdersRepository;
 import com.epam.esm.dao.repository.TagRepository;
@@ -17,7 +18,7 @@ import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.InsufficientFundInAccount;
@@ -47,7 +48,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceImplTest {
+class UsersServiceImplTest {
   @Mock private UserRepository userRepository;
   @Mock private OrdersRepository ordersRepository;
   @Mock private GiftCertificateRepository giftCertificateRepository;
@@ -59,15 +60,16 @@ class UserServiceImplTest {
   @Mock private TagRepository tagRepository;
   @Mock private PageValidator pageValidator;
 
-  @InjectMocks UserServiceImpl userService;
+  @InjectMocks
+  UsersServiceImpl userService;
 
   private static final long USER_ID = 1L;
   private static final String LOGIN = "Valid Login";
   private static final String PASSWORD = "Valid Password";
-  private static final BigDecimal ACCOUNT = new BigDecimal("100");
-  private final User user = new User(USER_ID, LOGIN, PASSWORD, ACCOUNT);
-  private final List<User> users = new ArrayList<>();
-  private final List<UserDto> userDtos = new ArrayList<>();
+  private static final BigDecimal BALANCE = new BigDecimal("100");
+  private final Users user = new Users(USER_ID, LOGIN, PASSWORD, BALANCE, Role.USER);
+  private final List<Users> users = new ArrayList<>();
+  private final List<UsersDto> usersDtos = new ArrayList<>();
   private static final int DEFAULT_PAGE_PARAMETER = 1;
   private static final int DEFAULT_SIZE_PARAMETER = 1;
   private static final long FIRST_ORDER_ID = 1L;
@@ -105,7 +107,7 @@ class UserServiceImplTest {
           FIRST_ORDER_CREATE_TIME,
           USER_ID,
           expectedGiftCertificateDtos);
-  private final UserDto userDto = new UserDto(USER_ID, LOGIN, ACCOUNT, Set.of(orderDto));
+  private final UsersDto usersDto = new UsersDto(USER_ID, LOGIN, BALANCE, Set.of(orderDto));
   private final List<Long> giftCertificateIds = Collections.singletonList(1L);
   private final GiftCertificateDtoIds giftCertificateDtoIds = new GiftCertificateDtoIds();
   private static final long MOST_WIDE_TAG_ID = 2L;
@@ -116,7 +118,7 @@ class UserServiceImplTest {
   @BeforeEach
   void setUp() {
     users.add(user);
-    userDtos.add(userDto);
+    usersDtos.add(usersDto);
     giftCertificateDtoIds.setGiftCertificateDtoIds(giftCertificateIds);
   }
 
@@ -125,12 +127,12 @@ class UserServiceImplTest {
     // given
     when(pageValidator.isValid(any())).thenReturn(true);
     when(userRepository.getEntityListWithPagination(any(), anyInt(), anyInt())).thenReturn(users);
-    when(userDtoBuilder.build(user)).thenReturn(userDto);
+    when(userDtoBuilder.build(user)).thenReturn(usersDto);
     // when
-    List<UserDto> actualUserDtos =
+    List<UsersDto> actualUsersDtos =
         userService.getAll(DEFAULT_PAGE_PARAMETER, DEFAULT_SIZE_PARAMETER);
     // then
-    assertEquals(userDtos, actualUserDtos);
+    assertEquals(usersDtos, actualUsersDtos);
   }
 
   @Test
@@ -167,7 +169,7 @@ class UserServiceImplTest {
   @Test
   void testMakeOrder_shouldThrowInsufficientFundInAccount_whenUserAccountLessThanOrderCost() {
     // given
-    User poorUser = user;
+    Users poorUser = user;
     poorUser.setBalance(BigDecimal.valueOf(0));
     when(userRepository.getEntity(any())).thenReturn(Optional.of(poorUser));
     when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.of(giftCertificate));
@@ -203,7 +205,7 @@ class UserServiceImplTest {
   void testMakeOrder_shouldThrowServiceException_whenOrdersWasNotSaved() {
     // given
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
-    when(userDtoBuilder.build(any())).thenReturn(userDto);
+    when(userDtoBuilder.build(any())).thenReturn(usersDto);
     when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.of(giftCertificate));
     when(userRepository.update(user)).thenReturn(Optional.of(user));
     // when
@@ -216,7 +218,7 @@ class UserServiceImplTest {
   void testMakeOrder_shouldOrder_whenUserMadeOrderSuccessful() {
     // given
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
-    when(userDtoBuilder.build(any())).thenReturn(userDto);
+    when(userDtoBuilder.build(any())).thenReturn(usersDto);
     when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.of(giftCertificate));
     when(userRepository.update(user)).thenReturn(Optional.of(user));
     when(ordersRepository.save(any())).thenReturn(Optional.of(order));
@@ -232,11 +234,11 @@ class UserServiceImplTest {
   void testGetById_shouldReturnUser_whenUserIsExistsInDataBase() {
     // given
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
-    when(userDtoBuilder.build(any())).thenReturn(userDto);
+    when(userDtoBuilder.build(any())).thenReturn(usersDto);
     // when
-    UserDto actualUserDto = userService.getById(USER_ID).orElse(new UserDto());
+    UsersDto actualUsersDto = userService.getById(USER_ID).orElse(new UsersDto());
     // then
-    assertEquals(userDto, actualUserDto);
+    assertEquals(usersDto, actualUsersDto);
   }
 
   @Test

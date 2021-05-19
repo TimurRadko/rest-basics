@@ -6,15 +6,15 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserDto extends RepresentationModel<UserDto> {
+public class UsersDto extends RepresentationModel<UsersDto> {
   private Long id;
   private String login;
   private BigDecimal balance;
   private Set<OrdersDto> orders;
 
-  public UserDto() {}
+  public UsersDto() {}
 
-  public UserDto(Long id, String login, BigDecimal balance, Set<OrdersDto> orders) {
+  public UsersDto(Long id, String login, BigDecimal balance, Set<OrdersDto> orders) {
     this.id = id;
     this.login = login;
     this.balance = balance;
@@ -58,26 +58,26 @@ public class UserDto extends RepresentationModel<UserDto> {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof UserDto)) {
+    if (!(o instanceof UsersDto)) {
       return false;
     }
 
-    UserDto userDto = (UserDto) o;
+    UsersDto usersDto = (UsersDto) o;
 
-    if (getId() != null ? !getId().equals(userDto.getId()) : userDto.getId() != null) {
+    if (getId() != null ? !getId().equals(usersDto.getId()) : usersDto.getId() != null) {
       return false;
     }
-    if (getLogin() != null ? !getLogin().equals(userDto.getLogin()) : userDto.getLogin() != null) {
+    if (getLogin() != null ? !getLogin().equals(usersDto.getLogin()) : usersDto.getLogin() != null) {
       return false;
     }
     if (getBalance() != null
-        ? !getBalance().equals(userDto.getBalance())
-        : userDto.getBalance() != null) {
+        ? !getBalance().equals(usersDto.getBalance())
+        : usersDto.getBalance() != null) {
       return false;
     }
     return getOrders() != null
-        ? getOrders().equals(userDto.getOrders())
-        : userDto.getOrders() == null;
+        ? getOrders().equals(usersDto.getOrders())
+        : usersDto.getOrders() == null;
   }
 
   @Override

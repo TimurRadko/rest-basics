@@ -1,4 +1,4 @@
-package com.epam.esm.web.exception;
+package com.epam.esm.exception;
 
 public class InvalidRequestBodyException extends ControllerException {
   public InvalidRequestBodyException(String message) {

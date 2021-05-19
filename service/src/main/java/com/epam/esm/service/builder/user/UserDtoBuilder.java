@@ -1,8 +1,8 @@
 package com.epam.esm.service.builder.user;
 
-import com.epam.esm.dao.entity.User;
+import com.epam.esm.dao.entity.Users;
 import com.epam.esm.service.builder.order.OrdersDtoBuilder;
-import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.UsersDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +17,13 @@ public class UserDtoBuilder {
     this.ordersDtoBuilder = ordersDtoBuilder;
   }
 
-  public UserDto build(User user) {
-    UserDto userDto = new UserDto();
-    userDto.setId(user.getId());
-    userDto.setLogin(user.getLogin());
-    userDto.setBalance(user.getBalance());
-    userDto.setOrders(
-        user.getOrders().stream().map(ordersDtoBuilder::build).collect(Collectors.toSet()));
-    return userDto;
+  public UsersDto build(Users users) {
+    UsersDto usersDto = new UsersDto();
+    usersDto.setId(users.getId());
+    usersDto.setLogin(users.getLogin());
+    usersDto.setBalance(users.getBalance());
+    usersDto.setOrders(
+        users.getOrders().stream().map(ordersDtoBuilder::build).collect(Collectors.toSet()));
+    return usersDto;
   }
 }

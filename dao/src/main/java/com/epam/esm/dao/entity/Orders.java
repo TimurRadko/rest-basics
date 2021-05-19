@@ -43,7 +43,7 @@ public class Orders implements TableEntity {
 
   @ManyToOne()
   @JoinColumn(name = "user_id")
-  private User user;
+  private Users users;
 
   public Orders() {}
 
@@ -87,12 +87,12 @@ public class Orders implements TableEntity {
     this.giftCertificates = giftCertificates;
   }
 
-  public User getUser() {
-    return user;
+  public Users getUser() {
+    return users;
   }
 
-  public void setUser(User user) {
-    this.user = user;
+  public void setUser(Users users) {
+    this.users = users;
   }
 
   @Override

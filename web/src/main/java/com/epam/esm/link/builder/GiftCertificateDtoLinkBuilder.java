@@ -1,8 +1,8 @@
-package com.epam.esm.web.link.builder;
+package com.epam.esm.link.builder;
 
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.web.controller.GiftCertificateController;
+import com.epam.esm.controller.GiftCertificateController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

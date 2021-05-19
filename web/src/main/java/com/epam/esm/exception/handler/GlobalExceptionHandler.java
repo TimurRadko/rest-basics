@@ -1,4 +1,4 @@
-package com.epam.esm.web.exception.handler;
+package com.epam.esm.exception.handler;
 
 import com.epam.esm.service.exception.DeletingEntityException;
 import com.epam.esm.service.exception.EmptyOrderException;

@@ -175,7 +175,10 @@ where orders4_.user_id = 5
 group by tag0_.id
 order by sum(orders4_.cost) desc limit 1;
 
+select * from users where id=1;
 
+update users
+set role = 'USER';
 
 
 

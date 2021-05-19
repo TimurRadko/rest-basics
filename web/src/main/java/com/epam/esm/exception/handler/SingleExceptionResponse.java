@@ -1,4 +1,4 @@
-package com.epam.esm.web.exception.handler;
+package com.epam.esm.exception.handler;
 
 class SingleExceptionResponse extends AbstractExceptionResponse {
   private String errorMessage;

@@ -2,7 +2,8 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.entity.Orders;
-import com.epam.esm.dao.entity.User;
+import com.epam.esm.dao.entity.Role;
+import com.epam.esm.dao.entity.Users;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.OrdersRepository;
 import com.epam.esm.dao.repository.TagRepository;
@@ -11,6 +12,7 @@ import com.epam.esm.dao.specification.gift.GetGiftCertificatesByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetMostWidelyUsedTagSpecification;
 import com.epam.esm.dao.specification.user.GetAllUsersSpecification;
 import com.epam.esm.dao.specification.user.GetUserByIdSpecification;
+import com.epam.esm.dao.specification.user.GetUserByLoginSpecification;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.builder.certificate.GiftCertificateDtoBuilder;
 import com.epam.esm.service.builder.order.OrdersBuilder;
@@ -21,7 +23,7 @@ import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.InsufficientFundInAccount;
@@ -29,6 +31,8 @@ import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.validator.PageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +43,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UsersServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final OrdersRepository ordersRepository;
   private final GiftCertificateRepository giftCertificateRepository;
@@ -52,7 +56,7 @@ public class UserServiceImpl implements UserService {
   private final PageValidator pageValidator;
 
   @Autowired
-  public UserServiceImpl(
+  public UsersServiceImpl(
       UserRepository userRepository,
       OrdersRepository ordersRepository,
       GiftCertificateRepository giftCertificateRepository,
@@ -76,7 +80,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<UserDto> getAll(Integer page, Integer size) {
+  public List<UsersDto> getAll(Integer page, Integer size) {
     if (!pageValidator.isValid(new PageDto(page, size))) {
       throw new PageNotValidException(pageValidator.getErrorMessage());
     }
@@ -90,7 +94,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public Optional<OrdersDto> makeOrder(Long id, GiftCertificateDtoIds giftCertificateDtoIds) {
-    User user =
+    Users users =
         userRepository
             .getEntity(new GetUserByIdSpecification(id))
             .orElseThrow(
@@ -102,30 +106,30 @@ public class UserServiceImpl implements UserService {
       throw new EmptyOrderException("You can't make empty order");
     }
     List<GiftCertificate> giftCertificates = getAllGiftCertificates(giftCertificateIds);
-    BigDecimal cost = getNewUserAccount(user, giftCertificates);
+    BigDecimal cost = getNewUserAccount(users, giftCertificates);
     userDtoBuilder.build(
         userRepository
-            .update(user)
+            .update(users)
             .orElseThrow(() -> new EntityNotFoundException("The User not exists in the DB")));
 
-    OrdersDto ordersDto = createOrderDto(user.getId(), cost, giftCertificates);
+    OrdersDto ordersDto = createOrderDto(users.getId(), cost, giftCertificates);
     Orders orders =
         ordersRepository
-            .save(ordersBuilder.build(ordersDto, user))
+            .save(ordersBuilder.build(ordersDto, users))
             .orElseThrow(() -> new ServiceException("The Orders wasn't saved"));
     return Optional.of(ordersDtoBuilder.build(orders));
   }
 
-  private BigDecimal getNewUserAccount(User user, List<GiftCertificate> giftCertificates) {
+  private BigDecimal getNewUserAccount(Users users, List<GiftCertificate> giftCertificates) {
     BigDecimal cost =
         giftCertificates.stream()
             .map(GiftCertificate::getPrice)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
-    BigDecimal account = user.getBalance();
+    BigDecimal account = users.getBalance();
     if (account.compareTo(cost) < 0) {
       throw new InsufficientFundInAccount("The user doesn't have enough funds in the account");
     }
-    user.setBalance(account.subtract(cost));
+    users.setBalance(account.subtract(cost));
     return cost;
   }
 
@@ -157,7 +161,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Optional<UserDto> getById(long id) {
+  public Optional<UsersDto> getById(long id) {
     return userRepository.getEntity(new GetUserByIdSpecification(id)).map(userDtoBuilder::build);
   }
 
@@ -166,5 +170,23 @@ public class UserServiceImpl implements UserService {
     return tagRepository
         .getEntity(new GetMostWidelyUsedTagSpecification(id))
         .map(tagDtoBuilder::build);
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+    Users findingUsers =
+        userRepository
+            .getEntity(new GetUserByLoginSpecification(login))
+            .orElseThrow(
+                () ->
+                    new UsernameNotFoundException(
+                        "User with login: " + login + " does not exists in database"));
+
+    String findingUserLogin = findingUsers.getLogin();
+    String findingUsrPassword = findingUsers.getPassword();
+    Role role = findingUsers.getRole();
+    return null;
+    //    return new org.springframework.security.core.userdetails.User(
+    //            findingUserLogin, findingUsrPassword, true, true, true, true, grantedAuthorities);
   }
 }

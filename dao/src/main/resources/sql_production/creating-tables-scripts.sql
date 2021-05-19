@@ -31,7 +31,8 @@ ALTER TABLE tags
 
 
 ------------CREATING UNIQUE INDEX--------------------------
-CREATE UNIQUE INDEX name_case_insensitive_unique_index ON tags (LOWER(name));
+CREATE
+UNIQUE INDEX name_case_insensitive_unique_index ON tags (LOWER(name));
 -----------------------------------------------------------
 
 
@@ -53,7 +54,8 @@ CREATE TABLE users
     id       SERIAL       NOT NULL,
     login    varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
-    account  double precision,
+    balance  double precision,
+    role     varchar(255) NOT NULL,
     PRIMARY KEY (id),
     UNIQUE (login)
 );

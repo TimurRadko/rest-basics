@@ -1,4 +1,4 @@
-package com.epam.esm.web.exception.handler;
+package com.epam.esm.exception.handler;
 
 public abstract class AbstractExceptionResponse {
   private int errorCode;

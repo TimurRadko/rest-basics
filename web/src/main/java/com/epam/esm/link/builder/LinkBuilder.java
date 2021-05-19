@@ -1,4 +1,4 @@
-package com.epam.esm.web.link.builder;
+package com.epam.esm.link.builder;
 
 /**
  * * This interface describes all operation for building HATEOAS links

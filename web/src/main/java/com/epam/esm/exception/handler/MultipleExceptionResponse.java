@@ -1,4 +1,4 @@
-package com.epam.esm.web.exception.handler;
+package com.epam.esm.exception.handler;
 
 import java.util.Collections;
 import java.util.List;

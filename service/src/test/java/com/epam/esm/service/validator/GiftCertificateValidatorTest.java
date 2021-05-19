@@ -24,25 +24,25 @@ class GiftCertificateValidatorTest {
   private final Set<TagDto> tagDtos = Set.of(new TagDto(1L, "tag"));
 
   private static final String NULL_GIFT_CERTIFICATE_MESSAGE =
-      "To create a Gift Certificate you must send the GiftCertificate Entity";
+      "To create a GiftCertificate you must send the GiftCertificate Entity";
   private static final String NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE =
-      "The name is required";
+      "The GiftCertificate name is required";
   private static final String INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE =
-      "The name must be between 3 and 50 characters long";
+      "The GiftCertificate name must be between 3 and 50 characters long";
   private static final String NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE =
-      "The price must be more than 0.0 and less than 5000.0";
+      "The GiftCertificate price must be more than 0.0 and less than 5000.0";
   private static final String NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE =
-      "The duration must be more than 0 and less than 365";
+      "The GiftCertificate duration must be more than 0 and less than 365";
   private static final String INCORRECT_LENGTH_AND_NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE =
-      "The name must be between 3 and 50 characters long\n"
-          + "The price must be more than 0.0 and less than 5000.0";
+      "The GiftCertificate name must be between 3 and 50 characters long\n"
+          + "The GiftCertificate price must be more than 0.0 and less than 5000.0";
   private static final String INCORRECT_LENGTH_AND_NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE =
-      "The name must be between 3 and 50 characters long\n"
-          + "The duration must be more than 0 and less than 365";
+      "The GiftCertificate name must be between 3 and 50 characters long\n"
+          + "The GiftCertificate duration must be more than 0 and less than 365";
   private static final String INCORRECT_ALL_DATA_GIFT_CERTIFICATE_MESSAGE =
-      "The name must be between 3 and 50 characters long\n"
-          + "The price must be more than 0.0 and less than 5000.0\n"
-          + "The duration must be more than 0 and less than 365";
+      "The GiftCertificate name must be between 3 and 50 characters long\n"
+          + "The GiftCertificate price must be more than 0.0 and less than 5000.0\n"
+          + "The GiftCertificate duration must be more than 0 and less than 365";
 
   @BeforeEach
   void setUp() {

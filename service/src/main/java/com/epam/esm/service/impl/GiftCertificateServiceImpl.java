@@ -21,11 +21,13 @@ import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DeletingEntityException;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.validator.GiftCertificateValidator;
 import com.epam.esm.service.validator.PageValidator;
+import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +49,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   private final TagBuilder tagBuilder;
   private final TagDtoBuilder tagDtoBuilder;
   private final PageValidator pageValidator;
+  private final TagValidator tagValidator;
 
   @Autowired
   public GiftCertificateServiceImpl(
@@ -57,7 +60,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       GiftCertificateDtoBuilder giftCertificateDtoBuilder,
       TagBuilder tagBuilder,
       TagDtoBuilder tagDtoBuilder,
-      PageValidator pageValidator) {
+      PageValidator pageValidator,
+      TagValidator tagValidator) {
     this.giftCertificateRepository = giftCertificateRepository;
     this.tagRepository = tagRepository;
     this.giftCertificateValidator = giftCertificateValidator;
@@ -66,6 +70,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     this.tagBuilder = tagBuilder;
     this.tagDtoBuilder = tagDtoBuilder;
     this.pageValidator = pageValidator;
+    this.tagValidator = tagValidator;
   }
 
   @Override
@@ -96,7 +101,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     Optional<Tag> optionalExistingTag;
     if (tagDto.getId() == null) {
       optionalExistingTag =
-          tagRepository.getEntity(new GetTagByNameSpecification(tagDto.getName()));
+          tagRepository.getEntity(new GetTagByNameSpecification(tagDto.getName().toLowerCase()));
     } else {
       optionalExistingTag = tagRepository.getEntity(new GetTagByIdSpecification(tagDto.getId()));
       if (optionalExistingTag.isEmpty()) {
@@ -105,6 +110,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       }
     }
     if (optionalExistingTag.isEmpty()) {
+      if (!tagValidator.isValid(tagDto)) {
+        throw new EntityNotValidException(tagValidator.getErrorMessage());
+      }
       return tagDtoBuilder.build(
           tagRepository
               .save(tagBuilder.build(tagDto))
@@ -259,11 +267,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   }
 
   private void updateGiftCertificate(GiftCertificate giftCertificate, Set<TagDto> tagDtos) {
+    checkTags(tagDtos);
     giftCertificate.setTags(tagDtos.stream().map(tagBuilder::build).collect(Collectors.toSet()));
     giftCertificateRepository
         .update(giftCertificate)
         .orElseThrow(
             () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
+  }
+
+  private void checkTags(Set<TagDto> tagDtos) {
+    for (TagDto tagDto : tagDtos) {
+      if (!tagValidator.isValid(tagDto)) {
+        throw new EntityNotValidException(tagValidator.getErrorMessage());
+      }
+    }
   }
 
   @Override

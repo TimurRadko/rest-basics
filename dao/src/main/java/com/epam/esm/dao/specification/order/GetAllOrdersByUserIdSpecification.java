@@ -1,7 +1,7 @@
 package com.epam.esm.dao.specification.order;
 
 import com.epam.esm.dao.entity.Orders;
-import com.epam.esm.dao.entity.User;
+import com.epam.esm.dao.entity.Users;
 import com.epam.esm.dao.specification.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -21,7 +21,7 @@ public final class GetAllOrdersByUserIdSpecification implements Specification<Or
   public CriteriaQuery<Orders> getCriteriaQuery(CriteriaBuilder builder) {
     CriteriaQuery<Orders> criteria = builder.createQuery(Orders.class);
     Root<Orders> ordersRoot = criteria.from(Orders.class);
-    Join<Orders, User> orderUserJoin = ordersRoot.join("user");
+    Join<Orders, Users> orderUserJoin = ordersRoot.join("user");
     Path<String> userIdPath = orderUserJoin.get("id");
     criteria.select(ordersRoot).distinct(true);
     criteria.where(builder.equal(userIdPath, userId));

@@ -5,18 +5,22 @@ import com.epam.esm.dao.entity.audit.AuditListener;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+
+import static com.epam.esm.dao.entity.Role.USER;
 
 @Entity
 @Table(name = "users")
 @EntityListeners(value = AuditListener.class)
-public class User implements TableEntity {
+public class Users implements TableEntity {
   @Id
   @Column(name = "id")
   protected Long id;
@@ -30,16 +34,21 @@ public class User implements TableEntity {
   @Column(name = "balance")
   private BigDecimal balance;
 
+  @Column(name = "role")
+  @Enumerated(EnumType.STRING)
+  private Role role = USER;
+
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
   private Set<Orders> orders;
 
-  public User() {}
+  public Users() {}
 
-  public User(Long id, String login, String password, BigDecimal balance) {
+  public Users(Long id, String login, String password, BigDecimal balance, Role role) {
     this.id = id;
     this.login = login;
     this.password = password;
     this.balance = balance;
+    this.role = role;
   }
 
   @Override
@@ -76,8 +85,16 @@ public class User implements TableEntity {
     this.balance = balance;
   }
 
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
+  }
+
   public Set<Orders> getOrders() {
-    return (orders == null) ? null : new HashSet<>(orders);
+    return orders;
   }
 
   public void setOrders(Set<Orders> orders) {
@@ -89,34 +106,38 @@ public class User implements TableEntity {
     if (this == o) {
       return true;
     }
-    if (!(o instanceof User)) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
 
-    User user = (User) o;
+    Users users = (Users) o;
 
-    if (getId() != null ? !getId().equals(user.getId()) : user.getId() != null) {
+    if (!Objects.equals(id, users.id)) {
       return false;
     }
-    if (getLogin() != null ? !getLogin().equals(user.getLogin()) : user.getLogin() != null) {
+    if (!Objects.equals(login, users.login)) {
       return false;
     }
-    if (getPassword() != null
-        ? !getPassword().equals(user.getPassword())
-        : user.getPassword() != null) {
+    if (!Objects.equals(password, users.password)) {
       return false;
     }
-    return getBalance() != null
-        ? getBalance().equals(user.getBalance())
-        : user.getBalance() == null;
+    if (!Objects.equals(balance, users.balance)) {
+      return false;
+    }
+    if (role != users.role) {
+      return false;
+    }
+    return Objects.equals(orders, users.orders);
   }
 
   @Override
   public int hashCode() {
-    int result = getId() != null ? getId().hashCode() : 0;
-    result = 31 * result + (getLogin() != null ? getLogin().hashCode() : 0);
-    result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
-    result = 31 * result + (getBalance() != null ? getBalance().hashCode() : 0);
+    int result = id != null ? id.hashCode() : 0;
+    result = 31 * result + (login != null ? login.hashCode() : 0);
+    result = 31 * result + (password != null ? password.hashCode() : 0);
+    result = 31 * result + (balance != null ? balance.hashCode() : 0);
+    result = 31 * result + (role != null ? role.hashCode() : 0);
+    result = 31 * result + (orders != null ? orders.hashCode() : 0);
     return result;
   }
 
@@ -133,6 +154,10 @@ public class User implements TableEntity {
         + '\''
         + ", balance="
         + balance
+        + ", role="
+        + role
+        + ", orders="
+        + orders
         + '}';
   }
 }
