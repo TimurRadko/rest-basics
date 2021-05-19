@@ -43,7 +43,7 @@ public class Orders implements TableEntity {
 
   @ManyToOne()
   @JoinColumn(name = "user_id")
-  private Users users;
+  private Users user;
 
   public Orders() {}
 
@@ -88,11 +88,11 @@ public class Orders implements TableEntity {
   }
 
   public Users getUser() {
-    return users;
+    return user;
   }
 
-  public void setUser(Users users) {
-    this.users = users;
+  public void setUser(Users user) {
+    this.user = user;
   }
 
   @Override

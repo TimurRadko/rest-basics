@@ -31,6 +31,8 @@ import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.validator.PageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -40,9 +42,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
+@Service("userServiceImpl")
 public class UsersServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final OrdersRepository ordersRepository;
@@ -183,10 +186,15 @@ public class UsersServiceImpl implements UserService {
                         "User with login: " + login + " does not exists in database"));
 
     String findingUserLogin = findingUsers.getLogin();
-    String findingUsrPassword = findingUsers.getPassword();
+    String findingUserPassword = findingUsers.getPassword();
     Role role = findingUsers.getRole();
-    return null;
-    //    return new org.springframework.security.core.userdetails.User(
-    //            findingUserLogin, findingUsrPassword, true, true, true, true, grantedAuthorities);
+    return new User(
+        findingUserLogin,
+        findingUserPassword,
+        true,
+        true,
+        true,
+        true,
+        Set.of(new SimpleGrantedAuthority("ROLE_" + role.name())));
   }
 }

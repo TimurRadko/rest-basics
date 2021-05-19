@@ -33,7 +33,7 @@ subprojects {
 
         implementation 'org.springframework.boot:spring-boot-starter-hateoas:2.4.5'
 
-        implementation 'org.springframework.security:spring-security-web:5.3.9.RELEASE'
+        implementation 'org.springframework.boot:spring-boot-starter-security:2.3.10.RELEASE'
     }
 
     test {

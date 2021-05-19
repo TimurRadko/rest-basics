@@ -57,7 +57,7 @@ public class GiftCertificateController {
   }
 
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthority('ROLE_GUEST', 'ROLE_USER', 'USER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_USER', 'USER_ADMIN')")
   public GiftCertificateDto get(@PathVariable Long id) {
     return giftCertificateDtoLinkBuilder.build(
         giftCertificateService
