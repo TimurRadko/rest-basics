@@ -5,6 +5,7 @@ import com.epam.esm.dao.repository.UserRepository;
 import com.epam.esm.dao.specification.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -31,7 +32,7 @@ public class UserRepositoryImpl implements UserRepository {
 
   @Override
   public List<Users> getEntityListWithPagination(
-          Specification<Users> specification, Integer page, Integer size) {
+      Specification<Users> specification, Integer page, Integer size) {
     CriteriaBuilder builder = entityManager.getCriteriaBuilder();
     CriteriaQuery<Users> criteriaQuery = specification.getCriteriaQuery(builder);
     return entityManager
@@ -55,5 +56,12 @@ public class UserRepositoryImpl implements UserRepository {
   @Override
   public Optional<Users> update(Users users) {
     return Optional.of(entityManager.merge(users));
+  }
+
+  @Override
+  @Transactional
+  public Optional<Users> save(Users user) {
+    entityManager.persist(user);
+    return Optional.of(user);
   }
 }

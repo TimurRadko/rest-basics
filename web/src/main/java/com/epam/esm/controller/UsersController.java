@@ -6,6 +6,7 @@ import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.dto.UsersCreatingDto;
 import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,8 @@ public class UsersController {
   }
 
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+  @PreAuthorize(
+      "hasAnyRole('ROLE_USER', 'ROLE_ADMIN') && @userSecurity.hasSameName(authentication, #id)")
   public UsersDto get(@PathVariable Long id) {
     return userDtoLinkBuilder.build(
         userService
@@ -62,7 +64,8 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/orders")
-  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+  @PreAuthorize(
+      "hasAnyRole('ROLE_USER', 'ROLE_ADMIN') && @userSecurity.hasSameName(authentication, #id)")
   public List<OrdersDto> getOrdersByUserId(
       @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "size", required = false) Integer size,
@@ -73,7 +76,8 @@ public class UsersController {
   }
 
   @PostMapping("/{id}/orders")
-  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+  @PreAuthorize(
+      "hasAnyRole('ROLE_USER', 'ROLE_ADMIN') && @userSecurity.hasSameName(authentication, #id)")
   public OrdersDto makeOrder(
       @PathVariable Long id,
       @RequestBody GiftCertificateDtoIds giftCertificateDtoIds,
@@ -91,7 +95,8 @@ public class UsersController {
   }
 
   @GetMapping("/{userId}/orders/{orderId}")
-  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+  @PreAuthorize(
+      "hasAnyRole('ROLE_USER', 'ROLE_ADMIN') && @userSecurity.hasSameName(authentication, #userId)")
   public OrdersDto getOrdersById(@PathVariable Long userId, @PathVariable Long orderId) {
     Optional<OrdersDto> optionalOrdersDto = orderService.getByUserAndOrderId(userId, orderId);
     OrdersDto ordersDto =
@@ -102,11 +107,28 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/tags")
-  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+  @PreAuthorize(
+      "hasAnyRole('ROLE_USER', 'ROLE_ADMIN') && @userSecurity.hasSameName(authentication, #id)")
   public TagDto getMostWidelyUsedTag(@PathVariable Long id) {
     return userDtoLinkBuilder.addLinkMostWidelyUsedTag(
         userService
             .getMostWidelyUsedTagByUserId(id)
             .orElseThrow(() -> new EntityNotFoundException("The most widely tag wasn't searched")));
+  }
+
+  @PostMapping()
+  public UsersDto save(
+      @RequestBody UsersCreatingDto userDto,
+      HttpServletRequest request,
+      HttpServletResponse response) {
+    UsersDto savedUserDto =
+        userService
+            .save(userDto)
+            .orElseThrow(() -> new EntityNotFoundException("The Account didn't create in the DB"));
+
+    Long id = savedUserDto.getId();
+    String url = request.getRequestURL().toString();
+    response.setHeader(HttpHeaders.LOCATION, url + "/" + id);
+    return userDtoLinkBuilder.build(savedUserDto);
   }
 }

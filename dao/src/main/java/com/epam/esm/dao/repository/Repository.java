@@ -12,6 +12,13 @@ import java.util.Optional;
  * @param <T> - the interface is typed by T extends Entity
  */
 public interface Repository<T extends TableEntity> {
+  /**
+   * * This method describes a general save (create) operation for all Entities, located in the DB
+   *
+   * @param t - typed Entities, which transmitted in the method as a args
+   * @return Optional<T> - container that is contained T Entity
+   */
+  Optional<T> save(T t);
 
   /**
    * This method describes a general getAll (getting a list of all entities) operation for all

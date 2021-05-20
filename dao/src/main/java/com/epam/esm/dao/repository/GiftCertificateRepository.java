@@ -9,13 +9,6 @@ import java.util.Optional;
  */
 public interface GiftCertificateRepository extends Repository<GiftCertificate> {
   /**
-   * * This method describes a general save (create) operation for all Tags, located in the DB
-   *
-   * @param giftCertificate - GiftCertificate, which transmitted in the method as a args
-   * @return Optional<GiftCertificate> - container that is contained GiftCertificate
-   */
-  Optional<GiftCertificate> save(GiftCertificate giftCertificate);
-  /**
    * * Updating the Gift Certificate with the parameters passed in the Entity
    *
    * @param giftCertificate - passed into the method GiftCertificate that is contained in one of all

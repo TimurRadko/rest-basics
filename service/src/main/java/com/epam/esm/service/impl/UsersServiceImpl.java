@@ -18,18 +18,23 @@ import com.epam.esm.service.builder.certificate.GiftCertificateDtoBuilder;
 import com.epam.esm.service.builder.order.OrdersBuilder;
 import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
+import com.epam.esm.service.builder.user.UserBuilder;
 import com.epam.esm.service.builder.user.UserDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.dto.UsersCreatingDto;
 import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.InsufficientFundInAccount;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.exception.UserLoginExistingException;
 import com.epam.esm.service.validator.PageValidator;
+import com.epam.esm.service.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -48,15 +53,17 @@ import java.util.stream.Collectors;
 @Service("userServiceImpl")
 public class UsersServiceImpl implements UserService {
   private final UserRepository userRepository;
+  private final TagRepository tagRepository;
   private final OrdersRepository ordersRepository;
   private final GiftCertificateRepository giftCertificateRepository;
   private final UserDtoBuilder userDtoBuilder;
   private final OrdersBuilder ordersBuilder;
   private final GiftCertificateDtoBuilder giftCertificateDtoBuilder;
   private final OrdersDtoBuilder ordersDtoBuilder;
+  private final UserBuilder userBuilder;
   private final TagDtoBuilder tagDtoBuilder;
-  private final TagRepository tagRepository;
   private final PageValidator pageValidator;
+  private final UserValidator userValidator;
 
   @Autowired
   public UsersServiceImpl(
@@ -67,9 +74,11 @@ public class UsersServiceImpl implements UserService {
       OrdersBuilder ordersBuilder,
       GiftCertificateDtoBuilder giftCertificateDtoBuilder,
       OrdersDtoBuilder ordersDtoBuilder,
+      UserBuilder userBuilder,
       TagDtoBuilder tagDtoBuilder,
       TagRepository tagRepository,
-      PageValidator pageValidator) {
+      PageValidator pageValidator,
+      UserValidator userValidator) {
     this.userRepository = userRepository;
     this.ordersRepository = ordersRepository;
     this.giftCertificateRepository = giftCertificateRepository;
@@ -77,9 +86,11 @@ public class UsersServiceImpl implements UserService {
     this.ordersBuilder = ordersBuilder;
     this.giftCertificateDtoBuilder = giftCertificateDtoBuilder;
     this.ordersDtoBuilder = ordersDtoBuilder;
+    this.userBuilder = userBuilder;
     this.tagDtoBuilder = tagDtoBuilder;
     this.tagRepository = tagRepository;
     this.pageValidator = pageValidator;
+    this.userValidator = userValidator;
   }
 
   @Override
@@ -176,6 +187,7 @@ public class UsersServiceImpl implements UserService {
   }
 
   @Override
+  @Transactional
   public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
     Users findingUsers =
         userRepository
@@ -196,5 +208,25 @@ public class UsersServiceImpl implements UserService {
         true,
         true,
         Set.of(new SimpleGrantedAuthority("ROLE_" + role.name())));
+  }
+
+  @Override
+  @Transactional
+  public Optional<UsersDto> save(UsersCreatingDto userDto) {
+    if (!userValidator.isValid(userDto)) {
+      throw new EntityNotValidMultipleException(userValidator.getErrorMessage());
+    }
+    Optional<Users> existingUser =
+        userRepository.getEntity(new GetUserByLoginSpecification(userDto.getLogin()));
+    if (existingUser.isEmpty()) {
+      Users savedUser =
+          userRepository
+              .save(userBuilder.buildForSave(userDto))
+              .orElseThrow(() -> new ServiceException("The User wasn't saved"));
+      return Optional.of(userDtoBuilder.build(savedUser));
+    } else {
+      throw new UserLoginExistingException(
+          "The User with login " + userDto.getLogin() + " is existing in DB");
+    }
   }
 }

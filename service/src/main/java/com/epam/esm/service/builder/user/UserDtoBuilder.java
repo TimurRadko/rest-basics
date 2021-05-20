@@ -6,6 +6,7 @@ import com.epam.esm.service.dto.UsersDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,8 +23,12 @@ public class UserDtoBuilder {
     usersDto.setId(users.getId());
     usersDto.setLogin(users.getLogin());
     usersDto.setBalance(users.getBalance());
-    usersDto.setOrders(
-        users.getOrders().stream().map(ordersDtoBuilder::build).collect(Collectors.toSet()));
+    if (users.getOrders() != null) {
+      usersDto.setOrders(
+          users.getOrders().stream().map(ordersDtoBuilder::build).collect(Collectors.toSet()));
+    } else {
+      usersDto.setOrders(new HashSet<>());
+    }
     return usersDto;
   }
 }

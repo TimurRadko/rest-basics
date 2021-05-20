@@ -1,6 +1,5 @@
 package com.epam.esm.security.config;
 
-import com.epam.esm.dao.entity.Role;
 import com.epam.esm.security.jwt.JwtConfig;
 import com.epam.esm.security.jwt.JwtLoginAndPasswordAuthenticationFilter;
 import com.epam.esm.security.jwt.JwtTokenVerifierFilter;
@@ -28,11 +27,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableConfigurationProperties(JwtConfig.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+  private final PasswordEncoder passwordEncoder;
   private final UserService userService;
   private final JwtConfig jwtConfig;
 
   @Autowired
-  public SecurityConfig(UserService userService, JwtConfig jwtConfig) {
+  public SecurityConfig(
+      PasswordEncoder passwordEncoder, UserService userService, JwtConfig jwtConfig) {
+    this.passwordEncoder = passwordEncoder;
     this.userService = userService;
     this.jwtConfig = jwtConfig;
   }
@@ -49,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             new JwtTokenVerifierFilter(jwtConfig), JwtLoginAndPasswordAuthenticationFilter.class)
         .authorizeRequests()
         .antMatchers("/api/**")
-        .hasAnyRole(Role.GUEST.name(), Role.USER.name(), Role.ADMIN.name())
+        .permitAll()
         .anyRequest()
         .authenticated();
   }
@@ -60,14 +62,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(10);
-  }
-
-  @Bean
   public DaoAuthenticationProvider daoAuthenticationProvider() {
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-    provider.setPasswordEncoder(passwordEncoder());
+    provider.setPasswordEncoder(passwordEncoder);
     provider.setUserDetailsService(userService);
     return provider;
   }

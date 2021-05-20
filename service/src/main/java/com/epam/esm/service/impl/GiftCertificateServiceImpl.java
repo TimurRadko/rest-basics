@@ -85,7 +85,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     GiftCertificate giftCertificate =
         giftCertificateRepository
             .save(giftCertificateBuilder.build(giftCertificateDto))
-            .orElseThrow();
+            .orElseThrow(() -> new ServiceException("The GiftCertificate wasn't saved"));
     return Optional.of(giftCertificateDtoBuilder.buildWithTagDtos(giftCertificate, tags));
   }
 

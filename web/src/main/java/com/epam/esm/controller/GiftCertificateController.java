@@ -41,7 +41,6 @@ public class GiftCertificateController {
   }
 
   @GetMapping()
-  @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_USER', 'USER_ADMIN')")
   public List<GiftCertificateDto> getAll(
       @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "size", required = false) Integer size,
@@ -57,7 +56,6 @@ public class GiftCertificateController {
   }
 
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_USER', 'ROLE_ADMIN')")
   public GiftCertificateDto get(@PathVariable Long id) {
     return giftCertificateDtoLinkBuilder.build(
         giftCertificateService
