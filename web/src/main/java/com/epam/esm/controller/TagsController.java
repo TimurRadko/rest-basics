@@ -38,6 +38,7 @@ public class TagsController {
   }
 
   @GetMapping()
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public List<TagDto> getAll(
       @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "size", required = false) Integer size,
@@ -48,6 +49,7 @@ public class TagsController {
   }
 
   @GetMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public TagDto get(@PathVariable Long id) throws ServiceException {
     return tagLinkBuilder.build(
         tagService
@@ -59,7 +61,7 @@ public class TagsController {
 
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
-  @PreAuthorize("hasAuthority('USER_ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public TagDto save(
       @RequestBody TagDto tagDto, HttpServletRequest request, HttpServletResponse response) {
     Optional<TagDto> optionalTag = tagService.save(tagDto);
@@ -75,7 +77,7 @@ public class TagsController {
 
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @PreAuthorize("hasAuthority('USER_ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public void delete(@PathVariable long id) {
     tagService.delete(id);
   }

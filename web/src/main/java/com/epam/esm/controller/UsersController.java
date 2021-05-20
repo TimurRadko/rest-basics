@@ -41,7 +41,7 @@ public class UsersController {
   }
 
   @GetMapping()
-  @PreAuthorize("hasAnyAuthority('ROLE_USER', 'USER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public List<UsersDto> getAll(
       @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "size", required = false) Integer size) {
@@ -51,7 +51,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthority('ROLE_USER', 'USER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public UsersDto get(@PathVariable Long id) {
     return userDtoLinkBuilder.build(
         userService
@@ -62,7 +62,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/orders")
-  @PreAuthorize("hasAnyAuthority('ROLE_USER', 'USER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public List<OrdersDto> getOrdersByUserId(
       @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "size", required = false) Integer size,
@@ -73,7 +73,7 @@ public class UsersController {
   }
 
   @PostMapping("/{id}/orders")
-  @PreAuthorize("hasAnyAuthority('ROLE_USER', 'USER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public OrdersDto makeOrder(
       @PathVariable Long id,
       @RequestBody GiftCertificateDtoIds giftCertificateDtoIds,
@@ -91,7 +91,7 @@ public class UsersController {
   }
 
   @GetMapping("/{userId}/orders/{orderId}")
-  @PreAuthorize("hasAnyAuthority('ROLE_USER', 'USER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public OrdersDto getOrdersById(@PathVariable Long userId, @PathVariable Long orderId) {
     Optional<OrdersDto> optionalOrdersDto = orderService.getByUserAndOrderId(userId, orderId);
     OrdersDto ordersDto =
@@ -102,7 +102,7 @@ public class UsersController {
   }
 
   @GetMapping("/{id}/tags")
-  @PreAuthorize("hasAnyAuthority('ROLE_USER', 'USER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
   public TagDto getMostWidelyUsedTag(@PathVariable Long id) {
     return userDtoLinkBuilder.addLinkMostWidelyUsedTag(
         userService

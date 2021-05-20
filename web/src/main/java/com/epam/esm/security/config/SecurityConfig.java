@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @ComponentScan("com.epam.esm")
 @PropertySource("classpath:application.properties")
 @EnableConfigurationProperties(JwtConfig.class)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final UserService userService;
   private final JwtConfig jwtConfig;
@@ -46,8 +48,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .addFilterAfter(
             new JwtTokenVerifierFilter(jwtConfig), JwtLoginAndPasswordAuthenticationFilter.class)
         .authorizeRequests()
-        .antMatchers("/")
-        .permitAll()
         .antMatchers("/api/**")
         .hasAnyRole(Role.GUEST.name(), Role.USER.name(), Role.ADMIN.name())
         .anyRequest()

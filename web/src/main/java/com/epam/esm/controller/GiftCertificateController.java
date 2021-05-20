@@ -41,7 +41,7 @@ public class GiftCertificateController {
   }
 
   @GetMapping()
-  @PreAuthorize("hasAnyAuthority('ROLE_GUEST', 'ROLE_USER', 'USER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_USER', 'USER_ADMIN')")
   public List<GiftCertificateDto> getAll(
       @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "size", required = false) Integer size,
@@ -57,7 +57,7 @@ public class GiftCertificateController {
   }
 
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_USER', 'USER_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_GUEST', 'ROLE_USER', 'ROLE_ADMIN')")
   public GiftCertificateDto get(@PathVariable Long id) {
     return giftCertificateDtoLinkBuilder.build(
         giftCertificateService
@@ -69,7 +69,7 @@ public class GiftCertificateController {
 
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
-  @PreAuthorize("hasAuthority('USER_ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public GiftCertificateDto save(
       @RequestBody GiftCertificateDto giftCertificateDto,
       HttpServletRequest request,
@@ -90,7 +90,7 @@ public class GiftCertificateController {
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  @PreAuthorize("hasAuthority('USER_ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public GiftCertificateDto update(
       @PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
     GiftCertificateDto updatedGiftCertificateDto =
@@ -105,14 +105,14 @@ public class GiftCertificateController {
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @PreAuthorize("hasAuthority('USER_ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public void delete(@PathVariable long id) {
     giftCertificateService.delete(id);
   }
 
   @PatchMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  @PreAuthorize("hasAuthority('USER_ADMIN')")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
   public GiftCertificateDto updateOneField(
       @PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
     GiftCertificateDto patchingGiftCertificateDto =

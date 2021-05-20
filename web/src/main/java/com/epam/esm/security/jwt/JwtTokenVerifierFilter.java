@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import org.assertj.core.util.Strings;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,14 +35,9 @@ public class JwtTokenVerifierFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    String authorizationHeaderKey = jwtConfig.authorizationHeader();
-    String authorizationHeader = request.getHeader(authorizationHeaderKey);
-
+    String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
     String tokenPrefix = jwtConfig.getTokenPrefix();
-
-    if (authorizationHeader == null
-        || authorizationHeader.isEmpty()
-        || !authorizationHeader.startsWith(tokenPrefix)) {
+    if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(tokenPrefix)) {
       filterChain.doFilter(request, response);
       return;
     }
