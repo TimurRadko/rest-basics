@@ -1,14 +1,8 @@
 package com.epam.esm.service.validator;
 
-import com.epam.esm.dao.entity.Role;
-import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UsersCreatingDto;
-import com.epam.esm.service.dto.UsersDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

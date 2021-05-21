@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 public class UserValidator extends AbstractValidator<UsersCreatingDto> {
   private static final int MIN_NAME_LENGTH = 2;
   private static final int MIN_PASSWORD_LENGTH = 8;
-  private static final int MAX_LENGTH = 50;
+  private static final int MAX_NAME_LENGTH = 50;
+  private static final int MAX_PASSWORD_LENGTH = 100;
 
   @Override
   public boolean isValid(UsersCreatingDto userDto) {
@@ -30,7 +31,7 @@ public class UserValidator extends AbstractValidator<UsersCreatingDto> {
     } else if (confirmPassword == null || confirmPassword.trim().length() == 0) {
       addErrorMessage("To create User confirmPassword is required");
       setIsResultValidFalse();
-    } else if (password.length() < MIN_PASSWORD_LENGTH || password.length() > MAX_LENGTH) {
+    } else if (password.length() < MIN_PASSWORD_LENGTH || password.length() > MAX_PASSWORD_LENGTH) {
       addErrorMessage("To create User password must be between 8 and 50 characters long");
       setIsResultValidFalse();
     } else if (!password.equals(confirmPassword)) {
@@ -43,7 +44,7 @@ public class UserValidator extends AbstractValidator<UsersCreatingDto> {
     if (login == null || login.trim().length() == 0) {
       addErrorMessage("The User name is required");
       setIsResultValidFalse();
-    } else if (login.length() < MIN_NAME_LENGTH || login.length() > MAX_LENGTH) {
+    } else if (login.length() < MIN_NAME_LENGTH || login.length() > MAX_NAME_LENGTH) {
       addErrorMessage("The User name must be between 2 and 50 characters long");
       setIsResultValidFalse();
     }

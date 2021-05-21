@@ -17,7 +17,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -30,13 +29,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final PasswordEncoder passwordEncoder;
   private final UserService userService;
   private final JwtConfig jwtConfig;
+  private final Oauth2AuthenticationSuccessHandler authenticationSuccessHandler;
 
   @Autowired
   public SecurityConfig(
-      PasswordEncoder passwordEncoder, UserService userService, JwtConfig jwtConfig) {
+      PasswordEncoder passwordEncoder,
+      UserService userService,
+      JwtConfig jwtConfig,
+      Oauth2AuthenticationSuccessHandler authenticationSuccessHandler) {
     this.passwordEncoder = passwordEncoder;
     this.userService = userService;
     this.jwtConfig = jwtConfig;
+    this.authenticationSuccessHandler = authenticationSuccessHandler;
   }
 
   @Override
@@ -50,14 +54,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .addFilterAfter(
             new JwtTokenVerifierFilter(jwtConfig), JwtLoginAndPasswordAuthenticationFilter.class)
         .authorizeRequests()
-        .antMatchers("/api/**")
-        .permitAll()
         .anyRequest()
-        .authenticated();
+        .authenticated()
+        .and()
+        .oauth2Login()
+        .successHandler(authenticationSuccessHandler);
   }
 
   @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+  protected void configure(AuthenticationManagerBuilder auth) {
     auth.authenticationProvider(daoAuthenticationProvider());
   }
 

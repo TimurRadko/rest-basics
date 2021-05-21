@@ -2,7 +2,6 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.entity.GiftCertificate;
 import com.epam.esm.dao.entity.Orders;
-import com.epam.esm.dao.entity.Role;
 import com.epam.esm.dao.entity.Users;
 import com.epam.esm.dao.repository.GiftCertificateRepository;
 import com.epam.esm.dao.repository.OrdersRepository;
@@ -19,6 +18,7 @@ import com.epam.esm.service.builder.order.OrdersBuilder;
 import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.builder.user.UserBuilder;
+import com.epam.esm.service.builder.user.UserDetailsBuilder;
 import com.epam.esm.service.builder.user.UserDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
@@ -36,8 +36,6 @@ import com.epam.esm.service.exception.UserLoginExistingException;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -47,7 +45,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service("userServiceImpl")
@@ -61,6 +58,7 @@ public class UsersServiceImpl implements UserService {
   private final GiftCertificateDtoBuilder giftCertificateDtoBuilder;
   private final OrdersDtoBuilder ordersDtoBuilder;
   private final UserBuilder userBuilder;
+  private final UserDetailsBuilder userDetailsBuilder;
   private final TagDtoBuilder tagDtoBuilder;
   private final PageValidator pageValidator;
   private final UserValidator userValidator;
@@ -68,6 +66,7 @@ public class UsersServiceImpl implements UserService {
   @Autowired
   public UsersServiceImpl(
       UserRepository userRepository,
+      TagRepository tagRepository,
       OrdersRepository ordersRepository,
       GiftCertificateRepository giftCertificateRepository,
       UserDtoBuilder userDtoBuilder,
@@ -75,11 +74,12 @@ public class UsersServiceImpl implements UserService {
       GiftCertificateDtoBuilder giftCertificateDtoBuilder,
       OrdersDtoBuilder ordersDtoBuilder,
       UserBuilder userBuilder,
+      UserDetailsBuilder userDetailsBuilder,
       TagDtoBuilder tagDtoBuilder,
-      TagRepository tagRepository,
       PageValidator pageValidator,
       UserValidator userValidator) {
     this.userRepository = userRepository;
+    this.tagRepository = tagRepository;
     this.ordersRepository = ordersRepository;
     this.giftCertificateRepository = giftCertificateRepository;
     this.userDtoBuilder = userDtoBuilder;
@@ -87,8 +87,8 @@ public class UsersServiceImpl implements UserService {
     this.giftCertificateDtoBuilder = giftCertificateDtoBuilder;
     this.ordersDtoBuilder = ordersDtoBuilder;
     this.userBuilder = userBuilder;
+    this.userDetailsBuilder = userDetailsBuilder;
     this.tagDtoBuilder = tagDtoBuilder;
-    this.tagRepository = tagRepository;
     this.pageValidator = pageValidator;
     this.userValidator = userValidator;
   }
@@ -196,18 +196,7 @@ public class UsersServiceImpl implements UserService {
                 () ->
                     new UsernameNotFoundException(
                         "User with login: " + login + " does not exists in database"));
-
-    String findingUserLogin = findingUsers.getLogin();
-    String findingUserPassword = findingUsers.getPassword();
-    Role role = findingUsers.getRole();
-    return new User(
-        findingUserLogin,
-        findingUserPassword,
-        true,
-        true,
-        true,
-        true,
-        Set.of(new SimpleGrantedAuthority("ROLE_" + role.name())));
+    return userDetailsBuilder.build(findingUsers);
   }
 
   @Override
