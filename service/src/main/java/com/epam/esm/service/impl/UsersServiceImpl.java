@@ -29,10 +29,11 @@ import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
-import com.epam.esm.service.exception.InsufficientFundInAccount;
+import com.epam.esm.service.exception.order.InsufficientFundInAccount;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.service.exception.UserLoginExistingException;
+import com.epam.esm.service.exception.user.UserLoginExistingException;
+import com.epam.esm.service.locale.TranslatorLocale;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,7 @@ public class UsersServiceImpl implements UserService {
   private final TagDtoBuilder tagDtoBuilder;
   private final PageValidator pageValidator;
   private final UserValidator userValidator;
+  private final TranslatorLocale translatorLocale;
 
   @Autowired
   public UsersServiceImpl(
@@ -77,7 +79,8 @@ public class UsersServiceImpl implements UserService {
       UserDetailsBuilder userDetailsBuilder,
       TagDtoBuilder tagDtoBuilder,
       PageValidator pageValidator,
-      UserValidator userValidator) {
+      UserValidator userValidator,
+      TranslatorLocale translatorLocale) {
     this.userRepository = userRepository;
     this.tagRepository = tagRepository;
     this.ordersRepository = ordersRepository;
@@ -91,6 +94,7 @@ public class UsersServiceImpl implements UserService {
     this.tagDtoBuilder = tagDtoBuilder;
     this.pageValidator = pageValidator;
     this.userValidator = userValidator;
+    this.translatorLocale = translatorLocale;
   }
 
   @Override
@@ -113,11 +117,12 @@ public class UsersServiceImpl implements UserService {
             .getEntity(new GetUserByIdSpecification(id))
             .orElseThrow(
                 () ->
-                    new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+                    new EntityNotFoundException(
+                        String.format(translatorLocale.toLocale("exception.message.40401"), id)));
 
     List<Long> giftCertificateIds = giftCertificateDtoIds.getGiftCertificateDtoIds();
     if (giftCertificateIds == null || giftCertificateIds.isEmpty()) {
-      throw new EmptyOrderException("You can't make empty order");
+      throw new EmptyOrderException(translatorLocale.toLocale("exception.message.40006"));
     }
     List<GiftCertificate> giftCertificates = getAllGiftCertificates(giftCertificateIds);
     BigDecimal cost = getNewUserAccount(users, giftCertificates);
@@ -141,7 +146,7 @@ public class UsersServiceImpl implements UserService {
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     BigDecimal account = users.getBalance();
     if (account.compareTo(cost) < 0) {
-      throw new InsufficientFundInAccount("The user doesn't have enough funds in the account");
+      throw new InsufficientFundInAccount(translatorLocale.toLocale("exception.message.40005"));
     }
     users.setBalance(account.subtract(cost));
     return cost;
@@ -156,7 +161,9 @@ public class UsersServiceImpl implements UserService {
               .orElseThrow(
                   () ->
                       new EntityNotFoundException(
-                          "Requested resource not found (id = " + giftCertificateId + ")"));
+                          String.format(
+                              translatorLocale.toLocale("exception.message.40401"),
+                              giftCertificateId)));
       giftCertificates.add(giftCertificate);
     }
     return giftCertificates;

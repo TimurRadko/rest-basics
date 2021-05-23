@@ -1,19 +1,27 @@
 package com.epam.esm.service.validator;
 
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.locale.TranslatorLocale;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TagValidator extends AbstractValidator<TagDto> {
   private static final int MIN_NAME_LENGTH = 3;
   private static final int MAX_NAME_LENGTH = 50;
+  private final TranslatorLocale translatorLocale;
+
+  @Autowired
+  public TagValidator(TranslatorLocale translatorLocale) {
+    this.translatorLocale = translatorLocale;
+  }
 
   public boolean isValid(TagDto tagDto) {
     setIsReturnValidTrue();
     eraseErrorMessages();
 
     if (tagDto == null) {
-      addErrorMessage("To create a Tag you must send the Tag Entity");
+      addErrorMessage(translatorLocale.toLocale("exception.message.nullTag"));
       return false;
     }
     checkName(tagDto.getName());
@@ -22,10 +30,10 @@ public class TagValidator extends AbstractValidator<TagDto> {
 
   private void checkName(String name) {
     if (name == null || name.trim().length() == 0) {
-      addErrorMessage("The Tag name is required");
+      addErrorMessage(translatorLocale.toLocale("exception.message.nameTagRequired"));
       setIsResultValidFalse();
     } else if (name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH) {
-      addErrorMessage("The Tag name must be between 3 and 50 characters long");
+      addErrorMessage(translatorLocale.toLocale("exception.message.lengthTagName"));
       setIsResultValidFalse();
     }
   }

@@ -1,14 +1,21 @@
 package com.epam.esm.service.validator;
 
 import com.epam.esm.service.dto.PageDto;
+import com.epam.esm.service.locale.TranslatorLocale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@ExtendWith(MockitoExtension.class)
 class PageValidatorTest {
-  private PageValidator pageValidator;
+  @Mock private TranslatorLocale translatorLocale;
+  @InjectMocks private PageValidator pageValidator;
   private static final String NULL_PAGE_MESSAGE = "The page mustn't be null";
   private static final String NULL_SIZE_MESSAGE = "The size mustn't be null";
   private static final String NULL_PAGE_AND_SIZE_MESSAGE =
@@ -20,7 +27,7 @@ class PageValidatorTest {
   @BeforeEach
   void setUp() {
     pageDto = new PageDto(1, 1);
-    pageValidator = new PageValidator();
+    pageValidator = new PageValidator(translatorLocale);
   }
 
   @Test
@@ -28,6 +35,7 @@ class PageValidatorTest {
     // given
     pageDto.setPage(null);
     // when
+
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then

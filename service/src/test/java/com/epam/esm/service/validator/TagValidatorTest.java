@@ -1,8 +1,10 @@
 package com.epam.esm.service.validator;
 
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.locale.TranslatorLocale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -10,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TagValidatorTest {
   private TagValidator validator;
+  @Mock private TranslatorLocale translatorLocale;
   private static final String EXPECTED_NULL_TAG_MESSAGE =
       "To create a Tag you must send the Tag Entity";
   private static final String EXPECTED_NULL_OR_ZERO_LENGTH_NAME_TAG_MESSAGE =
@@ -19,7 +22,7 @@ class TagValidatorTest {
 
   @BeforeEach
   void setUp() {
-    validator = new TagValidator();
+    validator = new TagValidator(translatorLocale);
   }
 
   @Test

@@ -1,10 +1,18 @@
 package com.epam.esm.service.validator;
 
 import com.epam.esm.service.dto.PageDto;
+import com.epam.esm.service.locale.TranslatorLocale;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PageValidator extends AbstractValidator<PageDto> {
+  private final TranslatorLocale translatorLocale;
+
+  @Autowired
+  public PageValidator(TranslatorLocale translatorLocale) {
+    this.translatorLocale = translatorLocale;
+  }
 
   @Override
   public boolean isValid(PageDto pageDto) {
@@ -13,16 +21,16 @@ public class PageValidator extends AbstractValidator<PageDto> {
     Integer page = pageDto.getPage();
     Integer size = pageDto.getSize();
     if (page == null) {
-      addErrorMessage("The page mustn't be null");
+      addErrorMessage(translatorLocale.toLocale("exception.message.pageNotNull"));
       if (size == null) {
-        addErrorMessage("The size mustn't be null");
+        addErrorMessage(translatorLocale.toLocale("exception.message.sizeNotNull"));
       } else {
         checkSizeParameter(size);
       }
       return false;
     }
     if (size == null) {
-      addErrorMessage("The size mustn't be null");
+      addErrorMessage(translatorLocale.toLocale("exception.message.sizeNotNull"));
       checkPageParameter(page);
       return false;
     }
@@ -33,18 +41,18 @@ public class PageValidator extends AbstractValidator<PageDto> {
 
   private void checkPageParameter(Integer page) {
     if (page <= 0) {
-      addErrorMessage("The page must be more than 0");
+      addErrorMessage(translatorLocale.toLocale("exception.message.pageMoreThanZero"));
       setIsResultValidFalse();
     }
   }
 
   private void checkSizeParameter(Integer size) {
     if (size <= 0) {
-      addErrorMessage("The size must be more than 0");
+      addErrorMessage(translatorLocale.toLocale("exception.message.sizeMoreThanZero"));
       setIsResultValidFalse();
     }
     if (size > 50) {
-      addErrorMessage("The size must be less than 50");
+      addErrorMessage(translatorLocale.toLocale("exception.message.sizeLessThanFifty"));
       setIsResultValidFalse();
     }
   }

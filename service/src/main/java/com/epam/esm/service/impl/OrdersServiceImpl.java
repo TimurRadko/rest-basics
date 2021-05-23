@@ -8,9 +8,10 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.PageDto;
-import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.PageNotValidException;
+import com.epam.esm.service.exception.user.UserDoesNotHaveOrderException;
+import com.epam.esm.service.locale.TranslatorLocale;
 import com.epam.esm.service.validator.PageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,15 +25,18 @@ public class OrdersServiceImpl implements OrderService {
   private final OrdersRepository ordersRepository;
   private final OrdersDtoBuilder ordersDtoBuilder;
   private final PageValidator pageValidator;
+  private final TranslatorLocale translatorLocale;
 
   @Autowired
   public OrdersServiceImpl(
       OrdersRepository ordersRepository,
       OrdersDtoBuilder ordersDtoBuilder,
-      PageValidator pageValidator) {
+      PageValidator pageValidator,
+      TranslatorLocale translatorLocale) {
     this.ordersRepository = ordersRepository;
     this.ordersDtoBuilder = ordersDtoBuilder;
     this.pageValidator = pageValidator;
+    this.translatorLocale = translatorLocale;
   }
 
   @Override
@@ -44,8 +48,8 @@ public class OrdersServiceImpl implements OrderService {
             .getEntity(new GetOrderByIdSpecification(orderId))
             .orElseThrow(() -> new EntityNotFoundException("The Order not exists in the DB"));
     if (existingOrders.isEmpty() || !existingOrders.contains(order)) {
-      throw new EmptyOrderException(
-          "User with id=" + userId + " doesn't have order with id=" + orderId);
+      throw new UserDoesNotHaveOrderException(
+          String.format(translatorLocale.toLocale("exception.message.40009"), userId, orderId));
     }
     return Optional.of(ordersDtoBuilder.build(order));
   }

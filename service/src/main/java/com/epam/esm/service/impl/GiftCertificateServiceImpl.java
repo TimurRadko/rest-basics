@@ -19,12 +19,13 @@ import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.DeletingEntityException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.exception.certificates.DeletingGiftCertificateException;
+import com.epam.esm.service.locale.TranslatorLocale;
 import com.epam.esm.service.validator.GiftCertificateValidator;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.TagValidator;
@@ -50,6 +51,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   private final TagDtoBuilder tagDtoBuilder;
   private final PageValidator pageValidator;
   private final TagValidator tagValidator;
+  private final TranslatorLocale translatorLocale;
 
   @Autowired
   public GiftCertificateServiceImpl(
@@ -61,7 +63,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       TagBuilder tagBuilder,
       TagDtoBuilder tagDtoBuilder,
       PageValidator pageValidator,
-      TagValidator tagValidator) {
+      TagValidator tagValidator,
+      TranslatorLocale translatorLocale) {
     this.giftCertificateRepository = giftCertificateRepository;
     this.tagRepository = tagRepository;
     this.giftCertificateValidator = giftCertificateValidator;
@@ -71,6 +74,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     this.tagDtoBuilder = tagDtoBuilder;
     this.pageValidator = pageValidator;
     this.tagValidator = tagValidator;
+    this.translatorLocale = translatorLocale;
   }
 
   @Override
@@ -106,7 +110,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       optionalExistingTag = tagRepository.getEntity(new GetTagByIdSpecification(tagDto.getId()));
       if (optionalExistingTag.isEmpty()) {
         throw new EntityNotFoundException(
-            "The Tag with id = " + tagDto.getId() + " cannot be created in the database");
+            String.format(translatorLocale.toLocale("exception.message.40401"), tagDto.getId()));
       }
     }
     if (optionalExistingTag.isEmpty()) {
@@ -289,14 +293,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     giftCertificateRepository
         .getEntity(new GetGiftCertificatesByIdSpecification(id))
         .orElseThrow(
-            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+            () ->
+                new EntityNotFoundException(
+                    String.format(translatorLocale.toLocale("exception.message.40401"), id)));
 
     List<GiftCertificate> existingGiftCertificate =
         giftCertificateRepository.getEntityList(new GetAllGiftCertificatesAssociatedWithOrders(id));
 
     if (!existingGiftCertificate.isEmpty()) {
-      throw new DeletingEntityException(
-          "The Gift Certificate with id = " + id + " attached to the Order. Deletion denied.");
+      throw new DeletingGiftCertificateException(
+          String.format(translatorLocale.toLocale("exception.message.40010"), id));
     }
     return giftCertificateRepository.delete(id);
   }

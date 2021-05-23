@@ -55,10 +55,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             new JwtTokenVerifierFilter(jwtConfig), JwtLoginAndPasswordAuthenticationFilter.class)
         .authorizeRequests()
         .anyRequest()
-        .authenticated()
-        .and()
-        .oauth2Login()
-        .successHandler(authenticationSuccessHandler);
+        .authenticated();
+//        .and()
+//        .oauth2Login()
+//        .successHandler(authenticationSuccessHandler);
   }
 
   @Override

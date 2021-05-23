@@ -11,11 +11,12 @@ import com.epam.esm.service.builder.tag.TagBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
 import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.DeletingEntityException;
+import com.epam.esm.service.exception.tag.DeletingTagException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.PageNotValidException;
-import com.epam.esm.service.exception.TagAlreadyExistsException;
+import com.epam.esm.service.exception.tag.TagAlreadyExistsException;
+import com.epam.esm.service.locale.TranslatorLocale;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class TagServiceImpl implements TagService {
   private final TagBuilder builder;
   private final TagDtoBuilder tagDtoBuilder;
   private final PageValidator pageValidator;
+  private final TranslatorLocale translatorLocale;
 
   @Autowired
   public TagServiceImpl(
@@ -40,12 +42,14 @@ public class TagServiceImpl implements TagService {
       TagValidator tagValidator,
       TagBuilder builder,
       TagDtoBuilder tagDtoBuilder,
-      PageValidator pageValidator) {
+      PageValidator pageValidator,
+      TranslatorLocale translatorLocale) {
     this.tagRepository = tagRepository;
     this.tagValidator = tagValidator;
     this.builder = builder;
     this.tagDtoBuilder = tagDtoBuilder;
     this.pageValidator = pageValidator;
+    this.translatorLocale = translatorLocale;
   }
 
   @Override
@@ -77,7 +81,7 @@ public class TagServiceImpl implements TagService {
       return optionalSavedTag.map(tagDtoBuilder::build);
     } else {
       throw new TagAlreadyExistsException(
-          "The tag with this name (" + tagDto.getName() + ") is already in the database");
+          String.format(translatorLocale.toLocale("exception.message.40901"), tag.getName()));
     }
   }
 
@@ -87,13 +91,15 @@ public class TagServiceImpl implements TagService {
     tagRepository
         .getEntity(new GetTagByIdSpecification(id))
         .orElseThrow(
-            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
+            () ->
+                new EntityNotFoundException(
+                    String.format(translatorLocale.toLocale("exception.message.40401"), id)));
 
     List<Tag> existingTags =
         tagRepository.getEntityList(new GetTagsByGiftCertificateSpecification(id));
     if (!existingTags.isEmpty()) {
-      throw new DeletingEntityException(
-          "The Tag with id = " + id + " attached to the Gift Certificate. Deletion denied.");
+      throw new DeletingTagException(
+          String.format(translatorLocale.toLocale("exception.message.40002"), id));
     }
     return tagRepository.delete(id);
   }

@@ -21,7 +21,7 @@ import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
-import com.epam.esm.service.exception.InsufficientFundInAccount;
+import com.epam.esm.service.exception.order.InsufficientFundInAccount;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.validator.PageValidator;

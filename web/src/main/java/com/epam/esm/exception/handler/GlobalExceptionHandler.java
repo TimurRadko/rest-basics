@@ -1,13 +1,15 @@
 package com.epam.esm.exception.handler;
 
-import com.epam.esm.service.exception.DeletingEntityException;
+import com.epam.esm.service.exception.certificates.DeletingGiftCertificateException;
+import com.epam.esm.service.exception.tag.DeletingTagException;
 import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
-import com.epam.esm.service.exception.InsufficientFundInAccount;
+import com.epam.esm.service.exception.order.InsufficientFundInAccount;
 import com.epam.esm.service.exception.PageNotValidException;
-import com.epam.esm.service.exception.TagAlreadyExistsException;
+import com.epam.esm.service.exception.tag.TagAlreadyExistsException;
+import com.epam.esm.service.exception.user.UserDoesNotHaveOrderException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   private static final int EMPTY_ORDER_CODE = 40006;
   private static final int PAGE_NOT_VALID_CODE = 40007;
   private static final int PAGE_OR_SIZE_PASS_TYPE_NOT_VALID_CODE = 40008;
+  private static final int USER_DOES_NOT_HAVE_ORDER_CODE = 40009;
+  private static final int DELETING_CERTIFICATE_CODE = 40010;
 
   @ExceptionHandler
   public ResponseEntity<SingleExceptionResponse> handleException(
@@ -57,8 +61,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler
-  public ResponseEntity<SingleExceptionResponse> handleException(
-      DeletingEntityException exception) {
+  public ResponseEntity<SingleExceptionResponse> handleException(DeletingTagException exception) {
     SingleExceptionResponse response = new SingleExceptionResponse();
     response.setErrorMessage(exception.getMessage());
     response.setErrorCode(DELETING_TAG_CODE);
@@ -143,12 +146,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler
+  public ResponseEntity<SingleExceptionResponse> handleException(
+      UserDoesNotHaveOrderException exception) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(USER_DOES_NOT_HAVE_ORDER_CODE);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
   public ResponseEntity<MultipleExceptionResponse> handleException(
       PageNotValidException exception) {
     MultipleExceptionResponse response = new MultipleExceptionResponse();
     List<String> exceptionList = new ArrayList<>(Arrays.asList(exception.getMessage().split("\n")));
     response.setErrorMessages(exceptionList);
     response.setErrorCode(PAGE_NOT_VALID_CODE);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<SingleExceptionResponse> handleException(
+      DeletingGiftCertificateException exception) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(exception.getMessage());
+    response.setErrorCode(DELETING_CERTIFICATE_CODE);
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 }
