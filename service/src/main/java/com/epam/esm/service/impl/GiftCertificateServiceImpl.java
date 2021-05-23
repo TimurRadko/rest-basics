@@ -20,6 +20,7 @@ import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.service.exception.EntityNotSavedException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.PageNotValidException;
@@ -89,7 +90,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     GiftCertificate giftCertificate =
         giftCertificateRepository
             .save(giftCertificateBuilder.build(giftCertificateDto))
-            .orElseThrow(() -> new ServiceException("The GiftCertificate wasn't saved"));
+            .orElseThrow(
+                () ->
+                    new EntityNotSavedException(
+                        translatorLocale.toLocale("exception.message.40011")));
     return Optional.of(giftCertificateDtoBuilder.buildWithTagDtos(giftCertificate, tags));
   }
 
@@ -120,7 +124,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       return tagDtoBuilder.build(
           tagRepository
               .save(tagBuilder.build(tagDto))
-              .orElseThrow(() -> new ServiceException("The Tag wasn't saved")));
+              .orElseThrow(
+                  () ->
+                      new EntityNotSavedException(
+                          translatorLocale.toLocale("exception.message.40011"))));
     } else {
       return tagDtoBuilder.build(optionalExistingTag.get());
     }
@@ -188,14 +195,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .update(giftCertificate)
                 .orElseThrow(
                     () ->
-                        new EntityNotFoundException("The Gift Certificate not exists in the DB"))));
+                        new EntityNotFoundException(
+                            String.format(
+                                translatorLocale.toLocale("exception.message.40401"), id)))));
   }
 
   private GiftCertificate getExistingGiftCertificate(long id) {
     return giftCertificateRepository
         .getEntity(new GetGiftCertificatesByIdSpecification(id))
         .orElseThrow(
-            () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
+            () ->
+                new EntityNotFoundException(
+                    String.format(translatorLocale.toLocale("exception.message.40401"), id)));
   }
 
   @Override
@@ -267,7 +278,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     return giftCertificateRepository
         .getEntity(new GetGiftCertificatesByIdSpecification(id))
         .orElseThrow(
-            () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
+            () ->
+                new EntityNotFoundException(
+                    String.format(translatorLocale.toLocale("exception.message.40401"), id)));
   }
 
   private void updateGiftCertificate(GiftCertificate giftCertificate, Set<TagDto> tagDtos) {
@@ -276,7 +289,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     giftCertificateRepository
         .update(giftCertificate)
         .orElseThrow(
-            () -> new EntityNotFoundException("The Gift Certificate not exists in the DB"));
+            () ->
+                new EntityNotFoundException(
+                    String.format(
+                        translatorLocale.toLocale("exception.message.40401"),
+                        giftCertificate.getId())));
   }
 
   private void checkTags(Set<TagDto> tagDtos) {

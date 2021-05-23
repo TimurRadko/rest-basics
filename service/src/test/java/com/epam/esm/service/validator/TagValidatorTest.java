@@ -4,15 +4,21 @@ import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.locale.TranslatorLocale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class TagValidatorTest {
-  private TagValidator validator;
   @Mock private TranslatorLocale translatorLocale;
+  @InjectMocks private TagValidator validator;
   private static final String EXPECTED_NULL_TAG_MESSAGE =
       "To create a Tag you must send the Tag Entity";
   private static final String EXPECTED_NULL_OR_ZERO_LENGTH_NAME_TAG_MESSAGE =
@@ -27,8 +33,12 @@ class TagValidatorTest {
 
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenTagIsNull() {
+    // given
+    // when
+    when(translatorLocale.toLocale(any())).thenReturn(EXPECTED_NULL_TAG_MESSAGE);
     assertFalse(validator.isValid(null));
     String actualErrorMessage = validator.getErrorMessage();
+    // then
     assertEquals(EXPECTED_NULL_TAG_MESSAGE, actualErrorMessage);
   }
 
@@ -47,6 +57,8 @@ class TagValidatorTest {
     // given
     TagDto tagDto = new TagDto(1L, null);
     // when
+    when(translatorLocale.toLocale(any()))
+        .thenReturn(EXPECTED_NULL_OR_ZERO_LENGTH_NAME_TAG_MESSAGE);
     boolean actualIsValid = validator.isValid(tagDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -59,6 +71,8 @@ class TagValidatorTest {
     // given
     TagDto tagDto = new TagDto(1L, "");
     // when
+    when(translatorLocale.toLocale(any()))
+        .thenReturn(EXPECTED_NULL_OR_ZERO_LENGTH_NAME_TAG_MESSAGE);
     boolean actualIsValid = validator.isValid(tagDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -71,6 +85,7 @@ class TagValidatorTest {
     // given
     TagDto tagDto = new TagDto(1L, "I");
     // when
+    when(translatorLocale.toLocale(any())).thenReturn(EXPECTED_MIN_OR_MAX_TAG_MESSAGE);
     boolean actualIsValid = validator.isValid(tagDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -83,6 +98,7 @@ class TagValidatorTest {
     // given
     TagDto tagDto = new TagDto(1L, "nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
     // when
+    when(translatorLocale.toLocale(any())).thenReturn(EXPECTED_MIN_OR_MAX_TAG_MESSAGE);
     boolean actualIsValid = validator.isValid(tagDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then

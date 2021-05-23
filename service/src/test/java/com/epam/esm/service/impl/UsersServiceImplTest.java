@@ -19,11 +19,12 @@ import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UsersDto;
-import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
-import com.epam.esm.service.exception.order.InsufficientFundInAccount;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.exception.order.EmptyOrderException;
+import com.epam.esm.service.exception.order.InsufficientFundInAccount;
+import com.epam.esm.service.locale.TranslatorLocale;
 import com.epam.esm.service.validator.PageValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,9 +60,9 @@ class UsersServiceImplTest {
   @Mock private TagDtoBuilder tagDtoBuilder;
   @Mock private TagRepository tagRepository;
   @Mock private PageValidator pageValidator;
+  @Mock private TranslatorLocale translatorLocale;
 
-  @InjectMocks
-  UsersServiceImpl userService;
+  @InjectMocks UsersServiceImpl userService;
 
   private static final long USER_ID = 1L;
   private static final String LOGIN = "Valid Login";
@@ -185,6 +186,8 @@ class UsersServiceImplTest {
     // given
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     // when
+    when(translatorLocale.toLocale(any()))
+        .thenReturn(String.format("Requested resource with id = %s not found.", user.getId()));
     // then
     assertThrows(
         EntityNotFoundException.class, () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));
@@ -196,6 +199,8 @@ class UsersServiceImplTest {
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.of(giftCertificate));
     // when
+    when(translatorLocale.toLocale(any()))
+        .thenReturn(String.format("Requested resource with id = %s not found.", user.getId()));
     // then
     assertThrows(
         EntityNotFoundException.class, () -> userService.makeOrder(USER_ID, giftCertificateDtoIds));

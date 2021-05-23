@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PageValidatorTest {
@@ -35,7 +37,7 @@ class PageValidatorTest {
     // given
     pageDto.setPage(null);
     // when
-
+    when(translatorLocale.toLocale(any())).thenReturn(NULL_PAGE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then
@@ -48,6 +50,7 @@ class PageValidatorTest {
     // given
     pageDto.setSize(null);
     // when
+    when(translatorLocale.toLocale(any())).thenReturn(NULL_SIZE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then
@@ -61,6 +64,8 @@ class PageValidatorTest {
     pageDto.setPage(null);
     pageDto.setSize(null);
     // when
+    when(translatorLocale.toLocale("exception.message.pageNotNull")).thenReturn(NULL_PAGE_MESSAGE);
+    when(translatorLocale.toLocale("exception.message.sizeNotNull")).thenReturn(NULL_SIZE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then
@@ -73,6 +78,7 @@ class PageValidatorTest {
     // given
     pageDto.setPage(-1);
     // when
+    when(translatorLocale.toLocale(any())).thenReturn(LESS_THAN_ZERO_PAGE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then
@@ -85,6 +91,7 @@ class PageValidatorTest {
     // given
     pageDto.setSize(-1);
     // when
+    when(translatorLocale.toLocale(any())).thenReturn(LESS_THAN_ZERO_SIZE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then

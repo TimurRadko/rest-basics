@@ -26,13 +26,13 @@ import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UsersCreatingDto;
 import com.epam.esm.service.dto.UsersDto;
-import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.service.exception.EntityNotSavedException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
-import com.epam.esm.service.exception.order.InsufficientFundInAccount;
 import com.epam.esm.service.exception.PageNotValidException;
-import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.service.exception.user.UserLoginExistingException;
+import com.epam.esm.service.exception.order.EmptyOrderException;
+import com.epam.esm.service.exception.order.InsufficientFundInAccount;
+import com.epam.esm.service.exception.user.UserLoginExistsException;
 import com.epam.esm.service.locale.TranslatorLocale;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.UserValidator;
@@ -129,13 +129,19 @@ public class UsersServiceImpl implements UserService {
     userDtoBuilder.build(
         userRepository
             .update(users)
-            .orElseThrow(() -> new EntityNotFoundException("The User not exists in the DB")));
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        String.format(translatorLocale.toLocale("exception.message.40401"), id))));
 
     OrdersDto ordersDto = createOrderDto(users.getId(), cost, giftCertificates);
     Orders orders =
         ordersRepository
             .save(ordersBuilder.build(ordersDto, users))
-            .orElseThrow(() -> new ServiceException("The Orders wasn't saved"));
+            .orElseThrow(
+                () ->
+                    new EntityNotSavedException(
+                        translatorLocale.toLocale("exception.message.40011")));
     return Optional.of(ordersDtoBuilder.build(orders));
   }
 
@@ -202,7 +208,8 @@ public class UsersServiceImpl implements UserService {
             .orElseThrow(
                 () ->
                     new UsernameNotFoundException(
-                        "User with login: " + login + " does not exists in database"));
+                        (String.format(
+                            translatorLocale.toLocale("exception.message.40012"), login))));
     return userDetailsBuilder.build(findingUsers);
   }
 
@@ -218,11 +225,15 @@ public class UsersServiceImpl implements UserService {
       Users savedUser =
           userRepository
               .save(userBuilder.buildForSave(userDto))
-              .orElseThrow(() -> new ServiceException("The User wasn't saved"));
+              .orElseThrow(
+                  () ->
+                      new EntityNotSavedException(
+                          translatorLocale.toLocale("exception.message.40011")));
       return Optional.of(userDtoBuilder.build(savedUser));
     } else {
-      throw new UserLoginExistingException(
-          "The User with login " + userDto.getLogin() + " is existing in DB");
+      throw new UserLoginExistsException(
+          (String.format(
+              translatorLocale.toLocale("exception.message.40902"), userDto.getLogin())));
     }
   }
 }

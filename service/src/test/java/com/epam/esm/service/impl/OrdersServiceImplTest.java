@@ -6,8 +6,9 @@ import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.EmptyOrderException;
 import com.epam.esm.service.exception.PageNotValidException;
+import com.epam.esm.service.exception.user.UserDoesNotHaveOrderException;
+import com.epam.esm.service.locale.TranslatorLocale;
 import com.epam.esm.service.validator.PageValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ class OrdersServiceImplTest {
   @Mock private OrdersRepository ordersRepository;
   @Mock private OrdersDtoBuilder ordersDtoBuilder;
   @Mock private PageValidator pageValidator;
+  @Mock TranslatorLocale translatorLocale;
 
   @InjectMocks private OrdersServiceImpl ordersService;
 
@@ -133,9 +135,14 @@ class OrdersServiceImplTest {
     when(ordersRepository.getEntityList(any())).thenReturn(new ArrayList<>());
     when(ordersRepository.getEntity(any())).thenReturn(Optional.of(order));
     // when
+    when(translatorLocale.toLocale(any()))
+        .thenReturn(
+            String.format(
+                "User with id = %s doesn't have order with id = %s.",
+                DEFAULT_USER_ID, FIRST_ORDER_ID));
     // then
     assertThrows(
-        EmptyOrderException.class,
+        UserDoesNotHaveOrderException.class,
         () -> ordersService.getByUserAndOrderId(DEFAULT_USER_ID, FIRST_ORDER_ID));
   }
 }

@@ -46,7 +46,11 @@ public class OrdersServiceImpl implements OrderService {
     Orders order =
         ordersRepository
             .getEntity(new GetOrderByIdSpecification(orderId))
-            .orElseThrow(() -> new EntityNotFoundException("The Order not exists in the DB"));
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        String.format(
+                            translatorLocale.toLocale("exception.message.40401"), orderId)));
     if (existingOrders.isEmpty() || !existingOrders.contains(order)) {
       throw new UserDoesNotHaveOrderException(
           String.format(translatorLocale.toLocale("exception.message.40009"), userId, orderId));
