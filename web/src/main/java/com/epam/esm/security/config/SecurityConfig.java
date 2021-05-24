@@ -1,5 +1,7 @@
 package com.epam.esm.security.config;
 
+import com.epam.esm.exception.handler.CustomAccessDeniedHandler;
+import com.epam.esm.exception.handler.CustomAuthenticationEntryPoint;
 import com.epam.esm.security.jwt.JwtConfig;
 import com.epam.esm.security.jwt.JwtLoginAndPasswordAuthenticationFilter;
 import com.epam.esm.security.jwt.JwtTokenVerifierFilter;
@@ -30,17 +32,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final UserService userService;
   private final JwtConfig jwtConfig;
   private final Oauth2AuthenticationSuccessHandler authenticationSuccessHandler;
+  private final CustomAccessDeniedHandler accessDeniedHandler;
+  private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
   @Autowired
   public SecurityConfig(
       PasswordEncoder passwordEncoder,
       UserService userService,
       JwtConfig jwtConfig,
-      Oauth2AuthenticationSuccessHandler authenticationSuccessHandler) {
+      Oauth2AuthenticationSuccessHandler authenticationSuccessHandler,
+      CustomAccessDeniedHandler accessDeniedHandler,
+      CustomAuthenticationEntryPoint authenticationEntryPoint) {
     this.passwordEncoder = passwordEncoder;
     this.userService = userService;
     this.jwtConfig = jwtConfig;
     this.authenticationSuccessHandler = authenticationSuccessHandler;
+    this.accessDeniedHandler = accessDeniedHandler;
+    this.authenticationEntryPoint = authenticationEntryPoint;
   }
 
   @Override
@@ -55,10 +63,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             new JwtTokenVerifierFilter(jwtConfig), JwtLoginAndPasswordAuthenticationFilter.class)
         .authorizeRequests()
         .anyRequest()
-        .authenticated();
-//        .and()
-//        .oauth2Login()
-//        .successHandler(authenticationSuccessHandler);
+        .authenticated()
+        .and()
+        .exceptionHandling()
+        .accessDeniedHandler(accessDeniedHandler)
+        .authenticationEntryPoint(authenticationEntryPoint)
+        .and()
+        .oauth2Login()
+        .successHandler(authenticationSuccessHandler);
   }
 
   @Override

@@ -1,12 +1,14 @@
 package com.epam.esm.exception.handler;
 
-import com.epam.esm.service.exception.EntityNotSavedException;
-import com.epam.esm.service.exception.order.EmptyOrderException;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.service.exception.EntityNotSavedException;
+import com.epam.esm.service.exception.EntityNotUpdatedException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
+import com.epam.esm.service.exception.MostWidelyTagNotExistsException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.certificates.DeletingGiftCertificateException;
+import com.epam.esm.service.exception.order.EmptyOrderException;
 import com.epam.esm.service.exception.order.InsufficientFundInAccount;
 import com.epam.esm.service.exception.tag.DeletingTagException;
 import com.epam.esm.service.exception.tag.TagAlreadyExistsException;
@@ -50,6 +52,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   private static final int DELETING_CERTIFICATE_CODE = 40010;
   private static final int ENTITY_NOT_SAVED_CODE = 40011;
   private static final int USER_LOGIN_NOT_FOUND_CODE = 40012;
+  private static final int ENTITY_NOT_UPDATED_EXCEPTION_CODE = 40013;
+  private static final int MOST_WIDELY_TAG_WAS_NOT_EXIST_CODE = 40014;
 
   @Autowired
   public GlobalExceptionHandler(TranslatorLocale translatorLocale) {
@@ -195,6 +199,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     response.setErrorMessage(translatorLocale.toLocale("exception.message.noHandler"));
     response.setErrorCode(NO_HANDLER_FOUND_CODE);
     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<SingleExceptionResponse> handleException(
+      EntityNotUpdatedException exception) {
+    SingleExceptionResponse response =
+        prepareSingleExceptionResponse(ENTITY_NOT_UPDATED_EXCEPTION_CODE, exception);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<SingleExceptionResponse> handleException(
+      MostWidelyTagNotExistsException exception) {
+    SingleExceptionResponse response =
+        prepareSingleExceptionResponse(MOST_WIDELY_TAG_WAS_NOT_EXIST_CODE, exception);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
   private SingleExceptionResponse prepareSingleExceptionResponse(

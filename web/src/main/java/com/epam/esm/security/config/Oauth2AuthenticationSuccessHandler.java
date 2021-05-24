@@ -48,12 +48,11 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
       throws IOException {
     DefaultOidcUser principal = (DefaultOidcUser) authentication.getPrincipal();
     Map<String, Object> claims = principal.getClaims();
-    String email = (String) claims.get("email");
     String name = (String) claims.get("name");
 
     UserDetails user;
     try {
-      user = userService.loadUserByUsername(email);
+      user = userService.loadUserByUsername(name);
     } catch (UsernameNotFoundException e) {
       Users builtUser = userBuilder.buildFromGoogleParameters(name);
       user = userDetailsBuilder.build(builtUser);

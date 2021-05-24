@@ -4,7 +4,9 @@ import com.epam.esm.link.builder.LinkBuilder;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.service.exception.EntityNotSavedException;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.locale.TranslatorLocale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,11 +32,16 @@ import java.util.stream.Collectors;
 public class TagsController {
   private final TagService tagService;
   private final LinkBuilder<TagDto> tagLinkBuilder;
+  private final TranslatorLocale translatorLocale;
 
   @Autowired
-  public TagsController(TagService tagService, LinkBuilder<TagDto> tagLinkBuilder) {
+  public TagsController(
+      TagService tagService,
+      LinkBuilder<TagDto> tagLinkBuilder,
+      TranslatorLocale translatorLocale) {
     this.tagService = tagService;
     this.tagLinkBuilder = tagLinkBuilder;
+    this.translatorLocale = translatorLocale;
   }
 
   @GetMapping()
@@ -56,7 +63,8 @@ public class TagsController {
             .getById(id)
             .orElseThrow(
                 () ->
-                    new EntityNotFoundException("Requested resource not found (id = " + id + ")")));
+                    new EntityNotFoundException(
+                        String.format(translatorLocale.toLocale("exception.message.40401"), id))));
   }
 
   @PostMapping()
@@ -66,7 +74,9 @@ public class TagsController {
       @RequestBody TagDto tagDto, HttpServletRequest request, HttpServletResponse response) {
     Optional<TagDto> optionalTag = tagService.save(tagDto);
     TagDto savedTagDto =
-        optionalTag.orElseThrow(() -> new EntityNotFoundException("The Tag didn't add to DB"));
+        optionalTag.orElseThrow(
+            () ->
+                new EntityNotSavedException(translatorLocale.toLocale("exception.message.40011")));
 
     Long id = savedTagDto.getId();
     String url = request.getRequestURL().toString();

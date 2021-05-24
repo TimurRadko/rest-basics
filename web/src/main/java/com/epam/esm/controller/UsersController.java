@@ -9,6 +9,9 @@ import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.UsersCreatingDto;
 import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.service.exception.EntityNotSavedException;
+import com.epam.esm.service.exception.MostWidelyTagNotExistsException;
+import com.epam.esm.service.locale.TranslatorLocale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,13 +35,18 @@ public class UsersController {
   private final UserService userService;
   private final OrderService orderService;
   private final UserDtoLinkBuilder userDtoLinkBuilder;
+  private final TranslatorLocale translatorLocale;
 
   @Autowired
   public UsersController(
-      UserService userService, OrderService orderService, UserDtoLinkBuilder userDtoLinkBuilder) {
+      UserService userService,
+      OrderService orderService,
+      UserDtoLinkBuilder userDtoLinkBuilder,
+      TranslatorLocale translatorLocale) {
     this.userService = userService;
     this.orderService = orderService;
     this.userDtoLinkBuilder = userDtoLinkBuilder;
+    this.translatorLocale = translatorLocale;
   }
 
   @GetMapping()
@@ -102,7 +110,8 @@ public class UsersController {
     OrdersDto ordersDto =
         optionalOrdersDto.orElseThrow(
             () ->
-                new EntityNotFoundException("Requested resource not found (id = " + orderId + ")"));
+                new EntityNotFoundException(
+                    String.format(translatorLocale.toLocale("exception.message.40401"), orderId)));
     return userDtoLinkBuilder.addLinkToOrderDtoUsingUserId(ordersDto, userId);
   }
 
@@ -113,7 +122,10 @@ public class UsersController {
     return userDtoLinkBuilder.addLinkMostWidelyUsedTag(
         userService
             .getMostWidelyUsedTagByUserId(id)
-            .orElseThrow(() -> new EntityNotFoundException("The most widely tag wasn't searched")));
+            .orElseThrow(
+                () ->
+                    new MostWidelyTagNotExistsException(
+                        translatorLocale.toLocale("exception.message.40414"))));
   }
 
   @PostMapping()
@@ -124,7 +136,10 @@ public class UsersController {
     UsersDto savedUserDto =
         userService
             .save(userDto)
-            .orElseThrow(() -> new EntityNotFoundException("The Account didn't create in the DB"));
+            .orElseThrow(
+                () ->
+                    new EntityNotSavedException(
+                        translatorLocale.toLocale("exception.message.40011")));
 
     Long id = savedUserDto.getId();
     String url = request.getRequestURL().toString();

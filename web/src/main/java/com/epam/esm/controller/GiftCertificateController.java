@@ -4,6 +4,8 @@ import com.epam.esm.link.builder.LinkBuilder;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
+import com.epam.esm.service.exception.EntityNotUpdatedException;
+import com.epam.esm.service.locale.TranslatorLocale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,13 +33,16 @@ import java.util.stream.Collectors;
 public class GiftCertificateController {
   private final GiftCertificateService giftCertificateService;
   private final LinkBuilder<GiftCertificateDto> giftCertificateDtoLinkBuilder;
+  private final TranslatorLocale translatorLocale;
 
   @Autowired
   public GiftCertificateController(
       GiftCertificateService giftCertificateService,
-      LinkBuilder<GiftCertificateDto> giftCertificateDtoLinkBuilder) {
+      LinkBuilder<GiftCertificateDto> giftCertificateDtoLinkBuilder,
+      TranslatorLocale translatorLocale) {
     this.giftCertificateService = giftCertificateService;
     this.giftCertificateDtoLinkBuilder = giftCertificateDtoLinkBuilder;
+    this.translatorLocale = translatorLocale;
   }
 
   @GetMapping()
@@ -49,7 +54,8 @@ public class GiftCertificateController {
       @RequestParam(value = "tag", required = false) List<String> tagNames,
       @RequestParam(value = "sort", required = false) List<String> sorts) {
 
-    return giftCertificateService.getAllByParams(page, size, name, description, tagNames, sorts)
+    return giftCertificateService
+        .getAllByParams(page, size, name, description, tagNames, sorts)
         .stream()
         .map(giftCertificateDtoLinkBuilder::build)
         .collect(Collectors.toList());
@@ -62,7 +68,8 @@ public class GiftCertificateController {
             .getById(id)
             .orElseThrow(
                 () ->
-                    new EntityNotFoundException("Requested resource not found (id = " + id + ")")));
+                    new EntityNotFoundException(
+                        String.format(translatorLocale.toLocale("exception.message.40401"), id))));
   }
 
   @PostMapping()
@@ -78,7 +85,11 @@ public class GiftCertificateController {
 
     GiftCertificateDto savedGiftCertificateDto =
         optionalGiftCertificateDto.orElseThrow(
-            () -> new EntityNotFoundException("The Gift certificate didn't add to DB"));
+            () ->
+                new EntityNotFoundException(
+                    String.format(
+                        translatorLocale.toLocale("exception.message.40401"),
+                        giftCertificateDto.getId())));
 
     Long id = savedGiftCertificateDto.getId();
     String url = request.getRequestURL().toString();
@@ -96,8 +107,8 @@ public class GiftCertificateController {
             .update(id, giftCertificateDto)
             .orElseThrow(
                 () ->
-                    new EntityNotFoundException(
-                        "Gift certificate with id=" + id + " didn't update"));
+                    new EntityNotUpdatedException(
+                        String.format(translatorLocale.toLocale("exception.message.40013"), id)));
     return giftCertificateDtoLinkBuilder.build(updatedGiftCertificateDto);
   }
 
@@ -118,8 +129,8 @@ public class GiftCertificateController {
             .updateOneField(id, giftCertificateDto)
             .orElseThrow(
                 () ->
-                    new EntityNotFoundException(
-                        "The price of the Gift certificate with id=" + id + " didn't update"));
+                    new EntityNotUpdatedException(
+                        String.format(translatorLocale.toLocale("exception.message.40013"), id)));
     return giftCertificateDtoLinkBuilder.build(patchingGiftCertificateDto);
   }
 }
