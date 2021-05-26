@@ -1,12 +1,12 @@
 package com.epam.esm.security.config;
 
 import com.epam.esm.dao.entity.Users;
+import com.epam.esm.security.TokenBuilder;
 import com.epam.esm.security.jwt.JwtConfig;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.builder.user.UserBuilder;
 import com.epam.esm.service.builder.user.UserDetailsBuilder;
 import com.epam.esm.service.dto.UsersCreatingDto;
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.Map;
 
 @Component
@@ -29,17 +27,20 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
   private final JwtConfig jwtConfig;
   private final UserBuilder userBuilder;
   private final UserDetailsBuilder userDetailsBuilder;
+  private final TokenBuilder tokenBuilder;
 
   @Autowired
   public Oauth2AuthenticationSuccessHandler(
       UserService userService,
       JwtConfig jwtConfig,
       UserBuilder userBuilder,
-      UserDetailsBuilder userDetailsBuilder) {
+      UserDetailsBuilder userDetailsBuilder,
+      TokenBuilder tokenBuilder) {
     this.userService = userService;
     this.jwtConfig = jwtConfig;
     this.userBuilder = userBuilder;
     this.userDetailsBuilder = userDetailsBuilder;
+    this.tokenBuilder = tokenBuilder;
   }
 
   @Override
@@ -60,18 +61,7 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
           new UsersCreatingDto(
               builtUser.getLogin(), builtUser.getPassword(), builtUser.getPassword()));
     }
-
-    String token =
-        Jwts.builder()
-            .setSubject(user.getUsername())
-            .claim("authorities", authentication.getAuthorities())
-            .setIssuedAt(new Date())
-            .setExpiration(
-                java.sql.Date.valueOf(
-                    LocalDate.now().plusDays(jwtConfig.getTokenDaysExpirationPeriod())))
-            .signWith(jwtConfig.secretKey())
-            .compact();
-
+    String token = tokenBuilder.buildWithUserLogin(authentication, user);
     PrintWriter writer = response.getWriter();
     writer.write(jwtConfig.getTokenPrefix() + token);
     //    response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() +

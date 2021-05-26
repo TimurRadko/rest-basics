@@ -16,11 +16,14 @@ import com.epam.esm.service.exception.user.UserDoesNotHaveOrderException;
 import com.epam.esm.service.exception.user.UserLoginExistsException;
 import com.epam.esm.service.exception.user.UserLoginNotFoundException;
 import com.epam.esm.service.locale.TranslatorLocale;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,12 +31,19 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 @ControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
+    implements AccessDeniedHandler {
   private final TranslatorLocale translatorLocale;
   private static final int ENTITY_NOT_FOUND_CODE = 40401;
   private static final int NO_HANDLER_FOUND_CODE = 40402;
@@ -54,6 +64,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   private static final int USER_LOGIN_NOT_FOUND_CODE = 40012;
   private static final int ENTITY_NOT_UPDATED_EXCEPTION_CODE = 40013;
   private static final int MOST_WIDELY_TAG_WAS_NOT_EXIST_CODE = 40014;
+  private static final int ACCESS_DENIED_CODE = 40301;
 
   @Autowired
   public GlobalExceptionHandler(TranslatorLocale translatorLocale) {
@@ -166,19 +177,46 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       HttpHeaders headers,
       HttpStatus status,
       WebRequest request) {
-    SingleExceptionResponse response = new SingleExceptionResponse();
-    response.setErrorMessage(translatorLocale.toLocale("exception.message.41501"));
-    response.setErrorCode(HTTP_MEDIA_TYPE_NOT_SUPPORTED_CODE);
+    SingleExceptionResponse response =
+        prepareCustomExceptionResponse(
+            HTTP_MEDIA_TYPE_NOT_SUPPORTED_CODE,
+            translatorLocale.toLocale("exception.message.41501"));
     return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
   }
 
   @Override
   protected ResponseEntity<Object> handleTypeMismatch(
       TypeMismatchException exception, HttpHeaders headers, HttpStatus status, WebRequest request) {
-    SingleExceptionResponse response = new SingleExceptionResponse();
-    response.setErrorMessage(translatorLocale.toLocale("exception.message.40008"));
-    response.setErrorCode(PAGE_OR_SIZE_PASS_TYPE_NOT_VALID_CODE);
+    SingleExceptionResponse response =
+        prepareCustomExceptionResponse(
+            PAGE_OR_SIZE_PASS_TYPE_NOT_VALID_CODE,
+            translatorLocale.toLocale("exception.message.40008"));
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
+  @Override
+  public void handle(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      AccessDeniedException accessDeniedException)
+      throws IOException {
+    SingleExceptionResponse exceptionResponse =
+        prepareCustomExceptionResponse(
+            ACCESS_DENIED_CODE, translatorLocale.toLocale("exception.message.accessDenied"));
+    response.setStatus(HttpStatus.FORBIDDEN.value());
+    response.setContentType(APPLICATION_JSON_VALUE);
+    OutputStream out = response.getOutputStream();
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.writeValue(out, exceptionResponse);
+    out.flush();
+  }
+
+  private SingleExceptionResponse prepareCustomExceptionResponse(int errorCode, String message) {
+    SingleExceptionResponse response = new SingleExceptionResponse();
+    response.setErrorMessage(message);
+    response.setErrorCode(errorCode);
+    return response;
   }
 
   @ExceptionHandler
@@ -195,9 +233,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       HttpHeaders headers,
       HttpStatus status,
       WebRequest request) {
-    SingleExceptionResponse response = new SingleExceptionResponse();
-    response.setErrorMessage(translatorLocale.toLocale("exception.message.noHandler"));
-    response.setErrorCode(NO_HANDLER_FOUND_CODE);
+    SingleExceptionResponse response =
+        prepareCustomExceptionResponse(
+            NO_HANDLER_FOUND_CODE, translatorLocale.toLocale("exception.message.noHandler"));
     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
   }
 

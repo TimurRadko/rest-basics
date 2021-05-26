@@ -9,7 +9,7 @@ public abstract class AbstractExceptionResponse {
     return errorCode;
   }
 
-  void setErrorCode(int errorCode) {
+  public void setErrorCode(int errorCode) {
     this.errorCode = errorCode;
   }
 }
