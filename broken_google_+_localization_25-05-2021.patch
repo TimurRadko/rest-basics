@@ -1,0 +1,451 @@
+Index: web/src/main/java/com/epam/esm/security/config/AuthenticationServerConfig.java
+===================================================================
+diff --git a/web/src/main/java/com/epam/esm/security/config/AuthenticationServerConfig.java b/web/src/main/java/com/epam/esm/security/config/AuthenticationServerConfig.java
+deleted file mode 100644
+--- a/web/src/main/java/com/epam/esm/security/config/AuthenticationServerConfig.java	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
++++ /dev/null	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
+@@ -1,4 +0,0 @@
+-package com.epam.esm.security.config;
+-
+-public class AuthenticationServerConfig extends AuthorizationServerConfigurerAdapter {
+-}
+Index: web/src/main/java/com/epam/esm/security/TokenBuilder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/src/main/java/com/epam/esm/security/TokenBuilder.java b/web/src/main/java/com/epam/esm/security/TokenBuilder.java
+new file mode 100644
+--- /dev/null	(date 1621878402368)
++++ b/web/src/main/java/com/epam/esm/security/TokenBuilder.java	(date 1621878402368)
+@@ -0,0 +1,45 @@
++package com.epam.esm.security;
++
++import com.epam.esm.security.jwt.JwtConfig;
++import io.jsonwebtoken.Jwts;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.security.core.Authentication;
++import org.springframework.security.core.userdetails.UserDetails;
++import org.springframework.stereotype.Component;
++
++import java.time.LocalDate;
++import java.util.Date;
++
++@Component
++public class TokenBuilder {
++  private final JwtConfig jwtConfig;
++
++  @Autowired
++  public TokenBuilder(JwtConfig jwtConfig) {
++    this.jwtConfig = jwtConfig;
++  }
++
++  public String build(Authentication authResult) {
++    return Jwts.builder()
++        .setSubject(authResult.getName())
++        .claim("authorities", authResult.getAuthorities())
++        .setIssuedAt(new Date())
++        .setExpiration(
++            java.sql.Date.valueOf(
++                LocalDate.now().plusDays(jwtConfig.getTokenDaysExpirationPeriod())))
++        .signWith(jwtConfig.secretKey())
++        .compact();
++  }
++
++  public String buildWithUserLogin(Authentication authResult, UserDetails user) {
++    return Jwts.builder()
++        .setSubject(user.getUsername())
++        .claim("authorities", authResult.getAuthorities())
++        .setIssuedAt(new Date())
++        .setExpiration(
++            java.sql.Date.valueOf(
++                LocalDate.now().plusDays(jwtConfig.getTokenDaysExpirationPeriod())))
++        .signWith(jwtConfig.secretKey())
++        .compact();
++  }
++}
+Index: web/src/main/java/com/epam/esm/security/config/Oauth2AuthenticationSuccessHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/src/main/java/com/epam/esm/security/config/Oauth2AuthenticationSuccessHandler.java b/web/src/main/java/com/epam/esm/security/config/Oauth2AuthenticationSuccessHandler.java
+--- a/web/src/main/java/com/epam/esm/security/config/Oauth2AuthenticationSuccessHandler.java	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
++++ b/web/src/main/java/com/epam/esm/security/config/Oauth2AuthenticationSuccessHandler.java	(date 1621933117535)
+@@ -1,12 +1,12 @@
+ package com.epam.esm.security.config;
+ 
+ import com.epam.esm.dao.entity.Users;
++import com.epam.esm.security.TokenBuilder;
+ import com.epam.esm.security.jwt.JwtConfig;
+ import com.epam.esm.service.UserService;
+ import com.epam.esm.service.builder.user.UserBuilder;
+ import com.epam.esm.service.builder.user.UserDetailsBuilder;
+ import com.epam.esm.service.dto.UsersCreatingDto;
+-import io.jsonwebtoken.Jwts;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.security.core.Authentication;
+ import org.springframework.security.core.userdetails.UserDetails;
+@@ -19,8 +19,6 @@
+ import javax.servlet.http.HttpServletResponse;
+ import java.io.IOException;
+ import java.io.PrintWriter;
+-import java.time.LocalDate;
+-import java.util.Date;
+ import java.util.Map;
+ 
+ @Component
+@@ -29,17 +27,20 @@
+   private final JwtConfig jwtConfig;
+   private final UserBuilder userBuilder;
+   private final UserDetailsBuilder userDetailsBuilder;
++  private final TokenBuilder tokenBuilder;
+ 
+   @Autowired
+   public Oauth2AuthenticationSuccessHandler(
+       UserService userService,
+       JwtConfig jwtConfig,
+       UserBuilder userBuilder,
+-      UserDetailsBuilder userDetailsBuilder) {
++      UserDetailsBuilder userDetailsBuilder,
++      TokenBuilder tokenBuilder) {
+     this.userService = userService;
+     this.jwtConfig = jwtConfig;
+     this.userBuilder = userBuilder;
+     this.userDetailsBuilder = userDetailsBuilder;
++    this.tokenBuilder = tokenBuilder;
+   }
+ 
+   @Override
+@@ -49,7 +50,6 @@
+     DefaultOidcUser principal = (DefaultOidcUser) authentication.getPrincipal();
+     Map<String, Object> claims = principal.getClaims();
+     String name = (String) claims.get("name");
+-
+     UserDetails user;
+     try {
+       user = userService.loadUserByUsername(name);
+@@ -60,18 +60,7 @@
+           new UsersCreatingDto(
+               builtUser.getLogin(), builtUser.getPassword(), builtUser.getPassword()));
+     }
+-
+-    String token =
+-        Jwts.builder()
+-            .setSubject(user.getUsername())
+-            .claim("authorities", authentication.getAuthorities())
+-            .setIssuedAt(new Date())
+-            .setExpiration(
+-                java.sql.Date.valueOf(
+-                    LocalDate.now().plusDays(jwtConfig.getTokenDaysExpirationPeriod())))
+-            .signWith(jwtConfig.secretKey())
+-            .compact();
+-
++    String token = tokenBuilder.buildWithUserLogin(authentication, user);
+     PrintWriter writer = response.getWriter();
+     writer.write(jwtConfig.getTokenPrefix() + token);
+     //    response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() +
+Index: web/src/main/resources/application.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/src/main/resources/application.properties b/web/src/main/resources/application.properties
+--- a/web/src/main/resources/application.properties	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
++++ b/web/src/main/resources/application.properties	(date 1621954797821)
+@@ -2,7 +2,6 @@
+ spring.profiles.active=dev
+ spring.aop.auto=true
+ spring.aop.proxy-target-class=true
+-
+ server.error.whitelabel.enabled=false
+ spring.mvc.throw-exception-if-no-handler-found=true
+ spring.web.resources.add-mappings=false
+Index: web/src/main/java/com/epam/esm/security/jwt/JwtLoginAndPasswordAuthenticationFilter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/src/main/java/com/epam/esm/security/jwt/JwtLoginAndPasswordAuthenticationFilter.java b/web/src/main/java/com/epam/esm/security/jwt/JwtLoginAndPasswordAuthenticationFilter.java
+--- a/web/src/main/java/com/epam/esm/security/jwt/JwtLoginAndPasswordAuthenticationFilter.java	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
++++ b/web/src/main/java/com/epam/esm/security/jwt/JwtLoginAndPasswordAuthenticationFilter.java	(date 1621954797862)
+@@ -1,8 +1,8 @@
+ package com.epam.esm.security.jwt;
+ 
+ import com.epam.esm.security.LoginAndPasswordAuthenticationRequest;
++import com.epam.esm.security.TokenBuilder;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+-import io.jsonwebtoken.Jwts;
+ import org.springframework.security.authentication.AuthenticationManager;
+ import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+ import org.springframework.security.core.Authentication;
+@@ -10,21 +10,20 @@
+ import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+ 
+ import javax.servlet.FilterChain;
+-import javax.servlet.ServletException;
+ import javax.servlet.http.HttpServletRequest;
+ import javax.servlet.http.HttpServletResponse;
+ import java.io.IOException;
+-import java.time.LocalDate;
+-import java.util.Date;
+ 
+ public class JwtLoginAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+   private final AuthenticationManager authenticationManager;
+   private final JwtConfig jwtConfig;
++  private final TokenBuilder tokenBuilder;
+ 
+   public JwtLoginAndPasswordAuthenticationFilter(
+-      AuthenticationManager authenticationManager, JwtConfig jwtConfig) {
++      AuthenticationManager authenticationManager, JwtConfig jwtConfig, TokenBuilder tokenBuilder) {
+     this.authenticationManager = authenticationManager;
+     this.jwtConfig = jwtConfig;
++    this.tokenBuilder = tokenBuilder;
+   }
+ 
+   @Override
+@@ -48,20 +47,8 @@
+       HttpServletRequest request,
+       HttpServletResponse response,
+       FilterChain chain,
+-      Authentication authResult)
+-      throws IOException, ServletException {
+-
+-    String token =
+-        Jwts.builder()
+-            .setSubject(authResult.getName())
+-            .claim("authorities", authResult.getAuthorities())
+-            .setIssuedAt(new Date())
+-            .setExpiration(
+-                java.sql.Date.valueOf(
+-                    LocalDate.now().plusDays(jwtConfig.getTokenDaysExpirationPeriod())))
+-            .signWith(jwtConfig.secretKey())
+-            .compact();
+-
++      Authentication authResult) {
++    String token = tokenBuilder.build(authResult);
+     response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
+   }
+ }
+Index: web/src/main/java/com/epam/esm/security/config/SecurityConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/src/main/java/com/epam/esm/security/config/SecurityConfig.java b/web/src/main/java/com/epam/esm/security/config/SecurityConfig.java
+--- a/web/src/main/java/com/epam/esm/security/config/SecurityConfig.java	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
++++ b/web/src/main/java/com/epam/esm/security/config/SecurityConfig.java	(date 1621954553477)
+@@ -2,16 +2,20 @@
+ 
+ import com.epam.esm.exception.handler.CustomAccessDeniedHandler;
+ import com.epam.esm.exception.handler.CustomAuthenticationEntryPoint;
++import com.epam.esm.exception.handler.SingleExceptionResponse;
++import com.epam.esm.security.TokenBuilder;
+ import com.epam.esm.security.jwt.JwtConfig;
+ import com.epam.esm.security.jwt.JwtLoginAndPasswordAuthenticationFilter;
+ import com.epam.esm.security.jwt.JwtTokenVerifierFilter;
+ import com.epam.esm.service.UserService;
++import com.fasterxml.jackson.databind.ObjectMapper;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.boot.context.properties.EnableConfigurationProperties;
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.context.annotation.ComponentScan;
+ import org.springframework.context.annotation.Configuration;
+ import org.springframework.context.annotation.PropertySource;
++import org.springframework.http.MediaType;
+ import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+ import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+ import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+@@ -20,6 +24,10 @@
+ import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+ import org.springframework.security.config.http.SessionCreationPolicy;
+ import org.springframework.security.crypto.password.PasswordEncoder;
++import org.springframework.security.web.AuthenticationEntryPoint;
++
++import javax.servlet.ServletOutputStream;
++import javax.servlet.http.HttpServletResponse;
+ 
+ @Configuration
+ @EnableWebSecurity
+@@ -34,6 +42,7 @@
+   private final Oauth2AuthenticationSuccessHandler authenticationSuccessHandler;
+   private final CustomAccessDeniedHandler accessDeniedHandler;
+   private final CustomAuthenticationEntryPoint authenticationEntryPoint;
++  private final TokenBuilder tokenBuilder;
+ 
+   @Autowired
+   public SecurityConfig(
+@@ -42,13 +51,15 @@
+       JwtConfig jwtConfig,
+       Oauth2AuthenticationSuccessHandler authenticationSuccessHandler,
+       CustomAccessDeniedHandler accessDeniedHandler,
+-      CustomAuthenticationEntryPoint authenticationEntryPoint) {
++      CustomAuthenticationEntryPoint authenticationEntryPoint,
++      TokenBuilder tokenBuilder) {
+     this.passwordEncoder = passwordEncoder;
+     this.userService = userService;
+     this.jwtConfig = jwtConfig;
+     this.authenticationSuccessHandler = authenticationSuccessHandler;
+     this.accessDeniedHandler = accessDeniedHandler;
+     this.authenticationEntryPoint = authenticationEntryPoint;
++    this.tokenBuilder = tokenBuilder;
+   }
+ 
+   @Override
+@@ -58,7 +69,9 @@
+         .sessionManagement()
+         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+         .and()
+-        .addFilter(new JwtLoginAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig))
++        .addFilter(
++            new JwtLoginAndPasswordAuthenticationFilter(
++                authenticationManager(), jwtConfig, tokenBuilder))
+         .addFilterAfter(
+             new JwtTokenVerifierFilter(jwtConfig), JwtLoginAndPasswordAuthenticationFilter.class)
+         .authorizeRequests()
+@@ -85,4 +98,39 @@
+     provider.setUserDetailsService(userService);
+     return provider;
+   }
++
++//  @Bean
++//  public AuthenticationEntryPoint unauthorizedHandler() {
++//    return (request, response, ex) -> {
++//      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
++//      response.setContentType(MediaType.APPLICATION_JSON_VALUE);
++//      ServletOutputStream out = response.getOutputStream();
++//      SingleExceptionResponse exceptionDto = new SingleExceptionResponse();
++//      exceptionDto.setErrorMessage("You are not authorized");
++//      new ObjectMapper().writeValue(out, exceptionDto);
++//      out.flush();
++//    };
++//  }
++
++  //  @Bean
++  //  public ClientRegistrationRepository clientRegistrationRepository() {
++  //    return new InMemoryClientRegistrationRepository(this.googleClientRegistration());
++  //  }
++  //
++  //  private ClientRegistration googleClientRegistration() {
++  //    return ClientRegistration.withRegistrationId("google")
++  //        .clientId("424651931197-lc94brpi2kmk10u1ptum42ij6r4aphip.apps.googleusercontent.com")
++  //        .clientSecret("ckIn9iPyYHRJjn_Uxa6ZSkJD")
++  //        .clientAuthenticationMethod(ClientAuthenticationMethod.BASIC)
++  //        .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
++  //        .redirectUriTemplate("{baseUrl}/login/oauth2/code/{registrationId}")
++  //        .scope("openid", "profile", "email")
++  //        .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
++  //        .tokenUri("https://www.googleapis.com/oauth2/v4/token")
++  //        .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
++  //        .userNameAttributeName(IdTokenClaimNames.SUB)
++  //        .jwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
++  //        .clientName("Google")
++  //        .build();
++  //  }
+ }
+Index: web/src/main/java/com/epam/esm/exception/handler/CustomAccessDeniedHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/src/main/java/com/epam/esm/exception/handler/CustomAccessDeniedHandler.java b/web/src/main/java/com/epam/esm/exception/handler/CustomAccessDeniedHandler.java
+--- a/web/src/main/java/com/epam/esm/exception/handler/CustomAccessDeniedHandler.java	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
++++ b/web/src/main/java/com/epam/esm/exception/handler/CustomAccessDeniedHandler.java	(date 1621952416457)
+@@ -12,7 +12,6 @@
+ import javax.servlet.http.HttpServletResponse;
+ import java.io.IOException;
+ import java.io.OutputStream;
+-import java.util.StringJoiner;
+ 
+ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+ 
+Index: web/src/main/java/com/epam/esm/exception/handler/GlobalExceptionHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/src/main/java/com/epam/esm/exception/handler/GlobalExceptionHandler.java b/web/src/main/java/com/epam/esm/exception/handler/GlobalExceptionHandler.java
+--- a/web/src/main/java/com/epam/esm/exception/handler/GlobalExceptionHandler.java	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
++++ b/web/src/main/java/com/epam/esm/exception/handler/GlobalExceptionHandler.java	(date 1621954553403)
+@@ -21,6 +21,9 @@
+ import org.springframework.http.HttpHeaders;
+ import org.springframework.http.HttpStatus;
+ import org.springframework.http.ResponseEntity;
++import org.springframework.security.access.AccessDeniedException;
++import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
++import org.springframework.security.web.access.AccessDeniedHandler;
+ import org.springframework.web.HttpMediaTypeNotSupportedException;
+ import org.springframework.web.bind.annotation.ControllerAdvice;
+ import org.springframework.web.bind.annotation.ExceptionHandler;
+@@ -55,6 +58,9 @@
+   private static final int ENTITY_NOT_UPDATED_EXCEPTION_CODE = 40013;
+   private static final int MOST_WIDELY_TAG_WAS_NOT_EXIST_CODE = 40014;
+ 
++  private static final int ACCESS_DENIED_CODE = 40301;
++  private static final int UNAUTHORIZED_CODE = 40101;
++
+   @Autowired
+   public GlobalExceptionHandler(TranslatorLocale translatorLocale) {
+     this.translatorLocale = translatorLocale;
+@@ -68,6 +74,26 @@
+     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+   }
+ 
++//  @ExceptionHandler(AccessDeniedException.class)
++//  public ResponseEntity<SingleExceptionResponse> handleException(
++//          AccessDeniedException exception) {
++//
++//    SingleExceptionResponse response =
++//            prepareSingleExceptionResponse(ACCESS_DENIED_CODE, exception);
++//
++//    return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
++//  }
++//
++//  @ExceptionHandler(AuthenticationCredentialsNotFoundException.class)
++//  public ResponseEntity<SingleExceptionResponse> handleException(
++//          AuthenticationCredentialsNotFoundException exception) {
++//
++//    SingleExceptionResponse response =
++//            prepareSingleExceptionResponse(UNAUTHORIZED_CODE, exception);
++//
++//    return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
++//  }
++
+   @ExceptionHandler
+   public ResponseEntity<SingleExceptionResponse> handleException(
+       TagAlreadyExistsException exception) {
+Index: web/src/main/java/com/epam/esm/exception/handler/SingleExceptionResponse.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/src/main/java/com/epam/esm/exception/handler/SingleExceptionResponse.java b/web/src/main/java/com/epam/esm/exception/handler/SingleExceptionResponse.java
+--- a/web/src/main/java/com/epam/esm/exception/handler/SingleExceptionResponse.java	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
++++ b/web/src/main/java/com/epam/esm/exception/handler/SingleExceptionResponse.java	(date 1621954690953)
+@@ -1,9 +1,9 @@
+ package com.epam.esm.exception.handler;
+ 
+-class SingleExceptionResponse extends AbstractExceptionResponse {
++public class SingleExceptionResponse extends AbstractExceptionResponse {
+   private String errorMessage;
+ 
+-  SingleExceptionResponse() {}
++  public SingleExceptionResponse() {}
+ 
+   public String getErrorMessage() {
+     return errorMessage;
+Index: web/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/build.gradle b/web/build.gradle
+--- a/web/build.gradle	(revision 59a9da1310bd024a36f8b0bbd737d01c329df89e)
++++ b/web/build.gradle	(date 1621876462235)
+@@ -15,5 +15,5 @@
+ 
+     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.4.5'
+ 
+-    implementation 'org.springframework.security.oauth:spring-security-oauth:2.5.1.RELEASE'
++    implementation 'org.springframework.security.oauth:spring-security-oauth2:2.5.1.RELEASE'
+ }

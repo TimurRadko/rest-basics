@@ -1,15 +1,15 @@
 package com.epam.esm.exception.handler;
 
-class SingleExceptionResponse extends AbstractExceptionResponse {
+public class SingleExceptionResponse extends AbstractExceptionResponse {
   private String errorMessage;
 
-  SingleExceptionResponse() {}
+  public SingleExceptionResponse() {}
 
   public String getErrorMessage() {
     return errorMessage;
   }
 
-  void setErrorMessage(String errorMessage) {
+  public void setErrorMessage(String errorMessage) {
     this.errorMessage = errorMessage;
   }
 }

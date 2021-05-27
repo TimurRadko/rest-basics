@@ -1,17 +1,18 @@
 package com.epam.esm.security.config;
 
-import com.epam.esm.exception.handler.CustomAccessDeniedHandler;
-import com.epam.esm.exception.handler.CustomAuthenticationEntryPoint;
+import com.epam.esm.security.TokenBuilder;
 import com.epam.esm.security.jwt.JwtConfig;
 import com.epam.esm.security.jwt.JwtLoginAndPasswordAuthenticationFilter;
 import com.epam.esm.security.jwt.JwtTokenVerifierFilter;
 import com.epam.esm.service.UserService;
+import com.epam.esm.service.locale.TranslatorLocale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -32,8 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final UserService userService;
   private final JwtConfig jwtConfig;
   private final Oauth2AuthenticationSuccessHandler authenticationSuccessHandler;
-  private final CustomAccessDeniedHandler accessDeniedHandler;
-  private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+  private final TokenBuilder tokenBuilder;
+  private final TranslatorLocale translatorLocale;
 
   @Autowired
   public SecurityConfig(
@@ -41,14 +42,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       UserService userService,
       JwtConfig jwtConfig,
       Oauth2AuthenticationSuccessHandler authenticationSuccessHandler,
-      CustomAccessDeniedHandler accessDeniedHandler,
-      CustomAuthenticationEntryPoint authenticationEntryPoint) {
+      TokenBuilder tokenBuilder,
+      TranslatorLocale translatorLocale) {
     this.passwordEncoder = passwordEncoder;
     this.userService = userService;
     this.jwtConfig = jwtConfig;
     this.authenticationSuccessHandler = authenticationSuccessHandler;
-    this.accessDeniedHandler = accessDeniedHandler;
-    this.authenticationEntryPoint = authenticationEntryPoint;
+    this.tokenBuilder = tokenBuilder;
+    this.translatorLocale = translatorLocale;
   }
 
   @Override
@@ -58,16 +59,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
-        .addFilter(new JwtLoginAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig))
+        .addFilter(
+            new JwtLoginAndPasswordAuthenticationFilter(
+                authenticationManager(), jwtConfig, tokenBuilder, translatorLocale))
         .addFilterAfter(
             new JwtTokenVerifierFilter(jwtConfig), JwtLoginAndPasswordAuthenticationFilter.class)
         .authorizeRequests()
+        .antMatchers(HttpMethod.GET, "/api/v2/certificates/**")
+        .permitAll()
+        .antMatchers(HttpMethod.POST, "/api/v2/users")
+        .permitAll()
         .anyRequest()
         .authenticated()
-        .and()
-        .exceptionHandling()
-        .accessDeniedHandler(accessDeniedHandler)
-        .authenticationEntryPoint(authenticationEntryPoint)
         .and()
         .oauth2Login()
         .successHandler(authenticationSuccessHandler);

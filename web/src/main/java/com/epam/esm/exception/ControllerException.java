@@ -1,7 +1,7 @@
 package com.epam.esm.exception;
 
-class ControllerException extends RuntimeException {
-  ControllerException(String message) {
+public class ControllerException extends RuntimeException {
+  public ControllerException(String message) {
     super(message);
   }
 }
