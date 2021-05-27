@@ -6,13 +6,13 @@ import com.epam.esm.security.jwt.JwtLoginAndPasswordAuthenticationFilter;
 import com.epam.esm.security.jwt.JwtTokenVerifierFilter;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.locale.TranslatorLocale;
-import com.google.api.client.googleapis.auth.oauth2.GoogleRefreshTokenRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -65,6 +65,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .addFilterAfter(
             new JwtTokenVerifierFilter(jwtConfig), JwtLoginAndPasswordAuthenticationFilter.class)
         .authorizeRequests()
+        .antMatchers(HttpMethod.GET, "/api/v2/certificates/**")
+        .permitAll()
+        .antMatchers(HttpMethod.POST, "/api/v2/users")
+        .permitAll()
         .anyRequest()
         .authenticated()
         .and()

@@ -13,25 +13,34 @@ import com.epam.esm.service.builder.certificate.GiftCertificateDtoBuilder;
 import com.epam.esm.service.builder.order.OrdersBuilder;
 import com.epam.esm.service.builder.order.OrdersDtoBuilder;
 import com.epam.esm.service.builder.tag.TagDtoBuilder;
+import com.epam.esm.service.builder.user.UserBuilder;
+import com.epam.esm.service.builder.user.UserDetailsBuilder;
 import com.epam.esm.service.builder.user.UserDtoBuilder;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.dto.UsersCreatingDto;
 import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.exception.order.EmptyOrderException;
 import com.epam.esm.service.exception.order.InsufficientFundInAccount;
+import com.epam.esm.service.exception.user.UserLoginExistsException;
 import com.epam.esm.service.locale.TranslatorLocale;
 import com.epam.esm.service.validator.PageValidator;
+import com.epam.esm.service.validator.UserValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -60,7 +69,10 @@ class UsersServiceImplTest {
   @Mock private TagDtoBuilder tagDtoBuilder;
   @Mock private TagRepository tagRepository;
   @Mock private PageValidator pageValidator;
+  @Mock private UserValidator userValidator;
   @Mock private TranslatorLocale translatorLocale;
+  @Mock private UserBuilder userBuilder;
+  @Mock private UserDetailsBuilder userDetailsBuilder;
 
   @InjectMocks UsersServiceImpl userService;
 
@@ -115,6 +127,7 @@ class UsersServiceImplTest {
   private static final String MOST_WIDE_TAG_NAME = "The Most";
   private final Tag mostWideTag = new Tag(MOST_WIDE_TAG_ID, MOST_WIDE_TAG_NAME);
   private final TagDto expectedMostWideTag = new TagDto(MOST_WIDE_TAG_ID, MOST_WIDE_TAG_NAME);
+  private final UsersCreatingDto usersCreatingDto = new UsersCreatingDto(LOGIN, PASSWORD, PASSWORD);
 
   @BeforeEach
   void setUp() {
@@ -255,5 +268,68 @@ class UsersServiceImplTest {
     Optional<TagDto> actualOptionalTag = userService.getMostWidelyUsedTagByUserId(USER_ID);
     // then
     assertEquals(Optional.of(expectedMostWideTag), actualOptionalTag);
+  }
+
+  @Test
+  void testSave_shouldReturnOptionalUserDto_whenSavedWasSuccess() {
+    // given
+    when(userValidator.isValid(any())).thenReturn(true);
+    when(userRepository.getEntity(any())).thenReturn(Optional.empty());
+    when(userRepository.save(any())).thenReturn(Optional.of(user));
+    when(userBuilder.buildForSave(usersCreatingDto)).thenReturn(user);
+    when(userDtoBuilder.build(user)).thenReturn(usersDto);
+    // when
+    Optional<UsersDto> actualOptionalUser = userService.save(usersCreatingDto);
+    // then
+    assertEquals(Optional.of(usersDto), actualOptionalUser);
+  }
+
+  @Test
+  void testSave_shouldUserLoginExistsException_whenUserIsExistsInDatabase() {
+    // given
+    when(userValidator.isValid(any())).thenReturn(true);
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
+    when(translatorLocale.toLocale(any()))
+        .thenReturn(
+            String.format(
+                "The User with this name (%s) is already in the database.", user.getId()));
+    // when
+    // then
+    assertThrows(UserLoginExistsException.class, () -> userService.save(usersCreatingDto));
+  }
+
+  @Test
+  void testLoadUserByUsername_shouldThrowUsernameNotFoundException_whenUserNotExists() {
+    // given
+    when(userRepository.getEntity(any())).thenReturn(Optional.empty());
+    when(translatorLocale.toLocale(any()))
+        .thenReturn(
+            String.format("User with login = %s does not exists in database.", user.getId()));
+    // when
+    // then
+    assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(LOGIN));
+  }
+
+  @Test
+  void testLoadUserByUsername_shouldReturnUserDetails_whenUserIsExists() {
+    // given
+    UserDetails userDetails = create(user);
+    when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
+    when(userDetailsBuilder.build(user)).thenReturn(userDetails);
+    // when
+    UserDetails actualUserDetails = userService.loadUserByUsername(LOGIN);
+    // then
+    assertEquals(userDetails, actualUserDetails);
+  }
+
+  private UserDetails create(Users user) {
+    return new User(
+        user.getLogin(),
+        user.getPassword(),
+        true,
+        true,
+        true,
+        true,
+        Set.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
   }
 }

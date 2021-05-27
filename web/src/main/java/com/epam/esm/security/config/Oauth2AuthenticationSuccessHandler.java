@@ -64,7 +64,5 @@ public class Oauth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     String token = tokenBuilder.buildWithUserLogin(authentication, user);
     PrintWriter writer = response.getWriter();
     writer.write(jwtConfig.getTokenPrefix() + token);
-    //    response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() +
-    // token);
   }
 }
