@@ -10,4 +10,5 @@ build
 /.gitattributes
 /persistence/out/
 /dao/out/
-/dao/out/
+/web/src/main/resources/
+/deprecated_solution_authorization_server.patch

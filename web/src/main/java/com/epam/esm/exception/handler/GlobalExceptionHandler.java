@@ -23,6 +23,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -65,6 +66,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
   private static final int ENTITY_NOT_UPDATED_EXCEPTION_CODE = 40013;
   private static final int MOST_WIDELY_TAG_WAS_NOT_EXIST_CODE = 40014;
   private static final int ACCESS_DENIED_CODE = 40301;
+  private static final int INVALID_GRANT_EXCEPTION = 40015;
 
   @Autowired
   public GlobalExceptionHandler(TranslatorLocale translatorLocale) {
@@ -252,6 +254,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
       MostWidelyTagNotExistsException exception) {
     SingleExceptionResponse response =
         prepareSingleExceptionResponse(MOST_WIDELY_TAG_WAS_NOT_EXIST_CODE, exception);
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler
+  public ResponseEntity<SingleExceptionResponse> handleException(InvalidGrantException exception) {
+    SingleExceptionResponse response =
+        prepareCustomExceptionResponse(
+            INVALID_GRANT_EXCEPTION,
+            translatorLocale.toLocale("exception.message.invalidCredentials"));
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
