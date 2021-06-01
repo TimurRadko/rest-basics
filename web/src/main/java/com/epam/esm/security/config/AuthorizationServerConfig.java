@@ -27,6 +27,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
   private static final String SCOPE_READ = "read";
   private static final String SCOPE_WRITE = "write";
   private static final String TRUST = "trust";
+  private static final int TWELVE_HOURS = 60 * 60 * 12;
+  private static final int THIRTY_DAYS = 60 * 60 * 24 * 30;
 
   private final TokenStore tokenStore;
   private final JwtAccessTokenConverter jwtTokenEnhancer;
@@ -58,7 +60,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         .withClient(USERNAME)
         .secret(passwordConfig.passwordEncoder().encode(PASSWORD))
         .authorizedGrantTypes(GRANT_TYPE_PASSWORD, AUTHORIZATION_CODE, REFRESH_TOKEN, IMPLICIT)
-        .scopes(SCOPE_READ, SCOPE_WRITE, TRUST);
+        .scopes(SCOPE_READ, SCOPE_WRITE, TRUST)
+        .accessTokenValiditySeconds(TWELVE_HOURS)
+        .refreshTokenValiditySeconds(THIRTY_DAYS);
   }
 
   @Override
