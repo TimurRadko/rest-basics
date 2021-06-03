@@ -3,7 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.dto.UsersCreatingDto;
+import com.epam.esm.service.dto.UserCredential;
 import com.epam.esm.service.dto.UsersDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -45,5 +45,5 @@ public interface UserService extends Service<UsersDto>, UserDetailsService {
    * @param userDto - UsersCreatingDto, which transmitted in the method as a args
    * @return Optional<UsersDto> - container that is contained UsersDto
    */
-  Optional<UsersDto> save(UsersCreatingDto userDto);
+  Optional<UsersDto> save(UserCredential userDto);
 }

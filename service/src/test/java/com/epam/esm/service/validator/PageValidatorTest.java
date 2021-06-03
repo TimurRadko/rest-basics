@@ -1,7 +1,7 @@
 package com.epam.esm.service.validator;
 
 import com.epam.esm.service.dto.PageDto;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PageValidatorTest {
-  @Mock private TranslatorLocale translatorLocale;
+  @Mock private LocaleTranslator localeTranslator;
   @InjectMocks private PageValidator pageValidator;
   private static final String NULL_PAGE_MESSAGE = "The page mustn't be null";
   private static final String NULL_SIZE_MESSAGE = "The size mustn't be null";
@@ -29,7 +29,7 @@ class PageValidatorTest {
   @BeforeEach
   void setUp() {
     pageDto = new PageDto(1, 1);
-    pageValidator = new PageValidator(translatorLocale);
+    pageValidator = new PageValidator(localeTranslator);
   }
 
   @Test
@@ -37,7 +37,7 @@ class PageValidatorTest {
     // given
     pageDto.setPage(null);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn(NULL_PAGE_MESSAGE);
+    when(localeTranslator.toLocale(any())).thenReturn(NULL_PAGE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then
@@ -50,7 +50,7 @@ class PageValidatorTest {
     // given
     pageDto.setSize(null);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn(NULL_SIZE_MESSAGE);
+    when(localeTranslator.toLocale(any())).thenReturn(NULL_SIZE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then
@@ -64,8 +64,8 @@ class PageValidatorTest {
     pageDto.setPage(null);
     pageDto.setSize(null);
     // when
-    when(translatorLocale.toLocale("exception.message.pageNotNull")).thenReturn(NULL_PAGE_MESSAGE);
-    when(translatorLocale.toLocale("exception.message.sizeNotNull")).thenReturn(NULL_SIZE_MESSAGE);
+    when(localeTranslator.toLocale("exception.message.pageNotNull")).thenReturn(NULL_PAGE_MESSAGE);
+    when(localeTranslator.toLocale("exception.message.sizeNotNull")).thenReturn(NULL_SIZE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then
@@ -78,7 +78,7 @@ class PageValidatorTest {
     // given
     pageDto.setPage(-1);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn(LESS_THAN_ZERO_PAGE_MESSAGE);
+    when(localeTranslator.toLocale(any())).thenReturn(LESS_THAN_ZERO_PAGE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then
@@ -91,7 +91,7 @@ class PageValidatorTest {
     // given
     pageDto.setSize(-1);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn(LESS_THAN_ZERO_SIZE_MESSAGE);
+    when(localeTranslator.toLocale(any())).thenReturn(LESS_THAN_ZERO_SIZE_MESSAGE);
     boolean actualIsValid = pageValidator.isValid(pageDto);
     String actualErrorMessage = pageValidator.getErrorMessage();
     // then

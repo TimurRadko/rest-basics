@@ -15,7 +15,7 @@ import com.epam.esm.service.exception.tag.TagAlreadyExistsException;
 import com.epam.esm.service.exception.user.UserDoesNotHaveOrderException;
 import com.epam.esm.service.exception.user.UserLoginExistsException;
 import com.epam.esm.service.exception.user.UserLoginNotFoundException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
     implements AccessDeniedHandler {
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
   private static final int ENTITY_NOT_FOUND_CODE = 40401;
   private static final int NO_HANDLER_FOUND_CODE = 40402;
   private static final int HTTP_MEDIA_TYPE_NOT_SUPPORTED_CODE = 41501;
@@ -69,8 +69,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
   private static final int INVALID_GRANT_EXCEPTION = 40015;
 
   @Autowired
-  public GlobalExceptionHandler(TranslatorLocale translatorLocale) {
-    this.translatorLocale = translatorLocale;
+  public GlobalExceptionHandler(LocaleTranslator localeTranslator) {
+    this.localeTranslator = localeTranslator;
   }
 
   @ExceptionHandler
@@ -182,7 +182,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
     SingleExceptionResponse response =
         prepareCustomExceptionResponse(
             HTTP_MEDIA_TYPE_NOT_SUPPORTED_CODE,
-            translatorLocale.toLocale("exception.message.41501"));
+            localeTranslator.toLocale("exception.message.41501"));
     return new ResponseEntity<>(response, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
   }
 
@@ -192,7 +192,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
     SingleExceptionResponse response =
         prepareCustomExceptionResponse(
             PAGE_OR_SIZE_PASS_TYPE_NOT_VALID_CODE,
-            translatorLocale.toLocale("exception.message.40008"));
+            localeTranslator.toLocale("exception.message.40008"));
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 
@@ -205,7 +205,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
       throws IOException {
     SingleExceptionResponse exceptionResponse =
         prepareCustomExceptionResponse(
-            ACCESS_DENIED_CODE, translatorLocale.toLocale("exception.message.accessDenied"));
+            ACCESS_DENIED_CODE, localeTranslator.toLocale("exception.message.accessDenied"));
     response.setStatus(HttpStatus.FORBIDDEN.value());
     response.setContentType(APPLICATION_JSON_VALUE);
     OutputStream out = response.getOutputStream();
@@ -237,7 +237,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
       WebRequest request) {
     SingleExceptionResponse response =
         prepareCustomExceptionResponse(
-            NO_HANDLER_FOUND_CODE, translatorLocale.toLocale("exception.message.noHandler"));
+            NO_HANDLER_FOUND_CODE, localeTranslator.toLocale("exception.message.noHandler"));
     return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
   }
 
@@ -262,7 +262,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
     SingleExceptionResponse response =
         prepareCustomExceptionResponse(
             INVALID_GRANT_EXCEPTION,
-            translatorLocale.toLocale("exception.message.invalidCredentials"));
+            localeTranslator.toLocale("exception.message.invalidCredentials"));
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 

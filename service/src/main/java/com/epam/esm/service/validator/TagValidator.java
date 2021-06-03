@@ -1,7 +1,7 @@
 package com.epam.esm.service.validator;
 
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 public class TagValidator extends AbstractValidator<TagDto> {
   private static final int MIN_NAME_LENGTH = 3;
   private static final int MAX_NAME_LENGTH = 50;
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
-  public TagValidator(TranslatorLocale translatorLocale) {
-    this.translatorLocale = translatorLocale;
+  public TagValidator(LocaleTranslator localeTranslator) {
+    this.localeTranslator = localeTranslator;
   }
 
   public boolean isValid(TagDto tagDto) {
@@ -21,7 +21,7 @@ public class TagValidator extends AbstractValidator<TagDto> {
     eraseErrorMessages();
 
     if (tagDto == null) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.nullTag"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.nullTag"));
       return false;
     }
     checkName(tagDto.getName());
@@ -30,10 +30,10 @@ public class TagValidator extends AbstractValidator<TagDto> {
 
   private void checkName(String name) {
     if (name == null || name.trim().length() == 0) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.nameTagRequired"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.nameTagRequired"));
       setIsResultValidFalse();
     } else if (name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.lengthTagName"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.lengthTagName"));
       setIsResultValidFalse();
     }
   }

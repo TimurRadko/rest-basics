@@ -54,8 +54,9 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Optional<Users> update(Users users) {
-    return Optional.of(entityManager.merge(users));
+  @Transactional
+  public Optional<Users> update(Users user) {
+    return Optional.of(entityManager.merge(user));
   }
 
   @Override

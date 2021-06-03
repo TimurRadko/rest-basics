@@ -8,7 +8,7 @@ import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.user.UserDoesNotHaveOrderException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import com.epam.esm.service.validator.PageValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,8 @@ class OrdersServiceImplTest {
   @Mock private OrdersRepository ordersRepository;
   @Mock private OrdersDtoBuilder ordersDtoBuilder;
   @Mock private PageValidator pageValidator;
-  @Mock TranslatorLocale translatorLocale;
+  @Mock
+  LocaleTranslator localeTranslator;
 
   @InjectMocks private OrdersServiceImpl ordersService;
 
@@ -135,7 +136,7 @@ class OrdersServiceImplTest {
     when(ordersRepository.getEntityList(any())).thenReturn(new ArrayList<>());
     when(ordersRepository.getEntity(any())).thenReturn(Optional.of(order));
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(
             String.format(
                 "User with id = %s doesn't have order with id = %s.",

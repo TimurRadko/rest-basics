@@ -16,7 +16,7 @@ import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import com.epam.esm.service.validator.GiftCertificateValidator;
 import com.epam.esm.service.validator.PageValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +53,7 @@ class GiftCertificateServiceImplTest {
   @Mock private PageValidator pageValidator;
   @Mock private TagDtoBuilder tagDtoBuilder;
   @Mock private TagBuilder tagBuilder;
-  @Mock private TranslatorLocale translatorLocale;
+  @Mock private LocaleTranslator localeTranslator;
 
   @InjectMocks private GiftCertificateServiceImpl giftCertificateService;
 
@@ -301,7 +301,7 @@ class GiftCertificateServiceImplTest {
     incomingGiftCertificateDto.setTags(Set.of(firstTagDto));
     when(giftCertificateValidator.isValid(any())).thenReturn(true);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn("The Gift Certificate not exists in the DB.");
+    when(localeTranslator.toLocale(any())).thenReturn("The Gift Certificate not exists in the DB.");
     // then
     assertThrows(
         ServiceException.class,
@@ -317,7 +317,7 @@ class GiftCertificateServiceImplTest {
     incomingGiftCertificateDto.setTags(Set.of(firstTagDto));
     when(giftCertificateValidator.isValid(any())).thenReturn(true);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn("The Gift Certificate not exists in the DB.");
+    when(localeTranslator.toLocale(any())).thenReturn("The Gift Certificate not exists in the DB.");
     // then
     assertThrows(
         ServiceException.class,
@@ -367,7 +367,7 @@ class GiftCertificateServiceImplTest {
     incomingGiftCertificateDto.setTags(Set.of(firstTagDto));
     when(giftCertificateRepository.update(any())).thenReturn(Optional.empty());
     // when
-    when(translatorLocale.toLocale(any())).thenReturn("The Gift Certificate not exists in the DB.");
+    when(localeTranslator.toLocale(any())).thenReturn("The Gift Certificate not exists in the DB.");
     // then
     assertThrows(
         EntityNotFoundException.class,
@@ -383,7 +383,7 @@ class GiftCertificateServiceImplTest {
     incomingGiftCertificateDto.setTags(Set.of(firstTagDto));
     when(giftCertificateValidator.isValid(any())).thenReturn(true);
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(
             String.format("Requested resource with id = %s not found.", ID_FOR_MANIPULATIONS));
     // then
@@ -443,7 +443,7 @@ class GiftCertificateServiceImplTest {
     // given
     when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.empty());
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(
             String.format("Requested resource with id = %s not found.", ID_FOR_MANIPULATIONS));
     // then

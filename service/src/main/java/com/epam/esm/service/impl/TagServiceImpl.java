@@ -16,7 +16,7 @@ import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.tag.TagAlreadyExistsException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +34,22 @@ public class TagServiceImpl implements TagService {
   private final TagBuilder builder;
   private final TagDtoBuilder tagDtoBuilder;
   private final PageValidator pageValidator;
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
   public TagServiceImpl(
-      TagRepository tagRepository,
-      TagValidator tagValidator,
-      TagBuilder builder,
-      TagDtoBuilder tagDtoBuilder,
-      PageValidator pageValidator,
-      TranslatorLocale translatorLocale) {
+          TagRepository tagRepository,
+          TagValidator tagValidator,
+          TagBuilder builder,
+          TagDtoBuilder tagDtoBuilder,
+          PageValidator pageValidator,
+          LocaleTranslator localeTranslator) {
     this.tagRepository = tagRepository;
     this.tagValidator = tagValidator;
     this.builder = builder;
     this.tagDtoBuilder = tagDtoBuilder;
     this.pageValidator = pageValidator;
-    this.translatorLocale = translatorLocale;
+    this.localeTranslator = localeTranslator;
   }
 
   @Override
@@ -81,7 +81,7 @@ public class TagServiceImpl implements TagService {
       return optionalSavedTag.map(tagDtoBuilder::build);
     } else {
       throw new TagAlreadyExistsException(
-          String.format(translatorLocale.toLocale("exception.message.40901"), tag.getName()));
+          String.format(localeTranslator.toLocale("exception.message.40901"), tag.getName()));
     }
   }
 
@@ -93,13 +93,13 @@ public class TagServiceImpl implements TagService {
         .orElseThrow(
             () ->
                 new EntityNotFoundException(
-                    String.format(translatorLocale.toLocale("exception.message.40401"), id)));
+                    String.format(localeTranslator.toLocale("exception.message.40401"), id)));
 
     List<Tag> existingTags =
         tagRepository.getEntityList(new GetTagsByGiftCertificateSpecification(id));
     if (!existingTags.isEmpty()) {
       throw new DeletingTagException(
-          String.format(translatorLocale.toLocale("exception.message.40002"), id));
+          String.format(localeTranslator.toLocale("exception.message.40002"), id));
     }
     return tagRepository.delete(id);
   }

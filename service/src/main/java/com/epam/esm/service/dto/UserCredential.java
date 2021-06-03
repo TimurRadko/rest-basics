@@ -2,14 +2,14 @@ package com.epam.esm.service.dto;
 
 import java.util.Objects;
 
-public class UsersCreatingDto {
+public class UserCredential {
   private String login;
   private String password;
   private String confirmPassword;
 
-  public UsersCreatingDto() {}
+  public UserCredential() {}
 
-  public UsersCreatingDto(String login, String password, String confirmPassword) {
+  public UserCredential(String login, String password, String confirmPassword) {
     this.login = login;
     this.password = password;
     this.confirmPassword = confirmPassword;
@@ -48,7 +48,7 @@ public class UsersCreatingDto {
       return false;
     }
 
-    UsersCreatingDto that = (UsersCreatingDto) o;
+    UserCredential that = (UserCredential) o;
 
     if (!Objects.equals(login, that.login)) {
       return false;

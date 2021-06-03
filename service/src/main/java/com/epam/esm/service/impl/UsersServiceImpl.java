@@ -24,7 +24,7 @@ import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.dto.UsersCreatingDto;
+import com.epam.esm.service.dto.UserCredential;
 import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotSavedException;
@@ -33,13 +33,10 @@ import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.order.EmptyOrderException;
 import com.epam.esm.service.exception.order.InsufficientFundInAccount;
 import com.epam.esm.service.exception.user.UserLoginExistsException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -47,8 +44,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,24 +63,24 @@ public class UsersServiceImpl implements UserService {
   private final TagDtoBuilder tagDtoBuilder;
   private final PageValidator pageValidator;
   private final UserValidator userValidator;
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
   public UsersServiceImpl(
-      UserRepository userRepository,
-      TagRepository tagRepository,
-      OrdersRepository ordersRepository,
-      GiftCertificateRepository giftCertificateRepository,
-      UserDtoBuilder userDtoBuilder,
-      OrdersBuilder ordersBuilder,
-      GiftCertificateDtoBuilder giftCertificateDtoBuilder,
-      OrdersDtoBuilder ordersDtoBuilder,
-      UserBuilder userBuilder,
-      UserDetailsBuilder userDetailsBuilder,
-      TagDtoBuilder tagDtoBuilder,
-      PageValidator pageValidator,
-      UserValidator userValidator,
-      TranslatorLocale translatorLocale) {
+          UserRepository userRepository,
+          TagRepository tagRepository,
+          OrdersRepository ordersRepository,
+          GiftCertificateRepository giftCertificateRepository,
+          UserDtoBuilder userDtoBuilder,
+          OrdersBuilder ordersBuilder,
+          GiftCertificateDtoBuilder giftCertificateDtoBuilder,
+          OrdersDtoBuilder ordersDtoBuilder,
+          UserBuilder userBuilder,
+          UserDetailsBuilder userDetailsBuilder,
+          TagDtoBuilder tagDtoBuilder,
+          PageValidator pageValidator,
+          UserValidator userValidator,
+          LocaleTranslator localeTranslator) {
     this.userRepository = userRepository;
     this.tagRepository = tagRepository;
     this.ordersRepository = ordersRepository;
@@ -99,7 +94,7 @@ public class UsersServiceImpl implements UserService {
     this.tagDtoBuilder = tagDtoBuilder;
     this.pageValidator = pageValidator;
     this.userValidator = userValidator;
-    this.translatorLocale = translatorLocale;
+    this.localeTranslator = localeTranslator;
   }
 
   @Override
@@ -123,11 +118,11 @@ public class UsersServiceImpl implements UserService {
             .orElseThrow(
                 () ->
                     new EntityNotFoundException(
-                        String.format(translatorLocale.toLocale("exception.message.40401"), id)));
+                        String.format(localeTranslator.toLocale("exception.message.40401"), id)));
 
     List<Long> giftCertificateIds = giftCertificateDtoIds.getGiftCertificateDtoIds();
     if (giftCertificateIds == null || giftCertificateIds.isEmpty()) {
-      throw new EmptyOrderException(translatorLocale.toLocale("exception.message.40006"));
+      throw new EmptyOrderException(localeTranslator.toLocale("exception.message.40006"));
     }
     List<GiftCertificate> giftCertificates = getAllGiftCertificates(giftCertificateIds);
     BigDecimal cost = getNewUserAccount(users, giftCertificates);
@@ -137,7 +132,7 @@ public class UsersServiceImpl implements UserService {
             .orElseThrow(
                 () ->
                     new EntityNotFoundException(
-                        String.format(translatorLocale.toLocale("exception.message.40401"), id))));
+                        String.format(localeTranslator.toLocale("exception.message.40401"), id))));
 
     OrdersDto ordersDto = createOrderDto(users.getId(), cost, giftCertificates);
     Orders orders =
@@ -146,7 +141,7 @@ public class UsersServiceImpl implements UserService {
             .orElseThrow(
                 () ->
                     new EntityNotSavedException(
-                        translatorLocale.toLocale("exception.message.40011")));
+                        localeTranslator.toLocale("exception.message.40011")));
     return Optional.of(ordersDtoBuilder.build(orders));
   }
 
@@ -157,7 +152,7 @@ public class UsersServiceImpl implements UserService {
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     BigDecimal account = users.getBalance();
     if (account.compareTo(cost) < 0) {
-      throw new InsufficientFundInAccount(translatorLocale.toLocale("exception.message.40005"));
+      throw new InsufficientFundInAccount(localeTranslator.toLocale("exception.message.40005"));
     }
     users.setBalance(account.subtract(cost));
     return cost;
@@ -173,7 +168,7 @@ public class UsersServiceImpl implements UserService {
                   () ->
                       new EntityNotFoundException(
                           String.format(
-                              translatorLocale.toLocale("exception.message.40401"),
+                              localeTranslator.toLocale("exception.message.40401"),
                               giftCertificateId)));
       giftCertificates.add(giftCertificate);
     }
@@ -214,13 +209,13 @@ public class UsersServiceImpl implements UserService {
                 () ->
                     new UsernameNotFoundException(
                         (String.format(
-                            translatorLocale.toLocale("exception.message.40012"), login))));
+                            localeTranslator.toLocale("exception.message.40012"), login))));
     return userDetailsBuilder.build(findingUsers);
   }
 
   @Override
   @Transactional
-  public Optional<UsersDto> save(UsersCreatingDto userDto) {
+  public Optional<UsersDto> save(UserCredential userDto) {
     if (!userValidator.isValid(userDto)) {
       throw new EntityNotValidMultipleException(userValidator.getErrorMessage());
     }
@@ -233,12 +228,12 @@ public class UsersServiceImpl implements UserService {
               .orElseThrow(
                   () ->
                       new EntityNotSavedException(
-                          translatorLocale.toLocale("exception.message.40011")));
+                          localeTranslator.toLocale("exception.message.40011")));
       return Optional.of(userDtoBuilder.build(savedUser));
     } else {
       throw new UserLoginExistsException(
           (String.format(
-              translatorLocale.toLocale("exception.message.40902"), userDto.getLogin())));
+              localeTranslator.toLocale("exception.message.40902"), userDto.getLogin())));
     }
   }
 }

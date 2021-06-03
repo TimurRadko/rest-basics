@@ -10,7 +10,7 @@ import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.tag.TagAlreadyExistsException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.TagValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ class TagServiceImplTest {
   @Mock private PageValidator pageValidator;
   @Mock private TagBuilder tagBuilder;
   @Mock private TagDtoBuilder tagDtoBuilder;
-  @Mock private TranslatorLocale translatorLocale;
+  @Mock private LocaleTranslator localeTranslator;
   @InjectMocks private TagServiceImpl tagService;
 
   private Tag firstTestTag;
@@ -125,7 +125,7 @@ class TagServiceImplTest {
     when(tagValidator.isValid(firstTestTagDto)).thenReturn(true);
     when(tagBuilder.build(firstTestTagDto)).thenReturn(firstTestTag);
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(
             String.format(
                 "The Tag with this name (%s) is already in the database.", firstTestTag.getId()));
@@ -139,7 +139,7 @@ class TagServiceImplTest {
     when(tagRepository.getEntity(any())).thenReturn(Optional.of(firstTestTag));
     when(tagRepository.getEntityList(any())).thenReturn(Collections.singletonList(firstTestTag));
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(
             String.format(
                 "The Tag with id = %s attached to the Gift Certificate. Deletion denied.",
@@ -166,7 +166,7 @@ class TagServiceImplTest {
     // given
     when(tagRepository.getEntity(any())).thenReturn(Optional.empty());
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(
             String.format("Requested resource with id = %s not found.", firstTestTag.getId()));
     // then

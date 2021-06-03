@@ -2,7 +2,7 @@ package com.epam.esm.service.validator;
 
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateValidatorTest {
-  @Mock private TranslatorLocale translatorLocale;
+  @Mock private LocaleTranslator localeTranslator;
 
   @InjectMocks private GiftCertificateValidator validator;
 
@@ -57,14 +57,14 @@ class GiftCertificateValidatorTest {
 
   @BeforeEach
   void setUp() {
-    validator = new GiftCertificateValidator(translatorLocale);
+    validator = new GiftCertificateValidator(localeTranslator);
   }
 
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftCertificateIsNull() {
     // given
     // when
-    when(translatorLocale.toLocale(any())).thenReturn(NULL_GIFT_CERTIFICATE_MESSAGE);
+    when(localeTranslator.toLocale(any())).thenReturn(NULL_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(null);
 
     String actualErrorMessage = validator.getErrorMessage();
@@ -90,7 +90,7 @@ class GiftCertificateValidatorTest {
     GiftCertificateDto giftCertificateDto =
         new GiftCertificateDto(ID, null, DESCRIPTION, PRICE, DURATION, NOW, NOW, tagDtos);
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
@@ -105,7 +105,7 @@ class GiftCertificateValidatorTest {
     GiftCertificateDto giftCertificateDto =
         new GiftCertificateDto(ID, "", DESCRIPTION, PRICE, DURATION, NOW, NOW, tagDtos);
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
@@ -120,7 +120,7 @@ class GiftCertificateValidatorTest {
     GiftCertificateDto giftCertificateDto =
         new GiftCertificateDto(ID, "I", DESCRIPTION, PRICE, DURATION, NOW, NOW, tagDtos);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
+    when(localeTranslator.toLocale(any())).thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -142,7 +142,7 @@ class GiftCertificateValidatorTest {
             NOW,
             tagDtos);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
+    when(localeTranslator.toLocale(any())).thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -157,7 +157,7 @@ class GiftCertificateValidatorTest {
         new GiftCertificateDto(
             ID, NAME, DESCRIPTION, BigDecimal.valueOf(-1), DURATION, NOW, NOW, tagDtos);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE);
+    when(localeTranslator.toLocale(any())).thenReturn(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -171,7 +171,7 @@ class GiftCertificateValidatorTest {
     GiftCertificateDto giftCertificateDto =
         new GiftCertificateDto(ID, NAME, DESCRIPTION, PRICE, -1, NOW, NOW, tagDtos);
     // when
-    when(translatorLocale.toLocale(any())).thenReturn(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE);
+    when(localeTranslator.toLocale(any())).thenReturn(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -193,9 +193,9 @@ class GiftCertificateValidatorTest {
             NOW,
             tagDtos);
     // when
-    when(translatorLocale.toLocale("exception.message.lengthName"))
+    when(localeTranslator.toLocale("exception.message.lengthName"))
         .thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
-    when(translatorLocale.toLocale("exception.message.priceValue"))
+    when(localeTranslator.toLocale("exception.message.priceValue"))
         .thenReturn(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
@@ -218,9 +218,9 @@ class GiftCertificateValidatorTest {
             NOW,
             tagDtos);
     // when
-    when(translatorLocale.toLocale("exception.message.lengthName"))
+    when(localeTranslator.toLocale("exception.message.lengthName"))
         .thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
-    when(translatorLocale.toLocale("exception.message.durationValue"))
+    when(localeTranslator.toLocale("exception.message.durationValue"))
         .thenReturn(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
@@ -244,11 +244,11 @@ class GiftCertificateValidatorTest {
             NOW,
             tagDtos);
     // when
-    when(translatorLocale.toLocale("exception.message.lengthName"))
+    when(localeTranslator.toLocale("exception.message.lengthName"))
         .thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
-    when(translatorLocale.toLocale("exception.message.durationValue"))
+    when(localeTranslator.toLocale("exception.message.durationValue"))
         .thenReturn(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE);
-    when(translatorLocale.toLocale("exception.message.priceValue"))
+    when(localeTranslator.toLocale("exception.message.priceValue"))
         .thenReturn(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();

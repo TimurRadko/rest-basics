@@ -11,7 +11,7 @@ import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.user.UserDoesNotHaveOrderException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import com.epam.esm.service.validator.PageValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,18 +25,18 @@ public class OrdersServiceImpl implements OrderService {
   private final OrdersRepository ordersRepository;
   private final OrdersDtoBuilder ordersDtoBuilder;
   private final PageValidator pageValidator;
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
   public OrdersServiceImpl(
-      OrdersRepository ordersRepository,
-      OrdersDtoBuilder ordersDtoBuilder,
-      PageValidator pageValidator,
-      TranslatorLocale translatorLocale) {
+          OrdersRepository ordersRepository,
+          OrdersDtoBuilder ordersDtoBuilder,
+          PageValidator pageValidator,
+          LocaleTranslator localeTranslator) {
     this.ordersRepository = ordersRepository;
     this.ordersDtoBuilder = ordersDtoBuilder;
     this.pageValidator = pageValidator;
-    this.translatorLocale = translatorLocale;
+    this.localeTranslator = localeTranslator;
   }
 
   @Override
@@ -50,10 +50,10 @@ public class OrdersServiceImpl implements OrderService {
                 () ->
                     new EntityNotFoundException(
                         String.format(
-                            translatorLocale.toLocale("exception.message.40401"), orderId)));
+                            localeTranslator.toLocale("exception.message.40401"), orderId)));
     if (existingOrders.isEmpty() || !existingOrders.contains(order)) {
       throw new UserDoesNotHaveOrderException(
-          String.format(translatorLocale.toLocale("exception.message.40009"), userId, orderId));
+          String.format(localeTranslator.toLocale("exception.message.40009"), userId, orderId));
     }
     return Optional.of(ordersDtoBuilder.build(order));
   }

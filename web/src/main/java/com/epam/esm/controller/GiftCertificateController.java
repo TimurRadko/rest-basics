@@ -5,7 +5,7 @@ import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotUpdatedException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,16 +33,16 @@ import java.util.stream.Collectors;
 public class GiftCertificateController {
   private final GiftCertificateService giftCertificateService;
   private final LinkBuilder<GiftCertificateDto> giftCertificateDtoLinkBuilder;
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
   public GiftCertificateController(
-      GiftCertificateService giftCertificateService,
-      LinkBuilder<GiftCertificateDto> giftCertificateDtoLinkBuilder,
-      TranslatorLocale translatorLocale) {
+          GiftCertificateService giftCertificateService,
+          LinkBuilder<GiftCertificateDto> giftCertificateDtoLinkBuilder,
+          LocaleTranslator localeTranslator) {
     this.giftCertificateService = giftCertificateService;
     this.giftCertificateDtoLinkBuilder = giftCertificateDtoLinkBuilder;
-    this.translatorLocale = translatorLocale;
+    this.localeTranslator = localeTranslator;
   }
 
   @GetMapping()
@@ -69,7 +69,7 @@ public class GiftCertificateController {
             .orElseThrow(
                 () ->
                     new EntityNotFoundException(
-                        String.format(translatorLocale.toLocale("exception.message.40401"), id))));
+                        String.format(localeTranslator.toLocale("exception.message.40401"), id))));
   }
 
   @PostMapping()
@@ -88,7 +88,7 @@ public class GiftCertificateController {
             () ->
                 new EntityNotFoundException(
                     String.format(
-                        translatorLocale.toLocale("exception.message.40401"),
+                        localeTranslator.toLocale("exception.message.40401"),
                         giftCertificateDto.getId())));
 
     Long id = savedGiftCertificateDto.getId();
@@ -108,7 +108,7 @@ public class GiftCertificateController {
             .orElseThrow(
                 () ->
                     new EntityNotUpdatedException(
-                        String.format(translatorLocale.toLocale("exception.message.40013"), id)));
+                        String.format(localeTranslator.toLocale("exception.message.40013"), id)));
     return giftCertificateDtoLinkBuilder.build(updatedGiftCertificateDto);
   }
 
@@ -130,7 +130,7 @@ public class GiftCertificateController {
             .orElseThrow(
                 () ->
                     new EntityNotUpdatedException(
-                        String.format(translatorLocale.toLocale("exception.message.40013"), id)));
+                        String.format(localeTranslator.toLocale("exception.message.40013"), id)));
     return giftCertificateDtoLinkBuilder.build(patchingGiftCertificateDto);
   }
 }

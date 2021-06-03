@@ -1,17 +1,17 @@
 package com.epam.esm.service.validator;
 
 import com.epam.esm.service.dto.PageDto;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PageValidator extends AbstractValidator<PageDto> {
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
-  public PageValidator(TranslatorLocale translatorLocale) {
-    this.translatorLocale = translatorLocale;
+  public PageValidator(LocaleTranslator localeTranslator) {
+    this.localeTranslator = localeTranslator;
   }
 
   @Override
@@ -21,16 +21,16 @@ public class PageValidator extends AbstractValidator<PageDto> {
     Integer page = pageDto.getPage();
     Integer size = pageDto.getSize();
     if (page == null) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.pageNotNull"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.pageNotNull"));
       if (size == null) {
-        addErrorMessage(translatorLocale.toLocale("exception.message.sizeNotNull"));
+        addErrorMessage(localeTranslator.toLocale("exception.message.sizeNotNull"));
       } else {
         checkSizeParameter(size);
       }
       return false;
     }
     if (size == null) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.sizeNotNull"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.sizeNotNull"));
       checkPageParameter(page);
       return false;
     }
@@ -41,18 +41,18 @@ public class PageValidator extends AbstractValidator<PageDto> {
 
   private void checkPageParameter(Integer page) {
     if (page <= 0) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.pageMoreThanZero"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.pageMoreThanZero"));
       setIsResultValidFalse();
     }
   }
 
   private void checkSizeParameter(Integer size) {
     if (size <= 0) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.sizeMoreThanZero"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.sizeMoreThanZero"));
       setIsResultValidFalse();
     }
     if (size > 50) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.sizeLessThanFifty"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.sizeLessThanFifty"));
       setIsResultValidFalse();
     }
   }

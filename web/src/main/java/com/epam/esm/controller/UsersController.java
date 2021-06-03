@@ -6,14 +6,16 @@ import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.dto.UsersCreatingDto;
+import com.epam.esm.service.dto.UserCredential;
 import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotSavedException;
 import com.epam.esm.service.exception.MostWidelyTagNotExistsException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,18 +37,18 @@ public class UsersController {
   private final UserService userService;
   private final OrderService orderService;
   private final UserDtoLinkBuilder userDtoLinkBuilder;
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
   public UsersController(
       UserService userService,
       OrderService orderService,
       UserDtoLinkBuilder userDtoLinkBuilder,
-      TranslatorLocale translatorLocale) {
+      LocaleTranslator localeTranslator) {
     this.userService = userService;
     this.orderService = orderService;
     this.userDtoLinkBuilder = userDtoLinkBuilder;
-    this.translatorLocale = translatorLocale;
+    this.localeTranslator = localeTranslator;
   }
 
   @GetMapping()
@@ -111,26 +113,26 @@ public class UsersController {
         optionalOrdersDto.orElseThrow(
             () ->
                 new EntityNotFoundException(
-                    String.format(translatorLocale.toLocale("exception.message.40401"), orderId)));
+                    String.format(localeTranslator.toLocale("exception.message.40401"), orderId)));
     return userDtoLinkBuilder.addLinkToOrderDtoUsingUserId(ordersDto, userId);
   }
 
   @GetMapping("/{id}/tags")
   @PreAuthorize(
       "hasAnyRole('ROLE_USER', 'ROLE_ADMIN') && @userSecurity.hasSameName(authentication, #id)")
-  public TagDto getMostWidelyUsedTag(@PathVariable Long id) {
-    return userDtoLinkBuilder.addLinkMostWidelyUsedTag(
-        userService
-            .getMostWidelyUsedTagByUserId(id)
-            .orElseThrow(
-                () ->
-                    new MostWidelyTagNotExistsException(
-                        translatorLocale.toLocale("exception.message.40414"))));
+  public ResponseEntity<TagDto> getMostWidelyUsedTag(@PathVariable Long id) {
+    Optional<TagDto> optionalTagDto = userService.getMostWidelyUsedTagByUserId(id);
+    return optionalTagDto
+        .map(
+            tagDto ->
+                new ResponseEntity<>(
+                    userDtoLinkBuilder.addLinkMostWidelyUsedTag(tagDto), HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
   }
 
   @PostMapping()
   public UsersDto save(
-      @RequestBody UsersCreatingDto userDto,
+      @RequestBody UserCredential userDto,
       HttpServletRequest request,
       HttpServletResponse response) {
     UsersDto savedUserDto =
@@ -139,7 +141,7 @@ public class UsersController {
             .orElseThrow(
                 () ->
                     new EntityNotSavedException(
-                        translatorLocale.toLocale("exception.message.40011")));
+                        localeTranslator.toLocale("exception.message.40011")));
 
     Long id = savedUserDto.getId();
     String url = request.getRequestURL().toString();

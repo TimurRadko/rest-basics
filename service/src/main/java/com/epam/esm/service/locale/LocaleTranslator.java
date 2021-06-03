@@ -8,11 +8,11 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import java.util.Locale;
 
 @Configuration
-public class TranslatorLocale {
+public class LocaleTranslator {
   private final ResourceBundleMessageSource messageSource;
 
   @Autowired
-  public TranslatorLocale(ResourceBundleMessageSource messageSource) {
+  public LocaleTranslator(ResourceBundleMessageSource messageSource) {
     this.messageSource = messageSource;
   }
 

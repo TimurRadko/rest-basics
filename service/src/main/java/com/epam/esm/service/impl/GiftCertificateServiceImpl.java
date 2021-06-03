@@ -24,9 +24,8 @@ import com.epam.esm.service.exception.EntityNotSavedException;
 import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.PageNotValidException;
-import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.exception.certificates.DeletingGiftCertificateException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import com.epam.esm.service.validator.GiftCertificateValidator;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.TagValidator;
@@ -52,7 +51,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   private final TagDtoBuilder tagDtoBuilder;
   private final PageValidator pageValidator;
   private final TagValidator tagValidator;
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
   public GiftCertificateServiceImpl(
@@ -65,7 +64,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       TagDtoBuilder tagDtoBuilder,
       PageValidator pageValidator,
       TagValidator tagValidator,
-      TranslatorLocale translatorLocale) {
+      LocaleTranslator localeTranslator) {
     this.giftCertificateRepository = giftCertificateRepository;
     this.tagRepository = tagRepository;
     this.giftCertificateValidator = giftCertificateValidator;
@@ -75,7 +74,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     this.tagDtoBuilder = tagDtoBuilder;
     this.pageValidator = pageValidator;
     this.tagValidator = tagValidator;
-    this.translatorLocale = translatorLocale;
+    this.localeTranslator = localeTranslator;
   }
 
   @Override
@@ -93,7 +92,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             .orElseThrow(
                 () ->
                     new EntityNotSavedException(
-                        translatorLocale.toLocale("exception.message.40011")));
+                        localeTranslator.toLocale("exception.message.40011")));
     return Optional.of(giftCertificateDtoBuilder.buildWithTagDtos(giftCertificate, tags));
   }
 
@@ -114,7 +113,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
       optionalExistingTag = tagRepository.getEntity(new GetTagByIdSpecification(tagDto.getId()));
       if (optionalExistingTag.isEmpty()) {
         throw new EntityNotFoundException(
-            String.format(translatorLocale.toLocale("exception.message.40401"), tagDto.getId()));
+            String.format(localeTranslator.toLocale("exception.message.40401"), tagDto.getId()));
       }
     }
     if (optionalExistingTag.isEmpty()) {
@@ -127,7 +126,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
               .orElseThrow(
                   () ->
                       new EntityNotSavedException(
-                          translatorLocale.toLocale("exception.message.40011"))));
+                          localeTranslator.toLocale("exception.message.40011"))));
     } else {
       return tagDtoBuilder.build(optionalExistingTag.get());
     }
@@ -197,7 +196,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                     () ->
                         new EntityNotFoundException(
                             String.format(
-                                translatorLocale.toLocale("exception.message.40401"), id)))));
+                                localeTranslator.toLocale("exception.message.40401"), id)))));
   }
 
   private GiftCertificate getExistingGiftCertificate(long id) {
@@ -206,7 +205,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         .orElseThrow(
             () ->
                 new EntityNotFoundException(
-                    String.format(translatorLocale.toLocale("exception.message.40401"), id)));
+                    String.format(localeTranslator.toLocale("exception.message.40401"), id)));
   }
 
   @Override
@@ -280,7 +279,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         .orElseThrow(
             () ->
                 new EntityNotFoundException(
-                    String.format(translatorLocale.toLocale("exception.message.40401"), id)));
+                    String.format(localeTranslator.toLocale("exception.message.40401"), id)));
   }
 
   private void updateGiftCertificate(GiftCertificate giftCertificate, Set<TagDto> tagDtos) {
@@ -292,7 +291,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             () ->
                 new EntityNotFoundException(
                     String.format(
-                        translatorLocale.toLocale("exception.message.40401"),
+                        localeTranslator.toLocale("exception.message.40401"),
                         giftCertificate.getId())));
   }
 
@@ -307,19 +306,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
   @Override
   @Transactional
   public int delete(long id) {
-    giftCertificateRepository
-        .getEntity(new GetGiftCertificatesByIdSpecification(id))
-        .orElseThrow(
-            () ->
-                new EntityNotFoundException(
-                    String.format(translatorLocale.toLocale("exception.message.40401"), id)));
-
     List<GiftCertificate> existingGiftCertificate =
         giftCertificateRepository.getEntityList(new GetAllGiftCertificatesAssociatedWithOrders(id));
 
     if (!existingGiftCertificate.isEmpty()) {
       throw new DeletingGiftCertificateException(
-          String.format(translatorLocale.toLocale("exception.message.40010"), id));
+          String.format(localeTranslator.toLocale("exception.message.40010"), id));
     }
     return giftCertificateRepository.delete(id);
   }

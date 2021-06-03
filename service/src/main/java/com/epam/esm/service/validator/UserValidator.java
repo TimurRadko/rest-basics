@@ -1,30 +1,30 @@
 package com.epam.esm.service.validator;
 
-import com.epam.esm.service.dto.UsersCreatingDto;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.dto.UserCredential;
+import com.epam.esm.service.locale.LocaleTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserValidator extends AbstractValidator<UsersCreatingDto> {
+public class UserValidator extends AbstractValidator<UserCredential> {
   private static final int MIN_NAME_LENGTH = 2;
   private static final int MIN_PASSWORD_LENGTH = 8;
   private static final int MAX_NAME_LENGTH = 50;
   private static final int MAX_PASSWORD_LENGTH = 100;
-  private final TranslatorLocale translatorLocale;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
-  public UserValidator(TranslatorLocale translatorLocale) {
-    this.translatorLocale = translatorLocale;
+  public UserValidator(LocaleTranslator localeTranslator) {
+    this.localeTranslator = localeTranslator;
   }
 
   @Override
-  public boolean isValid(UsersCreatingDto userDto) {
+  public boolean isValid(UserCredential userDto) {
     setIsReturnValidTrue();
     eraseErrorMessages();
 
     if (userDto == null) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.parameters"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.parameters"));
       return false;
     }
     checkLogin(userDto.getLogin());
@@ -34,26 +34,26 @@ public class UserValidator extends AbstractValidator<UsersCreatingDto> {
 
   private void checkPassword(String password, String confirmPassword) {
     if (password == null || password.trim().length() == 0) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.passwordRequired"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.passwordRequired"));
       setIsResultValidFalse();
     } else if (confirmPassword == null || confirmPassword.trim().length() == 0) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.confirmPasswordRequired"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.confirmPasswordRequired"));
       setIsResultValidFalse();
     } else if (password.length() < MIN_PASSWORD_LENGTH || password.length() > MAX_PASSWORD_LENGTH) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.passwordLength"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.passwordLength"));
       setIsResultValidFalse();
     } else if (!password.equals(confirmPassword)) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.passwordEquals"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.passwordEquals"));
       setIsResultValidFalse();
     }
   }
 
   private void checkLogin(String login) {
     if (login == null || login.trim().length() == 0) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.userNameRequired"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.userNameRequired"));
       setIsResultValidFalse();
     } else if (login.length() < MIN_NAME_LENGTH || login.length() > MAX_NAME_LENGTH) {
-      addErrorMessage(translatorLocale.toLocale("exception.message.userNameLength"));
+      addErrorMessage(localeTranslator.toLocale("exception.message.userNameLength"));
       setIsResultValidFalse();
     }
   }

@@ -2,10 +2,9 @@ package com.epam.esm.service.builder.user;
 
 import com.epam.esm.dao.entity.Role;
 import com.epam.esm.dao.entity.Users;
-import com.epam.esm.service.dto.UsersCreatingDto;
+import com.epam.esm.service.dto.UserCredential;
 import com.epam.esm.service.dto.UsersDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -29,10 +28,10 @@ public class UserBuilder {
     return users;
   }
 
-  public Users buildForSave(UsersCreatingDto usersCreatingDto) {
+  public Users buildForSave(UserCredential userCredential) {
     Users users = new Users();
-    users.setLogin(usersCreatingDto.getLogin());
-    users.setPassword(passwordEncoder.encode(usersCreatingDto.getPassword()));
+    users.setLogin(userCredential.getLogin());
+    users.setPassword(passwordEncoder.encode(userCredential.getPassword()));
     users.setBalance(BigDecimal.valueOf(100));
     users.setRole(Role.USER);
     return users;

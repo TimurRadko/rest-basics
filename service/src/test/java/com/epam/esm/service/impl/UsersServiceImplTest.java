@@ -20,7 +20,7 @@ import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.GiftCertificateDtoIds;
 import com.epam.esm.service.dto.OrdersDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.dto.UsersCreatingDto;
+import com.epam.esm.service.dto.UserCredential;
 import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.PageNotValidException;
@@ -28,7 +28,7 @@ import com.epam.esm.service.exception.ServiceException;
 import com.epam.esm.service.exception.order.EmptyOrderException;
 import com.epam.esm.service.exception.order.InsufficientFundInAccount;
 import com.epam.esm.service.exception.user.UserLoginExistsException;
-import com.epam.esm.service.locale.TranslatorLocale;
+import com.epam.esm.service.locale.LocaleTranslator;
 import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.UserValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,7 +70,7 @@ class UsersServiceImplTest {
   @Mock private TagRepository tagRepository;
   @Mock private PageValidator pageValidator;
   @Mock private UserValidator userValidator;
-  @Mock private TranslatorLocale translatorLocale;
+  @Mock private LocaleTranslator localeTranslator;
   @Mock private UserBuilder userBuilder;
   @Mock private UserDetailsBuilder userDetailsBuilder;
 
@@ -127,7 +127,7 @@ class UsersServiceImplTest {
   private static final String MOST_WIDE_TAG_NAME = "The Most";
   private final Tag mostWideTag = new Tag(MOST_WIDE_TAG_ID, MOST_WIDE_TAG_NAME);
   private final TagDto expectedMostWideTag = new TagDto(MOST_WIDE_TAG_ID, MOST_WIDE_TAG_NAME);
-  private final UsersCreatingDto usersCreatingDto = new UsersCreatingDto(LOGIN, PASSWORD, PASSWORD);
+  private final UserCredential userCredential = new UserCredential(LOGIN, PASSWORD, PASSWORD);
 
   @BeforeEach
   void setUp() {
@@ -199,7 +199,7 @@ class UsersServiceImplTest {
     // given
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(String.format("Requested resource with id = %s not found.", user.getId()));
     // then
     assertThrows(
@@ -212,7 +212,7 @@ class UsersServiceImplTest {
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
     when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.of(giftCertificate));
     // when
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(String.format("Requested resource with id = %s not found.", user.getId()));
     // then
     assertThrows(
@@ -276,10 +276,10 @@ class UsersServiceImplTest {
     when(userValidator.isValid(any())).thenReturn(true);
     when(userRepository.getEntity(any())).thenReturn(Optional.empty());
     when(userRepository.save(any())).thenReturn(Optional.of(user));
-    when(userBuilder.buildForSave(usersCreatingDto)).thenReturn(user);
+    when(userBuilder.buildForSave(userCredential)).thenReturn(user);
     when(userDtoBuilder.build(user)).thenReturn(usersDto);
     // when
-    Optional<UsersDto> actualOptionalUser = userService.save(usersCreatingDto);
+    Optional<UsersDto> actualOptionalUser = userService.save(userCredential);
     // then
     assertEquals(Optional.of(usersDto), actualOptionalUser);
   }
@@ -289,20 +289,20 @@ class UsersServiceImplTest {
     // given
     when(userValidator.isValid(any())).thenReturn(true);
     when(userRepository.getEntity(any())).thenReturn(Optional.of(user));
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(
             String.format(
                 "The User with this name (%s) is already in the database.", user.getId()));
     // when
     // then
-    assertThrows(UserLoginExistsException.class, () -> userService.save(usersCreatingDto));
+    assertThrows(UserLoginExistsException.class, () -> userService.save(userCredential));
   }
 
   @Test
   void testLoadUserByUsername_shouldThrowUsernameNotFoundException_whenUserNotExists() {
     // given
     when(userRepository.getEntity(any())).thenReturn(Optional.empty());
-    when(translatorLocale.toLocale(any()))
+    when(localeTranslator.toLocale(any()))
         .thenReturn(
             String.format("User with login = %s does not exists in database.", user.getId()));
     // when
