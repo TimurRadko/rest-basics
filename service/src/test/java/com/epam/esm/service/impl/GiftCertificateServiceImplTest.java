@@ -16,6 +16,7 @@ import com.epam.esm.service.exception.EntityNotValidException;
 import com.epam.esm.service.exception.EntityNotValidMultipleException;
 import com.epam.esm.service.exception.PageNotValidException;
 import com.epam.esm.service.exception.ServiceException;
+import com.epam.esm.service.exception.certificates.DeletingGiftCertificateException;
 import com.epam.esm.service.locale.LocaleTranslator;
 import com.epam.esm.service.validator.GiftCertificateValidator;
 import com.epam.esm.service.validator.PageValidator;
@@ -430,8 +431,8 @@ class GiftCertificateServiceImplTest {
     // given
     int expectedResult = 1;
     when(giftCertificateRepository.delete(ID_FOR_MANIPULATIONS)).thenReturn(expectedResult);
-    when(giftCertificateRepository.getEntity(any()))
-        .thenReturn(Optional.of(expectedGiftCertificate));
+    when(giftCertificateRepository.getEntityList(any()))
+            .thenReturn(Collections.emptyList());
     // when
     int actualResult = giftCertificateService.delete(ID_FOR_MANIPULATIONS);
     // then
@@ -439,15 +440,19 @@ class GiftCertificateServiceImplTest {
   }
 
   @Test
-  void testDelete_shouldThrowEntityNotFoundException_whenItNotExistsInDatabase() {
+  void testDelete_shouldThrowDeletingGiftCertificateException_whenItNotExistsInDatabase() {
     // given
-    when(giftCertificateRepository.getEntity(any())).thenReturn(Optional.empty());
+    when(giftCertificateRepository.getEntityList(any()))
+        .thenReturn(Collections.singletonList(expectedGiftCertificate));
     // when
     when(localeTranslator.toLocale(any()))
         .thenReturn(
-            String.format("Requested resource with id = %s not found.", ID_FOR_MANIPULATIONS));
+            String.format(
+                "The Gift Certificate with id = %s attached to the Order. Deletion denied.",
+                ID_FOR_MANIPULATIONS));
     // then
     assertThrows(
-        EntityNotFoundException.class, () -> giftCertificateService.delete(ID_FOR_MANIPULATIONS));
+        DeletingGiftCertificateException.class,
+        () -> giftCertificateService.delete(ID_FOR_MANIPULATIONS));
   }
 }

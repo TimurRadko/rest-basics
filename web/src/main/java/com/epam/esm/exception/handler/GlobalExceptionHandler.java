@@ -221,13 +221,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler
     return response;
   }
 
-  @ExceptionHandler
-  public ResponseEntity<SingleExceptionResponse> handleException(Exception exception) {
-    SingleExceptionResponse response = new SingleExceptionResponse();
-    response.setErrorMessage(exception.getMessage());
-    response.setErrorCode(COMMON_CODE);
-    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-  }
+//  @ExceptionHandler
+//  public ResponseEntity<SingleExceptionResponse> handleException(Exception exception) {
+//    SingleExceptionResponse response = new SingleExceptionResponse();
+//    response.setErrorMessage(exception.getMessage());
+//    response.setErrorCode(COMMON_CODE);
+//    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//  }
 
   @Override
   protected ResponseEntity<Object> handleNoHandlerFoundException(

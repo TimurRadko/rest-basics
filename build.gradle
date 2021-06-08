@@ -1,24 +1,19 @@
-allprojects {
-    apply plugin: 'application'
-    group 'com.epam.esm'
-    version '1.0-SNAPSHOT'
-    repositories {
-        mavenCentral()
-    }
-    mainClassName = 'com.epam.esm.Application'
+plugins {
+    id 'org.springframework.boot' version '2.4.5' apply false
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE' apply false
+    id 'java'
 }
 
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'com.epam.esm.Application'
-        )
+allprojects {
+    group 'com.epam.esm'
+    version '1.5'
+    apply plugin: 'java'
+    repositories {
+        mavenCentral()
     }
 }
 
 subprojects {
-    apply plugin: 'java-library'
-
     compileJava {
         sourceCompatibility = '11'
         targetCompatibility = '11'

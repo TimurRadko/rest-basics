@@ -10,7 +10,6 @@ import com.epam.esm.service.dto.UserCredential;
 import com.epam.esm.service.dto.UsersDto;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotSavedException;
-import com.epam.esm.service.exception.MostWidelyTagNotExistsException;
 import com.epam.esm.service.locale.LocaleTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
