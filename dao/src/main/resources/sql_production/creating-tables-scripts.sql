@@ -93,7 +93,7 @@ CREATE TABLE audit_history_operations
 (
     id          SERIAL,
     action      varchar(255) NOT NULL,
-    content     varchar(255) NOT NULL,
+    content     varchar(500) NOT NULL,
     create_date timestamp    NOT NULL,
     PRIMARY KEY (id)
 );

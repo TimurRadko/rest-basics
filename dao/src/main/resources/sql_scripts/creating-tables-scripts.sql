@@ -53,7 +53,7 @@ CREATE TABLE users
     id       SERIAL       NOT NULL,
     login    varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
-    account  double precision,
+    balance  double precision,
     PRIMARY KEY (id),
     UNIQUE (login)
 );
@@ -91,7 +91,7 @@ CREATE TABLE audit_history_operations
 (
     id          SERIAL,
     action      varchar(255) NOT NULL,
-    content     varchar(255) NOT NULL,
+    content     varchar(500) NOT NULL,
     create_date timestamp    NOT NULL,
     PRIMARY KEY (id)
 );

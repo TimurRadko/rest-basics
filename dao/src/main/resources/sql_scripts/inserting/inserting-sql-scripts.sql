@@ -22,12 +22,12 @@ VALUES (1, 1),
        (4, 2),
        (4, 4);
 
-INSERT INTO users(login, password, balance)
-VALUES ('Tom', md5('Tom'), 100),
-       ('Jerry', md5('Jerry'), 100),
-       ('Spike', md5('Spike'), 100),
-       ('Max', md5('Max'), 100),
-       ('Julia', md5('Julia'), 100);
+INSERT INTO users(login, password, balance, role)
+VALUES ('Tom', md5('Tom'), 100, 'ADMIN'),
+       ('Jerry', md5('Jerry'), 100, 'USER'),
+       ('Spike', md5('Spike'), 100, 'USER'),
+       ('Max', md5('Max'), 100, 'USER'),
+       ('Julia', md5('Julia'), 100, 'USER');
 
 INSERT INTO orders(user_id, cost, order_date)
 VALUES (1, 55.0, '2021-03-25 00:00:00.084745'),
