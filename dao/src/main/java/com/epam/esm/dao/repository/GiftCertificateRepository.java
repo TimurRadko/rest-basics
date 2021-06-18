@@ -13,7 +13,16 @@ public interface GiftCertificateRepository extends Repository<GiftCertificate> {
    *
    * @param giftCertificate - passed into the method GiftCertificate that is contained in one of all
    *     tables in the DB
-   * @return Optional<T> - container that is contained Entity (typed parameter)
+   * @return Optional<GiftCertificate> - container that is contained GiftCertificate
    */
   Optional<GiftCertificate> update(GiftCertificate giftCertificate);
+  /**
+   * * This method describes a general delete operation for all GiftCertificates with the specified
+   * id, located in the DB
+   *
+   * @param id id - passed into the method id parameter that is contained in one of all tables in
+   *     the DB
+   * @return int - return value more than 0, when Tag was deleted
+   */
+  int delete(long id);
 }

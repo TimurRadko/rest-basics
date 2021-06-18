@@ -1,23 +1,27 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.entity.GiftCertificateTag;
 import com.epam.esm.dao.entity.Tag;
-import com.epam.esm.dao.repository.GiftCertificateTagRepository;
 import com.epam.esm.dao.repository.TagRepository;
-import com.epam.esm.dao.specification.gifttag.GetGiftCertificateTagByTagIdSpecification;
 import com.epam.esm.dao.specification.tag.GetAllTagsSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByIdSpecification;
 import com.epam.esm.dao.specification.tag.GetTagByNameSpecification;
+import com.epam.esm.dao.specification.tag.GetTagsByGiftCertificateSpecification;
 import com.epam.esm.service.TagService;
-import com.epam.esm.service.builder.TagBuilder;
+import com.epam.esm.service.builder.tag.TagBuilder;
+import com.epam.esm.service.builder.tag.TagDtoBuilder;
+import com.epam.esm.service.dto.PageDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.DeletingTagException;
+import com.epam.esm.service.exception.tag.DeletingTagException;
 import com.epam.esm.service.exception.EntityNotFoundException;
 import com.epam.esm.service.exception.EntityNotValidException;
-import com.epam.esm.service.exception.TagAlreadyExistsException;
+import com.epam.esm.service.exception.PageNotValidException;
+import com.epam.esm.service.exception.tag.TagAlreadyExistsException;
+import com.epam.esm.service.locale.LocaleTranslator;
+import com.epam.esm.service.validator.PageValidator;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,32 +31,41 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
   private final TagRepository tagRepository;
   private final TagValidator tagValidator;
-  private final GiftCertificateTagRepository giftCertificateTagRepository;
-  private TagBuilder builder;
+  private final TagBuilder builder;
+  private final TagDtoBuilder tagDtoBuilder;
+  private final PageValidator pageValidator;
+  private final LocaleTranslator localeTranslator;
 
   @Autowired
   public TagServiceImpl(
-      TagRepository tagRepository,
-      TagValidator tagValidator,
-      GiftCertificateTagRepository giftCertificateTagRepository,
-      TagBuilder builder) {
+          TagRepository tagRepository,
+          TagValidator tagValidator,
+          TagBuilder builder,
+          TagDtoBuilder tagDtoBuilder,
+          PageValidator pageValidator,
+          LocaleTranslator localeTranslator) {
     this.tagRepository = tagRepository;
     this.tagValidator = tagValidator;
-    this.giftCertificateTagRepository = giftCertificateTagRepository;
     this.builder = builder;
+    this.tagDtoBuilder = tagDtoBuilder;
+    this.pageValidator = pageValidator;
+    this.localeTranslator = localeTranslator;
   }
 
   @Override
-  public List<TagDto> getAll(String sort) {
-    List<Tag> tags = tagRepository.getEntityListBySpecification(new GetAllTagsSpecification(sort));
-    return tags.stream().map((TagDto::new)).collect(Collectors.toList());
+  public List<TagDto> getAll(Integer page, Integer size, String sort) {
+    if (!pageValidator.isValid(new PageDto(page, size))) {
+      throw new PageNotValidException(pageValidator.getErrorMessage());
+    }
+    List<Tag> tags =
+        tagRepository.getEntityListWithPagination(new GetAllTagsSpecification(sort), page, size);
+    return tags.stream().map(tagDtoBuilder::build).collect(Collectors.toList());
   }
 
   @Override
   public Optional<TagDto> getById(long id) {
-    Optional<Tag> optionalTag =
-        tagRepository.getEntityBySpecification(new GetTagByIdSpecification(id));
-    return optionalTag.map(TagDto::new);
+    Optional<Tag> optionalTag = tagRepository.getEntity(new GetTagByIdSpecification(id));
+    return optionalTag.map(tagDtoBuilder::build);
   }
 
   @Override
@@ -60,31 +73,33 @@ public class TagServiceImpl implements TagService {
     if (!tagValidator.isValid(tagDto)) {
       throw new EntityNotValidException(tagValidator.getErrorMessage());
     }
-    Tag tag = builder.buildFromDto(tagDto);
-    String name = tag.getName();
+    Tag tag = builder.build(tagDto);
     Optional<Tag> optionalExistingTag =
-        tagRepository.getEntityBySpecification(new GetTagByNameSpecification(name));
+        tagRepository.getEntity(new GetTagByNameSpecification(tag.getName()));
     if (optionalExistingTag.isEmpty()) {
       Optional<Tag> optionalSavedTag = tagRepository.save(tag);
-      return optionalSavedTag.map(TagDto::new);
+      return optionalSavedTag.map(tagDtoBuilder::build);
     } else {
       throw new TagAlreadyExistsException(
-          "The tag with this name (" + tagDto.getName() + ") is already in the database");
+          String.format(localeTranslator.toLocale("exception.message.40901"), tag.getName()));
     }
   }
 
   @Override
+  @Transactional
   public int delete(long id) {
     tagRepository
-        .getEntityBySpecification(new GetTagByIdSpecification(id))
+        .getEntity(new GetTagByIdSpecification(id))
         .orElseThrow(
-            () -> new EntityNotFoundException("Requested resource not found (id = " + id + ")"));
-    List<GiftCertificateTag> existingGiftCertificateTags =
-        giftCertificateTagRepository.getEntityListBySpecification(
-            new GetGiftCertificateTagByTagIdSpecification(id));
-    if (!existingGiftCertificateTags.isEmpty()) {
+            () ->
+                new EntityNotFoundException(
+                    String.format(localeTranslator.toLocale("exception.message.40401"), id)));
+
+    List<Tag> existingTags =
+        tagRepository.getEntityList(new GetTagsByGiftCertificateSpecification(id));
+    if (!existingTags.isEmpty()) {
       throw new DeletingTagException(
-          "The tag with id = " + id + " attached to the Gift Certificate. Deletion denied.");
+          String.format(localeTranslator.toLocale("exception.message.40002"), id));
     }
     return tagRepository.delete(id);
   }

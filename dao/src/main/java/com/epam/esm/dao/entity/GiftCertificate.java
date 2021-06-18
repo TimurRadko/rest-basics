@@ -1,26 +1,64 @@
 package com.epam.esm.dao.entity;
 
-import com.epam.esm.dao.serialization.LocalDateDeserializer;
-import com.epam.esm.dao.serialization.LocalDateSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.epam.esm.dao.entity.audit.AuditListener;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
-public class GiftCertificate extends AbstractEntity {
+@Entity
+@Table(name = "gift_certificates")
+@EntityListeners(value = AuditListener.class)
+public class GiftCertificate implements TableEntity {
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @Column(name = "name")
   private String name;
+
+  @Column(name = "description")
   private String description;
+
+  @Column(name = "price")
   private BigDecimal price;
+
+  @Column(name = "duration")
   private Integer duration;
 
-  @JsonSerialize(using = LocalDateSerializer.class)
-  @JsonDeserialize(using = LocalDateDeserializer.class)
+  @Column(name = "create_date")
   private LocalDateTime createDate;
 
-  @JsonSerialize(using = LocalDateSerializer.class)
-  @JsonDeserialize(using = LocalDateDeserializer.class)
+  @Column(name = "last_update_date")
   private LocalDateTime lastUpdateDate;
+
+  @ManyToMany()
+  @JoinTable(
+      name = "gift_certificates_tags",
+      joinColumns = @JoinColumn(name = "gift_certificate_id"),
+      inverseJoinColumns = @JoinColumn(name = "tag_id"))
+  private Set<Tag> tags;
+
+  @OneToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "orders_gift_certificates",
+      joinColumns = @JoinColumn(name = "gift_certificate_id"),
+      inverseJoinColumns = @JoinColumn(name = "order_id"))
+  private Set<Orders> orders;
 
   public GiftCertificate() {}
 
@@ -29,16 +67,26 @@ public class GiftCertificate extends AbstractEntity {
       String name,
       String description,
       BigDecimal price,
-      int duration,
+      Integer duration,
       LocalDateTime createDate,
       LocalDateTime lastUpdateDate) {
-    super(id);
+    this.id = id;
     this.name = name;
     this.description = description;
     this.price = price;
     this.duration = duration;
     this.createDate = createDate;
     this.lastUpdateDate = lastUpdateDate;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getName() {
@@ -89,6 +137,22 @@ public class GiftCertificate extends AbstractEntity {
     this.lastUpdateDate = lastUpdateDate;
   }
 
+  public Set<Tag> getTags() {
+    return (tags == null) ? null : new HashSet<>(tags);
+  }
+
+  public void setTags(Set<Tag> tags) {
+    this.tags = tags;
+  }
+
+  public Set<Orders> getOrders() {
+    return (orders == null) ? null : new HashSet<>(orders);
+  }
+
+  public void setOrders(Set<Orders> orders) {
+    this.orders = orders;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -97,12 +161,12 @@ public class GiftCertificate extends AbstractEntity {
     if (!(o instanceof GiftCertificate)) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
 
     GiftCertificate that = (GiftCertificate) o;
 
+    if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) {
+      return false;
+    }
     if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) {
       return false;
     }
@@ -121,9 +185,7 @@ public class GiftCertificate extends AbstractEntity {
     }
     if (getCreateDate() != null
         ? !getCreateDate().equals(that.getCreateDate())
-        : that.getCreateDate() != null) {
-      return false;
-    }
+        : that.getCreateDate() != null) return false;
     return getLastUpdateDate() != null
         ? getLastUpdateDate().equals(that.getLastUpdateDate())
         : that.getLastUpdateDate() == null;
@@ -131,7 +193,7 @@ public class GiftCertificate extends AbstractEntity {
 
   @Override
   public int hashCode() {
-    int result = super.hashCode();
+    int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getName() != null ? getName().hashCode() : 0);
     result = 31 * result + (getDescription() != null ? getDescription().hashCode() : 0);
     result = 31 * result + (getPrice() != null ? getPrice().hashCode() : 0);

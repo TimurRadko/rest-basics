@@ -1,26 +1,30 @@
 package com.epam.esm.dao.specification.tag;
 
+import com.epam.esm.dao.entity.GiftCertificate;
+import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.specification.Specification;
 
-public final class GetAllTagsByGiftCertificatesIdSpecification implements Specification {
-  private final long id;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
 
-  private static final String QUERY =
-      "SELECT t.id, t.name FROM tags t "
-          + "INNER JOIN gift_certificates_tags gct "
-          + "ON t.id=gct.tag_id WHERE gct.gift_certificate_id=?;";
+public final class GetAllTagsByGiftCertificatesIdSpecification implements Specification<Tag> {
+  private final long id;
 
   public GetAllTagsByGiftCertificatesIdSpecification(long id) {
     this.id = id;
   }
 
   @Override
-  public String getQuery() {
-    return QUERY;
-  }
-
-  @Override
-  public Object[] getArgs() {
-    return new Object[] {id};
+  public CriteriaQuery<Tag> getCriteriaQuery(CriteriaBuilder builder) {
+    CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
+    Root<Tag> tagRoot = criteria.from(Tag.class);
+    Join<Tag, GiftCertificate> tagsJoin = tagRoot.join("giftCertificates");
+    Path<String> giftCertificateIdPath = tagsJoin.get("id");
+    criteria.select(tagRoot).distinct(true);
+    criteria.where(builder.equal(giftCertificateIdPath, id));
+    return criteria;
   }
 }

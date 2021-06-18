@@ -1,26 +1,31 @@
 package com.epam.esm.dao.specification.tag;
 
+import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.specification.Specification;
 
-public final class GetAllTagsSpecification implements Specification {
-  private final String sort;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-  private static final String QUERY =
-      "SELECT id, name FROM tags ORDER BY "
-          + "CASE WHEN ? ='name-asc' THEN name END ASC, "
-          + "CASE WHEN ? ='name-desc' THEN name END DESC, id ASC;";
+public final class GetAllTagsSpecification implements Specification<Tag> {
+  private final String sort;
 
   public GetAllTagsSpecification(String sort) {
     this.sort = sort;
   }
 
   @Override
-  public String getQuery() {
-    return QUERY;
-  }
-
-  @Override
-  public Object[] getArgs() {
-    return new Object[] {sort, sort};
+  public CriteriaQuery<Tag> getCriteriaQuery(CriteriaBuilder builder) {
+    CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
+    Root<Tag> tagRoot = criteria.from(Tag.class);
+    if (sort == null) {
+      return criteria.orderBy(builder.asc(tagRoot.get("id")));
+    }
+    if (sort.equals("name-asc")) {
+      criteria.orderBy(builder.asc(tagRoot.get("name")));
+    } else if (sort.equals("name-desc")) {
+      criteria.orderBy(builder.desc(tagRoot.get("name")));
+    }
+    return criteria;
   }
 }

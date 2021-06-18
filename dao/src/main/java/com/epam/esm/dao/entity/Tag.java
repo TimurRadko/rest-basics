@@ -1,13 +1,49 @@
 package com.epam.esm.dao.entity;
 
-public class Tag extends AbstractEntity {
+import com.epam.esm.dao.entity.audit.AuditListener;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "tags")
+@EntityListeners(value = AuditListener.class)
+public class Tag implements TableEntity {
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @Column(name = "name")
   private String name;
+
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
+  private List<GiftCertificate> giftCertificates;
 
   public Tag() {}
 
   public Tag(Long id, String name) {
-    super(id);
+    this.id = id;
     this.name = name;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
+  }
+
+  @Override
+  public void setId(Long id) {
+    this.id = id;
   }
 
   public String getName() {
@@ -18,6 +54,14 @@ public class Tag extends AbstractEntity {
     this.name = name;
   }
 
+  public List<GiftCertificate> getGiftCertificates() {
+    return (giftCertificates == null) ? null : new ArrayList<>(giftCertificates);
+  }
+
+  public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
+    this.giftCertificates = giftCertificates;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -26,18 +70,18 @@ public class Tag extends AbstractEntity {
     if (!(o instanceof Tag)) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
 
     Tag tag = (Tag) o;
 
+    if (getId() != null ? !getId().equals(tag.getId()) : tag.getId() != null) {
+      return false;
+    }
     return getName() != null ? getName().equals(tag.getName()) : tag.getName() == null;
   }
 
   @Override
   public int hashCode() {
-    int result = super.hashCode();
+    int result = getId() != null ? getId().hashCode() : 0;
     result = 31 * result + (getName() != null ? getName().hashCode() : 0);
     return result;
   }

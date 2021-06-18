@@ -1,27 +1,27 @@
 insert into gift_certificates (name, description, price, duration, create_date, last_update_date)
 values (
-           'The first',
+           'BBB',
            'The first certificate',
            55.0,
            14,
            '2021-03-25 00:00:00',
            '2020-10-05 00:00:00'
        ), (
-           'The second',
+           'AAA',
            'The second certificate',
            35.0,
            18,
            '2021-07-07 00:00:00',
            '2020-11-07 00:00:00'
        ), (
-           'The third',
+           'DDD',
            'The third certificate',
            50.0,
            11,
            '2020-05-09 00:00:00',
            '2020-10-09 00:00:00'
        ), (
-           'The fourth',
+           'CCC',
            'The fourth certificate',
            14.0,
            12,

@@ -1,23 +1,25 @@
 package com.epam.esm.dao.specification.tag;
 
+import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.dao.specification.Specification;
 
-public final class GetTagByNameSpecification implements Specification {
-  private final String name;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
-  private static final String QUERY = "SELECT id, name FROM tags WHERE name = ?;";
+public final class GetTagByNameSpecification implements Specification<Tag> {
+  private final String name;
 
   public GetTagByNameSpecification(String name) {
     this.name = name;
   }
 
   @Override
-  public String getQuery() {
-    return QUERY;
-  }
-
-  @Override
-  public Object[] getArgs() {
-    return new Object[] {name};
+  public CriteriaQuery<Tag> getCriteriaQuery(CriteriaBuilder builder) {
+    CriteriaQuery<Tag> criteria = builder.createQuery(Tag.class);
+    Root<Tag> tagRoot = criteria.from(Tag.class);
+    criteria.select(tagRoot);
+    criteria.where(builder.equal(tagRoot.get("name"), name));
+    return criteria;
   }
 }

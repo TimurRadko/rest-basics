@@ -1,10 +1,14 @@
 package com.epam.esm.service.validator;
 
-import com.epam.esm.dao.entity.GiftCertificate;
-import com.epam.esm.dao.entity.Tag;
 import com.epam.esm.service.dto.GiftCertificateDto;
+import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.locale.LocaleTranslator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,52 +17,56 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class GiftCertificateValidatorTest {
-  private GiftCertificateValidator validator;
+  @Mock private LocaleTranslator localeTranslator;
 
-  private final GiftCertificate giftCertificate =
-      new GiftCertificate(
-          1L,
-          "validName",
-          "validDescription",
-          BigDecimal.valueOf(12),
-          14,
-          LocalDateTime.now(),
-          LocalDateTime.now());
-  private final Set<Tag> tags = Set.of(new Tag(1L, "tag"));
+  @InjectMocks private GiftCertificateValidator validator;
+
+  private static final long ID = 1L;
+  private static final String NAME = "Valid Name";
+  private static final String DESCRIPTION = "Valid Description";
+  private static final BigDecimal PRICE = BigDecimal.valueOf(12);
+  private static final int DURATION = 14;
+  private static final LocalDateTime NOW = LocalDateTime.now();
+  private final Set<TagDto> tagDtos = Set.of(new TagDto(1L, "tag"));
 
   private static final String NULL_GIFT_CERTIFICATE_MESSAGE =
-      "To create a Gift Certificate you must send the GiftCertificate Entity";
+      "To create a GiftCertificate you must send the GiftCertificate Entity.";
   private static final String NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE =
-      "The name is required";
+      "The GiftCertificate name is required.";
   private static final String INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE =
-      "The name must be between 3 and 50 characters long";
+      "The GiftCertificate name must be between 3 and 50 characters long.";
   private static final String NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE =
-      "The price must be more than 0.0 and less than 5000.0";
+      "The GiftCertificate price must be more than 0.0 and less than 5000.0.";
   private static final String NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE =
-      "The duration must be more than 0 and less than 365";
+      "The GiftCertificate duration must be more than 0 and less than 365.";
   private static final String INCORRECT_LENGTH_AND_NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE =
-      "The name must be between 3 and 50 characters long\n"
-          + "The price must be more than 0.0 and less than 5000.0";
+      "The GiftCertificate name must be between 3 and 50 characters long.\n"
+          + "The GiftCertificate price must be more than 0.0 and less than 5000.0.";
   private static final String INCORRECT_LENGTH_AND_NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE =
-      "The name must be between 3 and 50 characters long\n"
-          + "The duration must be more than 0 and less than 365";
+      "The GiftCertificate name must be between 3 and 50 characters long.\n"
+          + "The GiftCertificate duration must be more than 0 and less than 365.";
   private static final String INCORRECT_ALL_DATA_GIFT_CERTIFICATE_MESSAGE =
-      "The name must be between 3 and 50 characters long\n"
-          + "The price must be more than 0.0 and less than 5000.0\n"
-          + "The duration must be more than 0 and less than 365";
+      "The GiftCertificate name must be between 3 and 50 characters long.\n"
+          + "The GiftCertificate price must be more than 0.0 and less than 5000.0.\n"
+          + "The GiftCertificate duration must be more than 0 and less than 365.";
 
   @BeforeEach
   void setUp() {
-    validator = new GiftCertificateValidator();
+    validator = new GiftCertificateValidator(localeTranslator);
   }
 
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftCertificateIsNull() {
     // given
     // when
+    when(localeTranslator.toLocale(any())).thenReturn(NULL_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(null);
+
     String actualErrorMessage = validator.getErrorMessage();
     // then
     assertFalse(actualIsValid);
@@ -68,7 +76,8 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnTrue_whenGiftCertificateIsValid() {
     // given
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(ID, NAME, DESCRIPTION, PRICE, DURATION, NOW, NOW, tagDtos);
     // when
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     // then
@@ -78,9 +87,11 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftsNameIsNull() {
     // given
-    giftCertificate.setName(null);
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(ID, null, DESCRIPTION, PRICE, DURATION, NOW, NOW, tagDtos);
     // when
+    when(localeTranslator.toLocale(any()))
+        .thenReturn(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -91,9 +102,11 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftsNameLengthIsZero() {
     // given
-    giftCertificate.setName("");
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(ID, "", DESCRIPTION, PRICE, DURATION, NOW, NOW, tagDtos);
     // when
+    when(localeTranslator.toLocale(any()))
+        .thenReturn(NULL_OR_ZERO_LENGTH_NAME_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -104,9 +117,10 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthIsLessThanMin() {
     // given
-    giftCertificate.setName("I");
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(ID, "I", DESCRIPTION, PRICE, DURATION, NOW, NOW, tagDtos);
     // when
+    when(localeTranslator.toLocale(any())).thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -117,9 +131,18 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthIsMoreThanMax() {
     // given
-    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(
+            ID,
+            "nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby",
+            DESCRIPTION,
+            PRICE,
+            DURATION,
+            NOW,
+            NOW,
+            tagDtos);
     // when
+    when(localeTranslator.toLocale(any())).thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -130,9 +153,11 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftPriceLessThanZero() {
     // given
-    giftCertificate.setPrice(BigDecimal.valueOf(-1));
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(
+            ID, NAME, DESCRIPTION, BigDecimal.valueOf(-1), DURATION, NOW, NOW, tagDtos);
     // when
+    when(localeTranslator.toLocale(any())).thenReturn(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -143,9 +168,10 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftDurationLessThanZero() {
     // given
-    giftCertificate.setDuration(-1);
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(ID, NAME, DESCRIPTION, PRICE, -1, NOW, NOW, tagDtos);
     // when
+    when(localeTranslator.toLocale(any())).thenReturn(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -156,10 +182,21 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthAndPriceIncorrect() {
     // given
-    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
-    giftCertificate.setPrice(BigDecimal.valueOf(-1));
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(
+            ID,
+            "nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby",
+            DESCRIPTION,
+            BigDecimal.valueOf(-1),
+            DURATION,
+            NOW,
+            NOW,
+            tagDtos);
     // when
+    when(localeTranslator.toLocale("exception.message.lengthName"))
+        .thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
+    when(localeTranslator.toLocale("exception.message.priceValue"))
+        .thenReturn(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -170,10 +207,21 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenGiftNameLengthAndDurationIncorrect() {
     // given
-    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
-    giftCertificate.setDuration(-1);
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(
+            ID,
+            "nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby",
+            DESCRIPTION,
+            PRICE,
+            -1,
+            NOW,
+            NOW,
+            tagDtos);
     // when
+    when(localeTranslator.toLocale("exception.message.lengthName"))
+        .thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
+    when(localeTranslator.toLocale("exception.message.durationValue"))
+        .thenReturn(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
@@ -185,11 +233,23 @@ class GiftCertificateValidatorTest {
   @Test
   void testValidate_shouldReturnCorrectErrorMessage_whenAllDataIncorrect() {
     // given
-    giftCertificate.setName("nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby");
-    giftCertificate.setPrice(BigDecimal.valueOf(-1));
-    giftCertificate.setDuration(-1);
-    GiftCertificateDto giftCertificateDto = new GiftCertificateDto(giftCertificate, tags);
+    GiftCertificateDto giftCertificateDto =
+        new GiftCertificateDto(
+            ID,
+            "nhomxlzywemguxgnthmsjqgdzdzxxgocafakaailmipargfpiby",
+            DESCRIPTION,
+            BigDecimal.valueOf(-1),
+            -1,
+            NOW,
+            NOW,
+            tagDtos);
     // when
+    when(localeTranslator.toLocale("exception.message.lengthName"))
+        .thenReturn(INCORRECT_LENGTH_GIFT_CERTIFICATE_MESSAGE);
+    when(localeTranslator.toLocale("exception.message.durationValue"))
+        .thenReturn(NEGATIVE_DURATION_GIFT_CERTIFICATE_MESSAGE);
+    when(localeTranslator.toLocale("exception.message.priceValue"))
+        .thenReturn(NEGATIVE_PRICE_GIFT_CERTIFICATE_MESSAGE);
     boolean actualIsValid = validator.isValid(giftCertificateDto);
     String actualErrorMessage = validator.getErrorMessage();
     // then
