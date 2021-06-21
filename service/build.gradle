@@ -1,6 +1,8 @@
 plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
+    id 'java'
+    id 'jacoco'
 }
 
 bootJar {
@@ -14,3 +16,15 @@ jar {
 dependencies {
     implementation project(":dao")
 }
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports { xml.enabled true }
+}
+
+

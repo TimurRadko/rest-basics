@@ -2,8 +2,16 @@ plugins {
     id 'org.springframework.boot' version '2.4.5' apply false
     id 'io.spring.dependency-management' version '1.0.11.RELEASE' apply false
     id 'java'
-    id 'jacoco'
     id "org.sonarqube" version "3.0"
+    id 'com.carepay.sonar-qualitygate' version '0.0.6'
+}
+
+sonarqube {
+    properties {
+        property 'sonar.projectKey', 'github-jenkins-sonar'
+        property 'sonar.host.url', 'http://localhost:9000'
+        property 'sonar.login', '9c9a82450b62f82ab591a5a748c77758d22ce559'
+    }
 }
 
 allprojects {
@@ -12,6 +20,7 @@ allprojects {
     apply plugin: 'java'
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
 }
 
@@ -35,10 +44,5 @@ subprojects {
 
     test {
         useJUnitPlatform()
-        finalizedBy jacocoTestReport
-    }
-
-    jacocoTestReport {
-        dependsOn test
     }
 }
